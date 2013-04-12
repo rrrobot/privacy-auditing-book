@@ -1,0 +1,140 @@
+Outline for the NSF book:
+
+Title: Technical Privacy Auditing with Computer Forensics Tools
+
+Part 1 -  Introduction
+
+- What is Privacy Auditing?
+
+- What is Computer Forensics?
+
+- Tools of the Trade
+  - Strings
+  - Hex Dumps
+  - Magic Numbers and Self-Identifying Data
+
+Part 2 - Understanding Text
+
+- ASCII and Unicode
+
+- Encoding and Decoding Text
+  - Base64
+  - uuencode
+
+- Compression
+
+- Encryption
+
+Part 3 - Dissecting Documents
+
+* Private Data in PDFs
+
+  - Improperly redacted data
+  - High-resolution JPEGs
+  - Metadata
+
+* Understanding Directory-Based Container Files
+  - PDF structure
+  - ZIP files
+
+* Understanding Chunk-Based Container Files (JPEGs)
+
+Part 4 - Media Exploitation
+
+Part 5 - Network Analysis
+
+Part 6 - Secrets Left in RAM
+
+Part 7 - Visualizing Data 
+- Strings
+- Hex Dumps
+* Random Sampling
+
+* Hidden data in PDFs
+
+* hash-based carving/ frag_find
+
+* Introducing forensics
+
+* Famous information leaks
+  - PDF files
+  - Microsoft Word
+  - Microsoft Registration server
+  - Information revealed in photos
+  - REsolution/cropping
+  - NSA Guide
+* GUIDs & identifiers
+
+* How to do a digital forensics experiment
+
+* Digital forensics is an experimental science
+
+* "Trolltech" - where are the naems from?
+
+* Looking for illegal content
+  - Why NECMEC consideres it important to notify victims
+  - triage concept
+* Who has used the console? Identify different users that are on the console.
+* Who has the suspect contacted through Xbox LIVE?
+* What are the date/times that the suspect was connected?
+* What is the location that the suspect connected from?
+* Can we recover messages that the user was writing?
+* Can we find the first contact between the suspect and [victim]?
+
+
+* How to conduct a good experiment
+
+* network forensics with tcpflow
+ - using the MD5 option to see when the same data is sent more than once
+================
+Hi
+
+but the thing is in the pdf file it is written that there is 1 .E01 file and 1 .AFF file 
+so I was little confused..
+
+but it worked to creat a raw "dd" file with FTKs imager.
+and  both sluthkit and FTK could read that "dd"...
+and it also created the md5.. and so...
+
+TANXS   for the answer !!!
+  
+================
+Working with large amounts of data:
+
+- ZIP vs. ZIP64
+- 7zip
+I hope you had a happy new year.
+
+As I mentioned when we spoke on the phone, I thought you might want to consider this example to possibly add to your article, about a murder case where the cellphone of the victim was accidentally erased by police. In the same case, there was also some interesting testimony regarding the timestamp on a computer.  The man was eventually convicted of murdering his wife, although I understand that appeals are ongoing.
+
+Here is the main article of interest:
+
+http://www.newsobserver.com/2011/03/30/1092850/detective-in-cooper-trial-accidentally.html
+
+Plus some others:
+http://www.newsobserver.com/2011/04/07/1111094/coopers-phone-use-under-scrutiny.html
+http://www.newsobserver.com/2011/04/13/1127823/investigator-brad-cooper.html
+http://www.newsobserver.com/2011/04/14/1128603/computer-shows-where-body-found.html
+http://www.newsobserver.com/2011/04/14/1130231/brad-coopers-lawyers-challenge.html
+http://www.newsobserver.com/2011/04/15/1130823/computer-time-at-issue-in-cooper.html
+http://www.newsobserver.com/2011/04/21/1144184/focus-falls-on-coopers-laptop.html
+http://www.newsobserver.com/2011/04/25/1153613/coopers-defense-witnesses-question.html
+
+Let me know what you think.
+
+Best,
+Fenella
+
+Fenella Saunders
+Managing Editor
+
+American Scientist, the magazine of
+Sigma Xi, The Scientific Research Society
+3106 E. NC Highway 54
+P.O. Box 13975
+Research Triangle Park, NC 27709-3975
+USA
+1-919-547-5224 or 800-282-0444 x224
+fax 1-919-549-0090
+fsaunders@sigmaxi.org
+www.americanscientist.org
