@@ -49,6 +49,21 @@
 \usepackage{url}		% nice handling of URLs
 \usepackage{times}
 
+% Steps
+% http://tex.stackexchange.com/questions/32798/a-step-by-step-environment
+\usepackage{xparse}
+\DeclareDocumentEnvironment{steps}%
+{O{Step}}% If no argument is given the label defaults to 'Step'
+{\begin{enumerate}[label=#1 \arabic*]}%
+{\end{enumerate}}
+
+\makeatletter% http://tex.stackexchange.com/questions/29517/forcing-new-line-after-item-number-in-enumerate-environment/29518#29518
+\def\step{%
+   \@ifnextchar[ \@step{\@noitemargtrue\@step[\@itemlabel]}}
+\def\@step[#1]{\item[#1]\mbox{}\hspace*{\dimexpr-\labelwidth-\labelsep}}
+\makeatother
+
+
 \newcommand{\wikipedia}[1]{See \url{#1}}
 \newcommand{\wikipediab}[1]{ and \url{#1}}
 
@@ -151,8 +166,362 @@
 \chapter*{Part 1: Privacy Auditing: Task and Tools}
 \chapter{Introduction}
 \chapter{What Data Looks Like}
+
+Tools:
+
+http://en.wikipedia.org/wiki/Comparison_of_hex_editors
+
 \chapter{Designing a good forensics experiment}
 \chapter{Operational Concerns}
-\chapter*{Part 2: Working with Documents and Files}
+\chapter*{Part 2: Data Leaks in Documents and Databases}
 \chapter{Private Data in PDFs}
 \chapter{Understanding Directory-Based Container Files}
+\chapter*{Part 3: Data Leaks in Operating Systems}
+\chapter{File Systems, File Extraction, and Residual Data}
+\sgraphic{art/TK}{Most mass storage systems, including hard drives (HDs),
+  solid state drives (SSDs), and Secure Digital (SD) cards, store data
+  in blocks of data, sometimes called \emph{sectors}}
+
+Most kinds of computer data are eventually turned into \emph{files}
+and stored on some kind of
+\emph{mass storage device} (\figref{art/TK}). At the most basic level a file is
+nothing more than a sequence of zero or more bytes. In practice files
+have additional properties such as a \emph{file name}, 
+\emph{creation date}, \emph{modification date}, \emph{last access
+  data}, and so on. These other properties are called \emph{metadata},
+a word that loosely means ``data about other data.''
+
+Mass storage systems don't store files. Instead, they store blocks of
+bytes (sometimes called \emph{sectors}). These blocks are invariably
+sized as an even power of 2. In the 1990s most hard drives had a block
+size of 512 bytes and Compact Discs (CDs) had a block size of 2048
+bytes; modern hard drives have a block size of 4096 bytes. A 1~TB
+drive in a computer laptop would therefore have approximately 250
+million 4096-byte blocks. Each block on the media is referenced
+by a distinct number called a \emph{logical block address} (LBA). Most
+mass storage systems are \emph{random access}, meaning that the
+computer can read or write any block in any order, although it is
+invariably faster to read or write blocks multiple blocks at a time in numeric order.
+
+Of course, users don't see blocks of bytes when they take an SD card
+out of a camera and try to read it on their laptop: they see folders
+and files. The  translation between the mass storage system's blocks
+of bytes and the files that are shown on the computer's screen is
+performed by a piece of code inside the operating system called the
+\emph{file system}.   The file system takes the concepts of
+\emph{files} and \emph{folders} used by people and application
+programs, and maps them to specific operations on blocks of data
+stored on the mass storage device. When a program opens a named file
+and reads the first few bytes, the file system locates the file's
+metadata on the drive, determines the specific block associated with
+the start of the file, and reads that block into memory. Mass
+storage systems can only read or write complete blocks, so the file
+system may also have to buffer data between the application program
+and the drive.
+
+Figure Tk shows a conceptual view of an SD camera card; a listing of
+that camera card appears in Figure Tk. Various sectors on the card are
+used to store the root directory, a subdirectory ``DCIM'', and
+directory entries for the 35 JPEG
+images named XXXX through XXXX. Most of the sectors on the card are
+used to store the JPEG images themselves. But the card also contains a
+significant amount of data that not visible when the card is
+inserted into a laptop: there are deleted JPEGs and deleted directory
+entries. Some of the deleted JPEGs exist in their entirity and can be
+easily recovered using the proper tools. Others exist as fragments and
+can only be recovered with difficulty. 
+
+In this chapter you'll learn why file systems retain information after the
+user deletes it, how to find and exploit this kind of residual
+information, and how to design computer systems so that such
+information is not retained.
+
+Tools used in this chapter: hex viewer;
+
+hex editor
+
+SleuthKit precompiled binaries for
+Windows. http://sourceforge.net/projects/sleuthkit/files/sleuthkit/4.0.2/
+  Download sleuthkit-win32-4.0.2.zip and uncompress the files into
+  c:\sleuthkit-win32-4.0.2
+
+
+
+\section{Background: File System Structures}
+This section describes how file systems are structured on a drive. The
+examples will be based on the two most popular file systems today, the
+FAT file system developed by Microsoft in the 1980s and widely used in
+digital cameras, and the NTFS file system developed by Microsoft in
+the 1990s and used for most versions of Windows from Windows NT
+through Windows 8.
+
+
+\subsection{Partitioning and Volume Management}
+
+Although a file system can be stored directly on the drive, with the
+file sector of the drive being used to store the first sector of the
+file system, this is not commonly done. Instead, the first 1 or 2
+sectors are used for a \emph{partition table} that describes the
+locations of the file systems. In this way a single device can be used
+to simulate multiple logical devices. Two commonly used partitioning
+schemes are the \emph{Master Boot Record} and the \emph{GUID Partition
+  Table} scheme.\wikipedia{http://en.wikipedia.org/wiki/GUID_Partition_Table}
+       \wikipediab{http://en.wikipedia.org/wiki/Master_boot_record}
+
+The term \emph{physical volume} is used variously to describe a
+physical disk, a partition on a physical disk, or a Logical Unit
+Number (LUN) of a storage
+system.\wikipedia{http://en.wikipedia.org/wiki/Logical_Unit_Number}
+Physical volumes can be used directly to hold a file system or can be
+grouped together with a Logical Volume Management (LVM)
+system\wikipedia{http://en.wikipedia.org/wiki/Logical_volume_management}. An
+LVM can group multiple physical volumes together in to a single
+physical volume that is large or more reliable than the volumes that
+it built from. Volume managers can also implement
+\emph{snapshots}\wikipedia{http://en.wikipedia.org/wiki/Snapshot_(computer_storage)}
+through the use of
+\emph{copy-on-write}\wikipedia{http://en.wikipedia.org/wiki/Copy-on-write}.
+
+\subsection{Files and File Systems}
+The word \emph{file} is commonly used to describe a sequence of data
+that is stored on a computer mass storage system. On modern computers
+files are sequences of zero or more \emph{bytes}. Files have a length
+that is set at any given point in time, but can be readily
+changed. Files can have names and other associated \emph{metadata}
+such as timestamps, an owner, and a group. Files have traditionally
+been grouped together in
+\emph{directories}\wikipedia{http://en.wikipedia.org/wiki/File_directory}. also
+called \emph{folders}. 
+
+The phrase \emph{File
+  System}\wikipedia{http://en.wikipedia.org/wiki/Computer_file} is
+used to describe the part of the computer's operating
+system that manages a storage system. However, the term is also used
+to describe the very sectors on a mass storage device that contain the
+files.
+
+It is important to realize that files are an \emph{abstraction} that
+was created for the purpose of managing data. There is nothing
+inherent in the design of computers, operating systems or mass storage
+devices that requires the use of files. A raw disk can be used as
+virtual memory \emph{backing store} or as a storage system for a
+database. Instead of stored as a sequence of bytes in a file, data can be stored as
+objects that are persisted in memory, or as BLOBs in a database.
+
+It is also important to realize that any computational storage device
+or abstraction can be used to virtualize and contain any other storage
+device. That is, a file can be stored in a file system, but a file
+system can also be created and stored inside a file (this is
+essentially what a disk image is). Most operating systems can swap to raw
+partitions or to files, but file systems can also be created inside
+RAM or virtual memory.
+
+Adding to the complexity of the forensic examiner is
+\emph{encryption}, which can be applied at the interface between any
+of these abstractions. Encryption can be performed in the storage
+device itself (as in the case of an encrypting hard drive), in the
+disk driver, in the logical volume management system, in the file
+system, or at the application level.
+
+\subsection{File Systems of Forensic Interest}
+There are a variety of different kinds of file systems in use on
+modern computer systems:
+\begin{description}
+\item[Disk file systems] organize files and directories on
+  block-oriented storage systems. These are of interest to those
+  engaged in MEDEX operations. Popular file systems include FAT32
+  (used primary on removable storage devices and camera cards), NTFS
+  (Microsoft's New Technology File System), and HFS+ (Apple's
+  Hierarchical File System used on Macs and iPhones).
+\item[Distributed file systems] allow a computer to access
+  information on remote servers as if it is stored
+  locally. Distributed file systems are forensically interesting
+  because many use local storage to cache information from the remote
+  servers. Analyzing local storage can therefore give clues as to what
+  was accessed remotely, and when it was accessed.
+\item[Virtual file systems] use the file and directory abstraction to
+  make it easy to access other information. For example, the Linux
+  \url{/dev} file system is used to access devices through the file
+  system, the \url{/sys} file system is used to access features within
+  the system kernel, and the \url{/net} file system accesses the
+  automounter. Virtual file systems are not typically of interest in
+  MEDEX because they do not leave residual information on a storage
+  device. However, virtual file systems are relevant in malware
+  analysis and intrusion response.
+\end{description}
+
+As this chapter is written, specific file systems of interest include:
+\begin{description}
+\item[FAT12, FAT16 and FAT32] file systems developed by Microsoft for use with
+  DOS. FAT refers to the File Allocation Table, an array of integers
+  that is used to determine if a cluster is in use or free. (In FAT, a
+  \emph{cluster} is a block of 1, 2, 4, 8 or more disk sectors.) The number
+  refers to the size of the integers in the array (12 bits, 16 bits or
+  32 bits). Today implementations of FAT are built in to practically every
+  operating system, including Windows, Linux, MacOS, most digital
+  cameras, and practically every other device with a USB or SD
+  interface. 
+\item[NTFS] 
+\item[HFS+]
+\item[YAFFS2]
+\item[EXT2/3]
+\item[EXT4]
+\end{description}
+
+Information can be hidden in a file system by storing data in blocks
+that are allocated but not used to hold content\cite{dfrws2005:KnutEcksteinAndMarkoJahnke}. 
+
+\section{Exercise: Windows - Creating and Testing FAT32 Disks}
+
+This exercise is designed to help you understand how file systems
+store information and the opportunities for retaining
+privacy-sensitive information that is not visible to the user. 
+
+This exercise will be done with a \emph{virtual disk}. Like a physical
+mass storage device, a virtual disk consists of a set of numbered data
+blocks. But instead of storing those blocks directly in on a mass
+storage device, the blocks are stored in another file. The operating
+system treats the virtual disk like a physical drive: it can be
+formatted, files can be copied to it, and so on. But we can also
+access the underlying file that holds the virtual disk. This makes it
+easier to inspect the individual data blocks.
+
+We will use the Windows |DISKPART| command to create and manage virtual
+disks. |DISKPART| is a command-line tool that needs to run as
+Administrator.
+
+We will be using these commands:
+\begin{tabular}{ll}
+help partition & shows partition command available\\
+create vdisk & Creates a virtual disk \\
+list disk & Shows available disks \\
+list vdisk & Shows detailed information about the available VDisks\\
+list partition & Shows available partitions \\
+\end{tabular}
+
+We will create a text file on the virtual disk that has a sensitive file
+name and file contents. We will then take a screen shot and save it on
+the computer's hard drive as a JPEG. We will then delete the text file
+and empty the trash. Finally we will inspect the disk image and see if
+we can find the text file and the screen shot.
+
+
+
+\begin{steps}
+\step Click the Start button, type |diskpart| into the search field,
+and click on the |diskpart| program icon.
+\step The User Account Control will ask you to verify that you want to
+run the DiskPart, a program that can make ``changes to the computer.''
+Click ``Yes.''  The |diskpart.exe| window should appear.
+\step If you haven't done so already, right-click on the window's
+titlebar and select ``Properties.'' Click on the Layout tab and change
+the ``Screen Buffer Size'' to 9999. This will allow you to scroll
+backwards and see the entire history of your DISKPART session.
+\step Type |help| to see the list of commands that the DISKPART
+command supports. You may need to make the window larger.
+
+\step Create a 16MB virtual disk with the command:
+
+\begin{Verbatim}
+DISKPART> create vdisk file="C:\disk1.vhd" maximum=16
+\end{Verbatim}
+
+\step Attach the disk you just created:
+\begin{Verbatim}
+DISKPART> attach vdisk
+\end{Verbatim}
+
+\step Verify that the disk is attached:
+\begin{Verbatim}
+DISKPART> list disk
+...
+DISKPART> list vdisk
+\end{Verbatim}
+
+\step Now we need to create a partition, assign a letter to that
+partition, and format the drive. We will call this drive K: and format
+it with FAT. 
+\begin{Verbatim}
+DISKPART> create partition primary
+DISKPART> assign letter=k
+DISKPART> format fs=fat label="WORK"
+\end{Verbatim}
+
+At this point we have a 16MB virtual disk attached to the computer as
+drive K:. The drive's contents are stored in the file |C:\disk1.vhd|.
+
+Lastly, we want to put a file on this disk. For test purposes we are
+going to use a small file with a distinctive file name and file
+contents.
+
+\step Run the windows NotePad program by clicking the Start program,
+typing ``Notepad'' into the search field, and clicking on the icon.
+
+\step Type this text into the document:  ``The phone number is
+202-555-1212.'' You can use your own phone number and add additional
+information if you wish.
+
+\step Select ``File/Save As'' and save the file on the WORK (K:) drive
+with the name ``file-name-example-0001.txt''. 
+
+\step Close the Notepad program.
+
+\step Now we will detach the virtual disk:
+
+\begin{Verbatim}
+DISKPART> detach vdisk
+\end{Verbatim}
+
+\subsection{Looking for the files}
+The 
+
+\section{Terminology}
+\sgraphic{art/diskpart-1}{The Windows diskpart command is used to create and
+  manage physical and virtual disks.}
+
+
+Allocated
+
+Blocks
+
+Carving
+
+Clusters
+
+Deleted
+
+File Allocation Table
+
+Free List
+
+inode
+
+Hard Link
+
+Symbolic Link
+
+Master File Table
+
+Overwritten
+
+TRIM Command
+
+Undelete
+
+Unlink
+
+
+
+\section{File Deletion and Deleted File Recovery}\label{deleted_file_recovery}
+Different file system implementations delete files in different ways.
+
+Traditionally, file systems simply \emph{unlinked} files---the pointer
+to the file was removed from the directory, and the blocks associated
+with the file were returned to the free list.
+
+
+\section{Exploiting File System Metadata}
+File system metadata can be used to determine usage. 
+\cite{dfrws2011:JonathanGrier}
+
+% October 12
