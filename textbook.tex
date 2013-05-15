@@ -33,7 +33,7 @@
 \usepackage{fancyvrb}           % a better verbatim
 \usepackage{varioref}		% provides \vref - smart referencing
 \usepackage{xspace}             % provides \xspace
-\usepackage{nps_sf298}          % Bring in SF298 for the documentation page
+%\usepackage{nps_sf298}          % Bring in SF298 for the documentation page
 \usepackage{latexsym}           % gives \Box
 \usepackage{graphicx}           % it's better
 \usepackage{multirow}           % for table cells with multiple row   
@@ -167,9 +167,157 @@
 \chapter{Introduction}
 \chapter{What Data Looks Like}
 
-Tools:
+In this book we will spend a lot of time looking at data buffers and
+trying to figure out what they mean. Two common ways to do this are
+looking at hex dumps (\secref{sec:hex-dumps}) and by extracting
+printable strings (\secref{sec:strings})
 
-http://en.wikipedia.org/wiki/Comparison_of_hex_editors
+\section{Bits, Bytes, Words, Integers and Floats}
+The \emph{bit} is the fundamental unit of storage on digital computers. Bits
+have two states. Typically we call these |0| and |1|, but they can be any
+two values (e.g. true/false, yes/no or up/down). This book 
+uses the values |0| and |1| for bits.\marginpar{The word \emph{bit} is
+  a contraction of the words \emph{binary digit}.}
+
+An ordered group of 4 bits is called a \emph{nibble}. Each bit can be
+a |0| or a |1|, creating 16 possible different values. Note
+that $2^4=16$. It is conventional to use the digits 0 through 9 to
+number the first 10 possible nibble values, and use the letters A
+through F to number the next six, as shown in \figref{nibble}. By
+convention computer users call this notation \emph{hexadecimal},
+although it's also called Base 16.
+
+\begin{figure}
+\begin{tabular}{ccc}
+binary & value & hexadecimal\\
+\hline
+0000 & 0 & 0 \\
+0001 & 1 & 1 \\
+0010 & 2 & 2 \\
+0011 & 3 & 3 \\
+0100 & 4 & 4 \\
+0101 & 5 & 5 \\
+0110 & 6 & 6 \\
+0111 & 7 & 7 \\
+1000 & 8 & 8 \\
+1001 & 9 & 9 \\
+1010 & 10& A \\
+1011 & 11& B \\
+1100 & 12& C \\
+1101 & 13& D \\
+1110 & 14& E \\
+1111 & 15& F \\
+\hline
+\end{tabular}
+\caption{A nibble is a set of 4 bits; it has 16 possible values.}\label{nibble}
+\end{figure}
+
+Modern computers operate on 8 bits at a time, a unit called a
+\emph{byte}. Because each bit in the byte can be a |0| or a |1|, and
+because the bits are ordered, the byte can represent the values
+$\texttt{00000000}_2$ through $\texttt{11111111}_2$ --- creating a
+total of $2^8=256$ possible different values. This book will normally treat
+bytes as unsigned integers in the range 0 to 255, but that is just a
+convention; the Java programming language treats bytes as signed
+integers in the range $-128$ to 127. It's also common to use present
+the value of a byte in hexadecimal notation, with the range |00|
+through |FF|.
+
+Computers use groups of bytes to represent larger numbers. Two bytes
+can represent 65,536 different values. Here are some examples:
+
+\begin{tabular}{cc}
+decimal & binary \\
+\hline
+0      & 00000000 00000000 \\
+255    & 00000000 11111111 \\
+256    & 00000001 00000000 \\
+65,280 & 11111111 00000000 \\
+65,535 & 11111111 11111111 \\
+\hline
+\end{tabular}
+
+In the example above, the right-hand byte is called the \emph{least
+  significant byte} and represents the bits $2^0$ through $2^7$; the
+left-hand byte  called the \emph{most
+significant byte}; it represents the binary values $2^8$ through
+$2^{15}$. 
+
+
+
+Because most computer memories are arranged as an array of bytes,
+there are two ways to store these 16-bit values at a particular memory
+location. 
+
+
+% http://en.wikipedia.org/wiki/Single-precision_floating-point_format
+
+Larger numbers Two bytes can be grouped together, allowing values between 0 and
+65,535 to be represented. Four bytes
+
+\section{Text, ASCII and Unicode}
+
+In the previous section we looekd 
+
+\section{Hex Dumps}\label{sec:hex-dumps}
+A common way to visualize binary data is to format it as a series of
+text lines, with each line containing a series of hexadecimal values (one
+for each binary byte). Such displays are called \emph{hex
+  dumps}.
+
+There are many different programs that produce hex dumps, and each
+program formats its output in a slight different manner. Fortunately
+there is enough commonality that you can usually look at a hex dump
+and figure it out. Most dumps will have a column on the left that
+displays the offset in bytes from the beginning of the data, and a
+column on the right that shows the ASCII representation of each
+byte. Dumps are typically formatted such that each line represents 32
+or 64 bytes of data.
+
+Below is a hex dump for the 28-byte string 
+|Hello World!\r\nHello World!\r\n| created with the Unix \emph{xxd} program:
+
+\begin{Verbatim}
+0000000: 4865 6c6c 6f20 576f 726c 6421 0d0a 4865  Hello World!..He
+0000010: 6c6c 6f20 576f 726c 6421 0d0a            llo World!..
+\end{Verbatim}
+
+
+\section{Strings}\label{sec:strings}
+
+Computer texts use the word \emph{string} inconsistently. Sometimes
+the word refers to any sequence of zero or more bytes; sometimes it
+means zero or more characters; and sometimes it means zero or
+more printable characters. Usually the specific meaning can be
+inferred from context. 
+
+One quick way to analyze unfamiliar data is to look for printable
+strings, which is the reason that ASCII is shown in most hex
+dumps. With large blocks of data it can be hard to find the printable
+strings. Consider the file random48.bin:
+
+\begin{Verbatim}
+0000000: fdf8 7c33 a153 0516 cc72 84fc 0050 7269  ..|3.S...r...Pri
+0000010: 7661 6379 1437 ed4d e84b 0280 a74f e64b  vacy.7.M.K...O.K
+0000020: 4695 6a66 9549 2cc9 4109 83c1 3e96 766b  F.jf.I,.A...>.vk
+\end{Verbatim}
+
+The file random48.bin contains the word ``Privacy'', but it can be hard to
+find. The \emph{strings} program will extract printable
+strings from a file and display them on stdout:
+
+\begin{Verbatim}
+$ strings random48.bin 
+Privacy
+$ 
+\end{Verbatim}
+
+Because ASCII is commonly used by computer systems, 
+\emph{strings} command is a powerful way to find  identifying
+information. 
+
+\section{Exercises}
+* Look for private information with strings in files
 
 \chapter{Designing a good forensics experiment}
 \chapter{Operational Concerns}
@@ -203,23 +351,120 @@ mass storage systems are \emph{random access}, meaning that the
 computer can read or write any block in any order, although it is
 invariably faster to read or write blocks multiple blocks at a time in numeric order.
 
-Of course, users don't see blocks of bytes when they take an SD card
-out of a camera and try to read it on their laptop: they see folders
-and files. The  translation between the mass storage system's blocks
-of bytes and the files that are shown on the computer's screen is
+Users don't see blocks of bytes when they take an SD card out of a
+camera and try to read it on their laptop: they see folders and
+files. The translation between the mass storage system's blocks of
+bytes and the files that are shown on the computer's screen is
 performed by a piece of code inside the operating system called the
-\emph{file system}.   The file system takes the concepts of
+\emph{file system}.  The file system takes the concepts of
 \emph{files} and \emph{folders} used by people and application
 programs, and maps them to specific operations on blocks of data
 stored on the mass storage device. When a program opens a named file
 and reads the first few bytes, the file system locates the file's
 metadata on the drive, determines the specific block associated with
-the start of the file, and reads that block into memory. Mass
-storage systems can only read or write complete blocks, so the file
-system may also have to buffer data between the application program
-and the drive.
+the start of the file, and reads that block into memory. Mass storage
+systems can only read or write complete blocks, so the file system may
+also have to buffer data between the application program and the
+drive.
 
-Figure Tk shows a conceptual view of an SD camera card; a listing of
+\section{Exploring an SD Camera Card}
+In this section we will explore the contents of an SD camera card
+created in 2009 with a Canon PowerShot SD800IS camera. The card is called NPS-2009-CANON2.
+
+\begin{figure}
+\caption{A conceptual view of NPS-2009-CANON2\label{nps-2009-canon2-conceptual}}
+\end{figure}
+
+To create the data for this section, we started with a 32MB camera
+card and cleared every addressable sector by overwriting that sector's
+content with NULL bytes. You can do this
+easily with the program in \figref{overwrite}.
+
+
+\lstset{basicstyle=\footnotesize,numbers=left,numberstyle=\tiny}
+\lstinputlisting[caption=A simple program to clear a disk.]{fs/clear.py}
+\begin{figure}
+\begin{lstlisting}
+\end{lstlisting}
+\caption{}\label{overwrite}
+\end{figure}
+
+After the card was cleared, we put it into the PowerShot, initialized
+the card, and took 36 photos. We then removed the card from the
+camera and placed it in a Linux-based computer, where the SD card
+appeared as a virtual disk drive. In order to make a copy of the drive
+data it is necessary to know the drive name that the Linux system
+assigns. For example, if the drive appears as |/dev/sde|, then the
+data can be copied off with this Linux  command:
+
+\begin{Verbatim}
+$ sudo dd if=/dev/sde of=nps-2009-canon2-gen1.raw conv=noerror,sync
+\end{Verbatim} 
+%$ 
+The dd command copies blocks of data from the input file (\emph{if=})
+to the output file (\emph{of=}). Two conversion options are
+specified: \emph{noerror} tells the \emph{dd} command to continue even
+if it encounters an error, and \emph{sync} tells the program to keep
+the output stream synchronized with the input stream in the event of
+an error by writing blocks filled with NULLs.  You can download the
+file from \url{http://digitalcorpora.org/corp/nps/drives/nps-2009-canon2/nps-2009-canon2-gen1.raw}.
+
+\figref{nps-2009-canon2-conceptual} shows a conceptual view of
+NPS-2009-CANON2's storage. The card has a Master Boot Record in its
+first sector (block 0) which has two slots: slot 1 is an unallocated
+region between blocks 0 and 50 (including, somewhat confusingly, the
+master boot record itself). Slot 2 is a DOS FAT16 file system that
+occupies blocks 51 through 60799. 
+
+Exercise: Use the SleuthKit to View the contents of the master boot
+record:
+
+\begin{Verbatim}
+C:\ mmls nps-2009-canon2-gen1.raw
+\end{Verbatim}
+
+The first block of a FAT file system contains a \emph{Boot Sector
+  Structure} that describes the file system's parameters, including
+the sector size, the cluster size, the number of reserved sectors, the
+number of File Allocation Tables, and so on. The layout of this
+structure is described in Microsoft's FAT specification; you can also
+find it in the SleuthKit file |sleuthkit/tsk3/fs/tsk_fs.h|. The first
+few lines of the SleuthKit structure are show in \figref{BSS}.
+
+\begin{figure}
+\begin{lstlisting}
+/*
+ * Boot Sector Structure for TSK_FS_INFO_TYPE_FAT_12,
+ * TSK_FS_INFO_TYPE_FAT_16, and TSK_FS_INFO_TYPE_FAT_32
+ */
+    typedef struct {
+        uint8_t f1[3];
+        char oemname[8];
+        uint8_t ssize[2];       /* sector size in bytes */
+        uint8_t csize;          /* cluster size in sectors */
+        uint8_t reserved[2];    /* number of reserved sectors for boot sectors */
+        uint8_t numfat;         /* Number of FATs */
+        uint8_t numroot[2];     /* Number of Root dentries */
+        uint8_t sectors16[2];   /* number of sectors in FS */
+        uint8_t f2[1];
+        uint8_t sectperfat16[2];        /* size of FAT */
+        uint8_t f3[4];
+        uint8_t prevsect[4];    /* number of sectors before FS partition */
+        uint8_t sectors32[4];   /* 32-bit value of number of FS sectors */
+
+        /* The following are different for fat12/fat16 and fat32 */
+        ...
+\end{lstlisting}
+\caption{The first few bytes of the Boot Sector Structure, the first
+  sector of a FAT file system. From Sleuthkit's \texttt{tsk\_fs.h}.\label{BSS}}
+\end{figure}
+
+The FAT file system's 
+
+Because the FAT file system begins in sector 51, the number ``51''
+must be added to all internal references.
+
+occu; A listing of
 that camera card appears in Figure Tk. Various sectors on the card are
 used to store the root directory, a subdirectory ``DCIM'', and
 directory entries for the 35 JPEG
@@ -243,7 +488,7 @@ hex editor
 SleuthKit precompiled binaries for
 Windows. http://sourceforge.net/projects/sleuthkit/files/sleuthkit/4.0.2/
   Download sleuthkit-win32-4.0.2.zip and uncompress the files into
-  c:\sleuthkit-win32-4.0.2
+  |c:\sleuthkit-win32-4.0.2|
 
 
 
@@ -471,6 +716,7 @@ with the name ``file-name-example-0001.txt''.
 \begin{Verbatim}
 DISKPART> detach vdisk
 \end{Verbatim}
+\end{steps}
 
 \subsection{Looking for the files}
 The 
@@ -525,3 +771,6 @@ File system metadata can be used to determine usage.
 \cite{dfrws2011:JonathanGrier}
 
 % October 12
+\bibliographystyle{is-plain}
+\bibliography{textbook,../../domex/papers/bib/forensics,../../domex/papers/bib/garfinkel}  % sigproc.bib is the name of the Bibliography in this case
+\end{document}
