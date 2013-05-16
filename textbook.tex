@@ -30,13 +30,13 @@
 \usepackage{ccaption}		% control captions
 \usepackage{setspace}           % enabled \doublespacing, \onehalfspacing, etc.
 \usepackage{multicol}           % multiple columns; good for you!
+\usepackage{multirow}           % for table cells with multiple row   
 \usepackage{fancyvrb}           % a better verbatim
 \usepackage{varioref}		% provides \vref - smart referencing
 \usepackage{xspace}             % provides \xspace
 %\usepackage{nps_sf298}          % Bring in SF298 for the documentation page
 \usepackage{latexsym}           % gives \Box
 \usepackage{graphicx}           % it's better
-\usepackage{multirow}           % for table cells with multiple row   
 \usepackage{pifont}             % fancy characters
 \usepackage{remreset}           % prevent footnotes from being reset at each chapter
 \usepackage{color}
@@ -170,9 +170,17 @@
 In this book we will spend a lot of time looking at data buffers and
 trying to figure out what they mean. Two common ways to do this are
 looking at hex dumps (\secref{sec:hex-dumps}) and by extracting
-printable strings (\secref{sec:strings})
+printable strings (\secref{sec:strings}). In order to understand
+what these values actually mean, it's important
+to first understand how numbers (\secref{sec:numbers}) and letters
+(\secref{sec:letters}) are actually stored inside a computer's memory.
 
-\section{Bits, Bytes, Words, Integers and Floats}
+Much of this chapter is similar to what might be covered at the start
+of a course on computer architecture. But whereas an architecture
+course is primarily concerned with computation and data in motion,
+this chapter is concerned with understanding data at rest. 
+
+\section{Bits, Bytes, and Memory}\label{sec:numbers}
 The \emph{bit} is the fundamental unit of storage on digital computers. Bits
 have two states. Typically we call these |0| and |1|, but they can be any
 two values (e.g. true/false, yes/no or up/down). This book 
@@ -187,26 +195,35 @@ through F to number the next six, as shown in \figref{nibble}. By
 convention computer users call this notation \emph{hexadecimal},
 although it's also called Base 16.
 
+To avoid confusion between decimal and binary notation, this book will
+always suffix binary numbers with a ``b''. Hexadecimal values have a
+``h'' suffix. Some programming languages prefix hexadecimal strings
+with a |\x| or |0x|. 
+
+\marginpar{There are 10 kinds of people in the world. Those who know
+  binary, and those who don't.}
+
+
 \begin{figure}
 \begin{tabular}{ccc}
 binary & value & hexadecimal\\
 \hline
-0000 & 0 & 0 \\
-0001 & 1 & 1 \\
-0010 & 2 & 2 \\
-0011 & 3 & 3 \\
-0100 & 4 & 4 \\
-0101 & 5 & 5 \\
-0110 & 6 & 6 \\
-0111 & 7 & 7 \\
-1000 & 8 & 8 \\
-1001 & 9 & 9 \\
-1010 & 10& A \\
-1011 & 11& B \\
-1100 & 12& C \\
-1101 & 13& D \\
-1110 & 14& E \\
-1111 & 15& F \\
+0000b & 0 & 0h \\
+0001b & 1 & 1h \\
+0010b & 2 & 2h \\
+0011b & 3 & 3h \\
+0100b & 4 & 4h \\
+0101b & 5 & 5h \\
+0110b & 6 & 6h \\
+0111b & 7 & 7h \\
+1000b & 8 & 8h \\
+1001b & 9 & 9h \\
+1010b & 10& Ah \\
+1011b & 11& Bh \\
+1100b & 12& Ch \\
+1101b & 13& Dh \\
+1110b & 14& Eh \\
+1111b & 15& Fh \\
 \hline
 \end{tabular}
 \caption{A nibble is a set of 4 bits; it has 16 possible values.}\label{nibble}
@@ -215,7 +232,7 @@ binary & value & hexadecimal\\
 Modern computers operate on 8 bits at a time, a unit called a
 \emph{byte}. Because each bit in the byte can be a |0| or a |1|, and
 because the bits are ordered, the byte can represent the values
-$\texttt{00000000}_2$ through $\texttt{11111111}_2$ --- creating a
+\texttt{00000000b} through \texttt{11111111b} --- creating a
 total of $2^8=256$ possible different values. This book will normally treat
 bytes as unsigned integers in the range 0 to 255, but that is just a
 convention; the Java programming language treats bytes as signed
@@ -223,17 +240,21 @@ integers in the range $-128$ to 127. It's also common to use present
 the value of a byte in hexadecimal notation, with the range |00|
 through |FF|.
 
+\subsection{Memory}
+
+\subsection{Registers}
+
 Computers use groups of bytes to represent larger numbers. Two bytes
 can represent 65,536 different values. Here are some examples:
 
 \begin{tabular}{cc}
 decimal & binary \\
 \hline
-0      & 00000000 00000000 \\
-255    & 00000000 11111111 \\
-256    & 00000001 00000000 \\
-65,280 & 11111111 00000000 \\
-65,535 & 11111111 11111111 \\
+0      & 00000000b 00000000b \\
+255    & 00000000b 11111111b \\
+256    & 00000001b 00000000b \\
+65,280 & 11111111b 00000000b \\
+65,535 & 11111111b 11111111b \\
 \hline
 \end{tabular}
 
@@ -242,7 +263,6 @@ In the example above, the right-hand byte is called the \emph{least
 left-hand byte  called the \emph{most
 significant byte}; it represents the binary values $2^8$ through
 $2^{15}$. 
-
 
 
 Because most computer memories are arranged as an array of bytes,
@@ -255,7 +275,7 @@ location.
 Larger numbers Two bytes can be grouped together, allowing values between 0 and
 65,535 to be represented. Four bytes
 
-\section{Text, ASCII and Unicode}
+\section{Text, ASCII and Unicode}\label{sec:letters}
 
 In the previous section we looekd 
 
@@ -275,7 +295,10 @@ byte. Dumps are typically formatted such that each line represents 32
 or 64 bytes of data.
 
 Below is a hex dump for the 28-byte string 
-|Hello World!\r\nHello World!\r\n| created with the Unix \emph{xxd} program:
+|Hello World!\r\nHello World!\r\n| created with the Unix \emph{xxd}
+program. Notice that the hexadecimal numbers \emph{do not} have a
+``h'' suffix; users are expected to recognize hexadecimal values from
+context:
 
 \begin{Verbatim}
 0000000: 4865 6c6c 6f20 576f 726c 6421 0d0a 4865  Hello World!..He
@@ -367,7 +390,7 @@ systems can only read or write complete blocks, so the file system may
 also have to buffer data between the application program and the
 drive.
 
-\section{Exploring an SD Camera Card}
+\section{Exploring the GEN1 SD Camera Card}
 In this section we will explore the contents of an SD camera card
 created in 2009 with a Canon PowerShot SD800IS camera. The card is called NPS-2009-CANON2.
 
@@ -401,27 +424,161 @@ data can be copied off with this Linux  command:
 $ sudo dd if=/dev/sde of=nps-2009-canon2-gen1.raw conv=noerror,sync
 \end{Verbatim} 
 %$ 
+
 The dd command copies blocks of data from the input file (\emph{if=})
 to the output file (\emph{of=}). Two conversion options are
 specified: \emph{noerror} tells the \emph{dd} command to continue even
 if it encounters an error, and \emph{sync} tells the program to keep
 the output stream synchronized with the input stream in the event of
-an error by writing blocks filled with NULLs.  You can download the
-file from \url{http://digitalcorpora.org/corp/nps/drives/nps-2009-canon2/nps-2009-canon2-gen1.raw}.
+an error by writing blocks filled with NULLs.  
+
+When we were finished imaging the card we took it out of the Linux
+computer and put it back in the camera. Next we used the camera's
+interface to delete some photographs and then took some more. Then we
+imaged the card a second time, creating the ``generation 2'' disk
+image. This process was repeated a total of six times. By comparing
+the different disk images it's possible to understand how the Camera's
+firmware manages the files and directories stored on the camera card.
+
+For the remainder of this section we'll work with just the first
+generation image, which will call GEN1. You can download that file from: \url{http://digitalcorpora.org/nps-2009-canon2-gen1.raw}.
+
 
 \figref{nps-2009-canon2-conceptual} shows a conceptual view of
-NPS-2009-CANON2's storage. The card has a Master Boot Record in its
+GEN1's storage. The card has a Master Boot Record in its
 first sector (block 0) which has two slots: slot 1 is an unallocated
 region between blocks 0 and 50 (including, somewhat confusingly, the
 master boot record itself). Slot 2 is a DOS FAT16 file system that
-occupies blocks 51 through 60799. 
+occupies blocks 51 through 60799. The FAT file system contains its own
+structures, including a \emph{Boot Sector Structure} that describes the
+file system, a \emph{root directory}, \emph{subdirectories},
+\emph{files}, and finally a \emph{file allocation table} that both
+describes which sectors belong to which file and indicates which
+sectors are free and available for new files. We'll discuss each of
+those in the following section.
 
-Exercise: Use the SleuthKit to View the contents of the master boot
+\subsection{The Master Boot Record (Partition Table)}
+
+The master Boot Record, more commonly known as the MBR, occupies the first
+sector of a hard drive used on most Windows-based computers. When the
+Windows computer is turned on the computer's Basic Input/Output
+System (BIOS) loads these 512 bytes into the start of the computer's
+memory and jumps to location 0. Typically the MBR contains a short
+program that loads more sectors from the hard drive into memory and
+runs them; this second boot loader loads the operating system and runs
+it.
+
+The basic structure of the MBR is described by this table:
+
+\begin{minipage}{\textwidth}
+\begin{tabular}{|c|c|c|c|c|}
+\multicolumn{5}{c}{\bf Structure of the MBR\footnote{From Wikipedia, \url{http://en.wikipedia.org/wiki/Master_boot_record}}}\\
+\hline
+\multicolumn{2}{|c|}{\bf Address} & \multicolumn{2}{c|}{}                              & \\
+\cline{1-2} \bf Hex & \bf Dec         & \multicolumn{2}{c|}{\multirow{-2}{*}{\bf Description}} & \multirow{-2}{*}{\bf Size in bytes}\\
+\hline
++000h & +0   & \multicolumn{2}{c|}{Bootstrap code; extended information} & 446 \\
+\cline{3-4}
++1BEh & +446 & Partition entry \#1 && 16 \\
++1CEh & +462 & Partition entry \#2 && 16 \\
++1DEh & +478 & Partition entry \#3 && 16 \\
++1EEh & +494 & Partition entry \#4 && 16 \\
+\hline
++1FEh & +510 & 55h & & \\
+\cline{1-3}
++1FFh & +511 & AAh & \multirow{-2}{*}{Boot Signature} & \multirow{-2}{*}{2} \\
+\hline
+\hline
+\multicolumn{4}{|r|}{\textbf{Total size: $\bf 446 + (4\times16) + 2 $}} & \textbf{512}\\
+\hline
+\end{tabular}
+\end{minipage}
+
+The basic MBR thus provides for a maximum of four partitions, each
+described by a partition entry. The entry record includes a byte
+indicating if it is active or not, the start of the partition and the
+partition's length.  Originally the start and length were encoded as a 
+3-byte CHS (Cylinder, Head, Sector) triplet; later the encoding was
+expanded to allow a 4-byte LBA (Logical Block
+Address). Because blocks
+are assumed to be 512 bytes, traditional MBR partitioning allows for a
+maximum media size of $512 \times 2^{32}=2\textrm{TiB}$ in storage.
+
+If you review the Wikipedia page you will see that no less than six
+different MBRs have been developed and deployed by manufacturers since
+MBR records were introduced by IBM PC DOS 2.0 in 1983. All of these
+systems store the bootstrap code at location 0, the first four
+partition entries starting at location |1BEh|, and have a boot
+signature in the last two blocks of the sector. This consistency is
+provided for backwards compatibility, allowing each 
+generation of disk utilities and BIOS drivers to make some kind of sense of
+whatever data they might find on a mass storage device.  Modern
+computers use a new partitioning scheme called the GUID Partition
+Table (GPT), but even these systems still include a so-called
+``Protective MBR'' that allocates the entire drive to a partition of
+type |EEh|. This partition literally protects the GPT disk in the
+event that the user attempts to mount it on a system that does not
+understand GPT partitioning: instead of inadvertently overwriting the
+media, the system will believe that the entire disk is taken up by a
+partition that the system does not understand.
+
+The SleuthKit |mmls| command will display the contents of the
+partition table of any physical device or disk image:
+
+Exercise 1: Use the SleuthKit to View the contents of the master boot
 record:
 
 \begin{Verbatim}
 C:\ mmls nps-2009-canon2-gen1.raw
 \end{Verbatim}
+
+Exercise 2: Alternatively, you can view the contents of the MBR with a
+hex dump:
+
+\begin{Verbatim}
+$ xxd -len 512 nps-2009-canon2-gen1.raw
+0000000: fa33 c08e d0bc 007c 8bf4 5007 501f fbfc  .3.....|..P.P...
+0000010: bf00 06b9 0001 f2a5 ea1d 0600 00be be07  ................
+0000020: b304 803c 8074 0e80 3c00 751c 83c6 10fe  ...<.t..<.u.....
+0000030: cb75 efcd 188b 148b 4c02 8bee 83c6 10fe  .u......L.......
+0000040: cb74 1a80 3c00 74f4 be8b 06ac 3c00 740b  .t..<.t.....<.t.
+0000050: 56bb 0700 b40e cd10 5eeb f0eb febf 0500  V.......^.......
+0000060: bb00 7cb8 0102 57cd 135f 730c 33c0 cd13  ..|...W.._s.3...
+0000070: 4f75 edbe a306 ebd3 bec2 06bf fe7d 813d  Ou...........}.=
+0000080: 55aa 75c7 8bf5 ea00 7c00 0049 6e76 616c  U.u.....|..Inval
+0000090: 6964 2070 6172 7469 7469 6f6e 2074 6162  id partition tab
+00000a0: 6c65 0045 7272 6f72 206c 6f61 6469 6e67  le.Error loading
+00000b0: 206f 7065 7261 7469 6e67 2073 7973 7465   operating syste
+00000c0: 6d00 4d69 7373 696e 6720 6f70 6572 6174  m.Missing operat
+00000d0: 696e 6720 7379 7374 656d 0000 0000 0000  ing system......
+00000e0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000f0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000100: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000110: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000120: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000130: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000140: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000150: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000160: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000170: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000180: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000190: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00001a0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00001b0: 0000 0000 0000 0000 0000 0000 0000 0001  ................
+00001c0: 1400 0403 60da 3300 0000 4ded 0000 0000  ....`.3...M.....
+00001d0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00001e0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00001f0: 0000 0000 0000 0000 0000 0000 0000 55aa  ..............U.
+$ 
+\end{Verbatim}
+
+Exercise 3: Finally, you can write a program in Python that will open
+up the disk image, read the sector into memory, and then print the
+fields:
+
+
+
+
 
 The first block of a FAT file system contains a \emph{Boot Sector
   Structure} that describes the file system's parameters, including

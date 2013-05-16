@@ -25,3 +25,9 @@ curricula---for example, in a course on technology and public
 policy---broadening the exposure that students in these fields receive
 to these important STEM topics.
 
+================
+Options for LaTeX books:
+
+http://www.wiley.com/WileyCDA/Section/id-301843.html
+http://www.latextemplates.com/template/tufte-style-book
+http://www.latextemplates.com/template/the-legrand-orange-book
