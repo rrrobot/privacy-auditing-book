@@ -1,0 +1,179 @@
+\chapter{What Data Looks Like}
+
+In this book we will spend a lot of time looking at data buffers and
+trying to figure out what they mean. Two common ways to do this are
+looking at hex dumps (\secref{sec:hex-dumps}) and by extracting
+printable strings (\secref{sec:strings}). In order to understand
+what these values actually mean, it's important
+to first understand how numbers (\secref{sec:numbers}) and letters
+(\secref{sec:letters}) are actually stored inside a computer's memory.
+
+Much of this chapter is similar to what might be covered at the start
+of a course on computer architecture. But whereas an architecture
+course is primarily concerned with computation and data in motion,
+this chapter is concerned with understanding data at rest. 
+
+\section{Bits, Bytes, and Memory}\label{sec:numbers}
+The \emph{bit} is the fundamental unit of storage on digital computers. Bits
+have two states. Typically we call these |0| and |1|, but they can be any
+two values (e.g. true/false, yes/no or up/down). This book 
+uses the values |0| and |1| for bits.\marginpar{The word \emph{bit} is
+  a contraction of the words \emph{binary digit}.}
+
+An ordered group of 4 bits is called a \emph{nibble}. Each bit can be
+a |0| or a |1|, creating 16 possible different values. Note
+that $2^4=16$. It is conventional to use the digits 0 through 9 to
+number the first 10 possible nibble values, and use the letters A
+through F to number the next six, as shown in \figref{nibble}. By
+convention computer users call this notation \emph{hexadecimal},
+although it's also called Base 16.
+
+To avoid confusion between decimal and binary notation, this book will
+always suffix binary numbers with a ``b''. Hexadecimal values have a
+``h'' suffix. Some programming languages prefix hexadecimal strings
+with a |\x| or |0x|. 
+
+\marginpar{There are 10 kinds of people in the world. Those who know
+  binary, and those who don't.}
+
+
+\begin{figure}
+\begin{tabular}{ccc}
+binary & value & hexadecimal\\
+\hline
+0000b & 0 & 0h \\
+0001b & 1 & 1h \\
+0010b & 2 & 2h \\
+0011b & 3 & 3h \\
+0100b & 4 & 4h \\
+0101b & 5 & 5h \\
+0110b & 6 & 6h \\
+0111b & 7 & 7h \\
+1000b & 8 & 8h \\
+1001b & 9 & 9h \\
+1010b & 10& Ah \\
+1011b & 11& Bh \\
+1100b & 12& Ch \\
+1101b & 13& Dh \\
+1110b & 14& Eh \\
+1111b & 15& Fh \\
+\hline
+\end{tabular}
+\caption{A nibble is a set of 4 bits; it has 16 possible values.}\label{nibble}
+\end{figure}
+
+Modern computers operate on 8 bits at a time, a unit called a
+\emph{byte}. Because each bit in the byte can be a |0| or a |1|, and
+because the bits are ordered, the byte can represent the values
+\texttt{00000000b} through \texttt{11111111b} --- creating a
+total of $2^8=256$ possible different values. This book will normally treat
+bytes as unsigned integers in the range 0 to 255, but that is just a
+convention; the Java programming language treats bytes as signed
+integers in the range $-128$ to 127. It's also common to use present
+the value of a byte in hexadecimal notation, with the range |00|
+through |FF|.
+
+\subsection{Memory}
+
+\subsection{Registers}
+
+Computers use groups of bytes to represent larger numbers. Two bytes
+can represent 65,536 different values. Here are some examples:
+
+\begin{tabular}{cc}
+decimal & binary \\
+\hline
+0      & 00000000b 00000000b \\
+255    & 00000000b 11111111b \\
+256    & 00000001b 00000000b \\
+65,280 & 11111111b 00000000b \\
+65,535 & 11111111b 11111111b \\
+\hline
+\end{tabular}
+
+In the example above, the right-hand byte is called the \emph{least
+  significant byte} and represents the bits $2^0$ through $2^7$; the
+left-hand byte  called the \emph{most
+significant byte}; it represents the binary values $2^8$ through
+$2^{15}$. 
+
+
+Because most computer memories are arranged as an array of bytes,
+there are two ways to store these 16-bit values at a particular memory
+location. 
+
+
+% http://en.wikipedia.org/wiki/Single-precision_floating-point_format
+
+Larger numbers Two bytes can be grouped together, allowing values between 0 and
+65,535 to be represented. Four bytes
+
+\section{Text, ASCII and Unicode}\label{sec:letters}
+
+In the previous section we looekd 
+
+\section{Hex Dumps}\label{sec:hex-dumps}
+A common way to visualize binary data is to format it as a series of
+text lines, with each line containing a series of hexadecimal values (one
+for each binary byte). Such displays are called \emph{hex
+  dumps}.
+
+There are many different programs that produce hex dumps, and each
+program formats its output in a slight different manner. Fortunately
+there is enough commonality that you can usually look at a hex dump
+and figure it out. Most dumps will have a column on the left that
+displays the offset in bytes from the beginning of the data, and a
+column on the right that shows the ASCII representation of each
+byte. Dumps are typically formatted such that each line represents 32
+or 64 bytes of data.
+
+Below is a hex dump for the 28-byte string 
+|Hello World!\r\nHello World!\r\n| created with the Unix \emph{xxd}
+program. Notice that the hexadecimal numbers \emph{do not} have a
+``h'' suffix; users are expected to recognize hexadecimal values from
+context:
+
+\begin{Verbatim}
+0000000: 4865 6c6c 6f20 576f 726c 6421 0d0a 4865  Hello World!..He
+0000010: 6c6c 6f20 576f 726c 6421 0d0a            llo World!..
+\end{Verbatim}
+
+
+\section{Strings}\label{sec:strings}
+
+Computer texts use the word \emph{string} inconsistently. Sometimes
+the word refers to any sequence of zero or more bytes; sometimes it
+means zero or more characters; and sometimes it means zero or
+more printable characters. Usually the specific meaning can be
+inferred from context. 
+
+One quick way to analyze unfamiliar data is to look for printable
+strings, which is the reason that ASCII is shown in most hex
+dumps. With large blocks of data it can be hard to find the printable
+strings. Consider the file random48.bin:
+
+\begin{Verbatim}
+0000000: fdf8 7c33 a153 0516 cc72 84fc 0050 7269  ..|3.S...r...Pri
+0000010: 7661 6379 1437 ed4d e84b 0280 a74f e64b  vacy.7.M.K...O.K
+0000020: 4695 6a66 9549 2cc9 4109 83c1 3e96 766b  F.jf.I,.A...>.vk
+\end{Verbatim}
+
+The file random48.bin contains the word ``Privacy'', but it can be hard to
+find. The \emph{strings} program will extract printable
+strings from a file and display them on stdout:
+
+\begin{Verbatim}
+$ strings random48.bin 
+Privacy
+$ 
+\end{Verbatim}
+
+Because ASCII is commonly used by computer systems, 
+\emph{strings} command is a powerful way to find  identifying
+information. 
+
+\section{Exercises}
+Look for private information with strings in files
+
+
+

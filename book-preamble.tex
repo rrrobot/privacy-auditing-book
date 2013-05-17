@@ -1,0 +1,53 @@
+\usepackage{xspace}             % optional spaces
+\usepackage{paralist}           % gives compactitem, etc.
+\usepackage{listings}           % source code listings
+\usepackage{tabularx}           % the ``X'' for tables
+\usepackage{pifont}             % symbols
+\usepackage{color}              % some people like commenting in color
+\usepackage{fancyvrb}
+  \DefineShortVerb{\|}            % makes |foo| a verbatim command
+
+
+\newcommand{\slgbooktitle}{Technical Privacy Auditing with Computer
+  Forensics Tools} \newcommand{\slgbookcopyright}{Public Domain}
+\newcommand{\slgbookpublisher}{DRAFT}
+\newcommand{\slgbookurl}{www.digitalcorpora.org}
+\newcommand{\slgbookfrontmatter}{This is a work of the US
+  Government. In accordance with 17 USC 105, copyright protection is
+  not available for any work of the US Government.
+  \\
+  This text is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.}
+\newcommand{\slgbookdate}{First draft, May 2013}
+
+% Useful cross-reference commands
+\newcommand{\Sref}[1]{\S\ref{#1}}
+\newcommand{\chapref}[1]{Chapter~\ref{#1}\xspace}
+\newcommand{\chapvref}[1]{Chapter~\vref{#1}\xspace}
+\newcommand{\figref}[1]{Figure~\ref{#1}\xspace}
+\newcommand{\secref}[1]{Section~\ref{#1}\xspace}
+\newcommand{\secvref}[1]{Section~\vref{#1}\xspace}
+\newcommand{\figvref}[1]{Figure~\vref{#1}\xspace}
+\newcommand{\tabref}[1]{Table~\ref{#1}\xspace}
+\newcommand{\tabvref}[1]{Table~\vref{#1}\xspace}
+\newcommand{\appref}[1]{Appendix~\ref{#1}\xspace}
+\newcommand{\appvref}[1]{Appendix~\vref{#1}\xspace}
+
+% Useful symbols and abbreviations
+%\newcommand{\checkmark}{\Pisymbol{pzd}{52}}
+\newcommand{\naive}{na\"{\i}ve\xspace}
+\newcommand{\etc}{\emph{etc.}\xspace}
+\newcommand{\eg}{\emph{e.g.\ }}
+\newcommand{\etal}{\emph{et al.\ }}
+
+% \sgraphic[optional width=8in]{filename}{caption}
+% Then use \figref{filename} to get a reference to the figure
+\newcommand{\sgraphic}[3][width=\linewidth]{
+  \begin{figure}
+  \begin{center}
+  \fbox{\includegraphics[#1]{#2}}
+  \end{center}
+  \caption{#3\label{#2}}
+  \end{figure}
+}

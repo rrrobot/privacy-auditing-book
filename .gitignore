@@ -1,1 +1,13 @@
 *~
+*.aux
+*.blg
+*.log
+*.ptc
+*.toc
+*.ilg
+*.ind
+*.bbl
+*.blg
+*.log
+*.out
+plainbook.pdf

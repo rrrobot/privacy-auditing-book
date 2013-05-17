@@ -41,6 +41,7 @@
 \documentclass[11pt,fleqn]{book} % Default font size and left-justified equations
 
 \usepackage[top=3cm,bottom=3cm,left=3.2cm,right=3.2cm,headsep=10pt,a4paper]{geometry} % Page margins
+
 \usepackage{xcolor} % Required for specifying colors by name
 \definecolor{ocre}{RGB}{243,102,25} % Define the orange color used for highlighting throughout the book
 
@@ -65,8 +66,6 @@
 
 \input{orange/structure} % Insert the commands.tex file which contains the majority of the structure behind the template
 
-
-\usepackage{hyperref}
 \begin{document}
 
 %----------------------------------------------------------------------------------------
@@ -79,7 +78,7 @@
 \centering
 \vspace*{9cm}
 \par\normalfont\fontsize{35}{35}\sffamily\selectfont
-\par % Book title
+Technical Privacy Auditing with Computer Forensics Tools\par % Book title
 \vspace*{1cm}
 {\Huge Simson L. Garfinkel}\par % Author name
 \endgroup
@@ -128,6 +127,7 @@
 
 \chapterimage{orange/Pictures/chapter_head_2.pdf} % Chapter heading image
 
+\chapter{Part 1: Privacy Auditing: Task and Tools}
 
 \section{Paragraphs of Text}\index{Paragraphs of Text}
 
@@ -175,8 +175,25 @@ Lists are useful to present information in a concise and/or ordered way\footnote
 
 \chapter{Designing a good forensics experiment}
 
-\section{one}
-\section{two}
+\section{Theorems}\index{Theorems}
+
+This is an example of theorems.
+
+\subsection{Several equations}\index{Theorems!Several Equations}
+
+\begin{theorem}
+In $E=\mathbb{R}^n$ all norms are equivalent. It has the properties:
+\begin{align}
+& \big| ||\mathbf{x}|| - ||\mathbf{y}|| \big|\leq || \mathbf{x}- \mathbf{y}||\\
+&  ||\sum_{i=1}^n\mathbf{x}_i||\leq \sum_{i=1}^n||\mathbf{x}_i||\quad\text{where $n$ is a finite integer}
+\end{align}
+\end{theorem}
+
+\subsection{Single Line}\index{Theorems!Single Line}
+
+\begin{theorem}
+A set $\mathcal{D}(G)$ in dense in $L^2(G)$, $|\cdot|_0$. 
+\end{theorem}
 
 %------------------------------------------------
 
@@ -184,15 +201,92 @@ Lists are useful to present information in a concise and/or ordered way\footnote
 
 This is an example of a definition. A definition could be mathematical or it could define a concept.
 
-%------------------------------------------------
+\begin{definition}[Definition name]
+Given a vector space $E$, a norm on $E$ is an application, denoted $||\cdot||$, $E$ in $\mathbb{R}^+=[0,+\infty[$ such that:
+\begin{align}
+& ||\mathbf{x}||=0\ \Rightarrow\ \mathbf{x}=\mathbf{0}\\
+& ||\lambda \mathbf{x}||=|\lambda|\cdot ||\mathbf{x}||\\
+& ||\mathbf{x}+\mathbf{y}||\leq ||\mathbf{x}||+||\mathbf{y}||
+\end{align}
+\end{definition}
 
 %------------------------------------------------
 
-%------------------------------------------------
+\section{Notations}\index{Notations}
+
+\begin{notation}
+Given an open subset $G$ of $\mathbb{R}^n$, the set of functions $\varphi$ are:
+\begin{enumerate}
+\item Bounded support $G$;
+\item Infinitely differentiable;
+\end{enumerate}
+a vector space is denoted by $\mathcal{D}(G)$. 
+\end{notation}
 
 %------------------------------------------------
 
+\section{Remarks}\index{Remarks}
+
+This is an example of a remark.
+
+\begin{remark}
+The concepts presented here are now in conventional employment in mathematics. Vector spaces are taken over the field $\mathbb{K}=\mathbb{R}$, however, established properties are easily extended to $\mathbb{K}=\mathbb{C}$.
+\end{remark}
+
 %------------------------------------------------
+
+\section{Corollaries}\index{Corollaries}
+
+This is an example of a corollary.
+
+\begin{corollary}[Corollary name]
+The concepts presented here are now in conventional employment in mathematics. Vector spaces are taken over the field $\mathbb{K}=\mathbb{R}$, however, established properties are easily extended to $\mathbb{K}=\mathbb{C}$.
+\end{corollary}
+
+%------------------------------------------------
+
+\section{Propositions}\index{Propositions}
+
+This is an example of propositions.
+
+\subsection{Several equations}\index{Propositions!Several Equations}
+
+\begin{proposition}[Proposition name]
+It has the properties:
+\begin{align}
+& \big| ||\mathbf{x}|| - ||\mathbf{y}|| \big|\leq || \mathbf{x}- \mathbf{y}||\\
+&  ||\sum_{i=1}^n\mathbf{x}_i||\leq \sum_{i=1}^n||\mathbf{x}_i||\quad\text{where $n$ is a finite integer}
+\end{align}
+\end{proposition}
+
+\subsection{Single Line}\index{Propositions!Single Line}
+
+\begin{proposition} 
+Let $f,g\in L^2(G)$; if $\forall \varphi\in\mathcal{D}(G)$, $(f,\varphi)_0=(g,\varphi)_0$ then $f = g$. 
+\end{proposition}
+
+%------------------------------------------------
+
+\section{Examples}\index{Examples}
+
+This is an example of examples.
+
+\subsection{Equation and Text}\index{Examples!Equation and Text}
+
+\begin{example}
+Let $G=\{x\in\mathbb{R}^2:|x|<3\}$ and denoted by: $x^0=(1,1)$; consider the function:
+\begin{equation}
+f(x)=\left\{\begin{aligned} & \mathrm{e}^{|x|} & & \text{si $|x-x^0|\leq 1/2$}\\
+& 0 & & \text{si $|x-x^0|> 1/2$}\end{aligned}\right.
+\end{equation}
+The function $f$ has bounded support, we can take $A=\{x\in\mathbb{R}^2:|x-x^0|\leq 1/2+\epsilon\}$ for all $\epsilon\in\intoo{0}{5/2-\sqrt{2}}$.
+\end{example}
+
+\subsection{Paragraph of Text}\index{Examples!Paragraph of Text}
+
+\begin{example}[Example name]
+\lipsum[2]
+\end{example}
 
 %------------------------------------------------
 
@@ -227,39 +321,33 @@ Definition of word.
 %----------------------------------------------------------------------------------------
 
 \chapterimage{orange/Pictures/chapter_head_1.pdf} % Chapter heading image
+
 \chapter{Operational Concerns}
 
 \section{Table}\index{Table}
 
-Not many tables.
+\begin{table}[h]
+\centering
+\begin{tabular}{l l l}
+\toprule
+\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
+\midrule
+Treatment 1 & 0.0003262 & 0.562 \\
+Treatment 2 & 0.0015681 & 0.910 \\
+Treatment 3 & 0.0009271 & 0.296 \\
+\bottomrule
+\end{tabular}
+\caption{Table caption}
+\end{table}
 
-\chapter*{Part 2: Data Leaks in Documents and Databases}
-In this section, we'll look at actual data leaks.
+%------------------------------------------------
 
-\section{one}
-\section{two}
+\section{Figure}\index{Figure}
 
-
-\lipsum[2]
-
-\chapter{Private Data in PDFs}
-
-\section{one}
-\section{two}
-
-
-\begin{itemize}\item foo\end{itemize}
-\section{A section }
-\lipsum[2]
-\section{A section }
-\lipsum[2]
-
-\chapter{Directory Container Files}
-\begin{itemize}\item foo\end{itemize}
-\section{A section }
-\lipsum[2]
-\section{A section }
-\lipsum[2]
+\begin{figure}[h]
+\centering\includegraphics[scale=0.5]{orange/Pictures/placeholder}
+\caption{Figure caption}
+\end{figure}
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY

@@ -1,0 +1,887 @@
+% http://www.latextemplates.com/template/tufte-style-book
+%
+% This magic lets the Makefile create both the one-column version
+% and the two-column version without the need to edit this file
+%
+
+\documentclass[11pt,letter]{book}
+
+%\renewcommand{\cite}[1]{\nocite{#1}}
+\newcommand{\citep}[1]{\cite{#1}}
+\newcommand{\citet}[1]{\cite{#1}}
+
+\usepackage[T1]{fontenc}        % http://tex.stackexchange.com/questions/664/why-should-i-use-usepackaget1fonte
+\usepackage[utf8x]{inputenc}	% accented letters in tex files allowed
+\usepackage{ucs}                % more unicode support
+\usepackage{fancyvrb}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphics}
+\usepackage{marvosym}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{tabularx}
+\usepackage{euro}
+\usepackage{tabularx}           % tables that expand to with width requested
+\usepackage{titletoc}		% adds toc commands
+\usepackage{titlesec}		% complete replacement for titles
+\usepackage{fancyhdr}		% puts chapters names in footers
+\usepackage{ccaption}		% control captions
+\usepackage{setspace}           % enabled \doublespacing, \onehalfspacing, etc.
+\usepackage{multicol}           % multiple columns; good for you!
+\usepackage{multirow}           % for table cells with multiple row   
+\usepackage{fancyvrb}           % a better verbatim
+\usepackage{varioref}		% provides \vref - smart referencing
+\usepackage{xspace}             % provides \xspace
+\usepackage{latexsym}           % gives \Box
+\usepackage{graphicx}           % it's better
+\usepackage{pifont}             % fancy characters
+\usepackage{remreset}           % prevent footnotes from being reset at each chapter
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{paralist}           % {compactenum} {compactitem} environments
+\usepackage{enumitem}		% No extra space before lists
+\usepackage{float}              % reimplementation of float package
+\usepackage{cite}               % for [5-8] reference style
+\usepackage{amsmath}            % for many types of math equations
+\usepackage{url}		% nice handling of URLs
+\usepackage{times}
+
+% Steps
+% http://tex.stackexchange.com/questions/32798/a-step-by-step-environment
+\usepackage{xparse}
+\DeclareDocumentEnvironment{steps}%
+{O{Step}}% If no argument is given the label defaults to 'Step'
+{\begin{enumerate}[label=#1 \arabic*]}%
+{\end{enumerate}}
+
+\makeatletter% http://tex.stackexchange.com/questions/29517/forcing-new-line-after-item-number-in-enumerate-environment/29518#29518
+\def\step{%
+   \@ifnextchar[ \@step{\@noitemargtrue\@step[\@itemlabel]}}
+\def\@step[#1]{\item[#1]\mbox{}\hspace*{\dimexpr-\labelwidth-\labelsep}}
+\makeatother
+
+
+\newcommand{\wikipedia}[1]{See \url{#1}}
+\newcommand{\wikipediab}[1]{ and \url{#1}}
+
+% Try not to float graphics to their own pages
+\renewcommand{\topfraction}{0.99}
+\renewcommand{\floatpagefraction}{0.99}
+
+% \sgraphicb[optional width=8in]{filename}{caption}
+% \sgraphicb is like sgraphic, but may put it at the bottom of the page
+\newcommand{\sgraphicb}[3][width=\linewidth]{
+  \begin{figure}
+  \begin{center}
+  \fbox{\includegraphics[#1]{#2}}
+  \end{center}
+  \caption{#3\label{#2}}
+  \end{figure}
+}
+
+% \sgraphicn[optional width=8in]{filename}{caption}
+% \sgraphicn is like sgraphic, but does not put a box around the graphic
+\newcommand{\sgraphicn}[3][width=\textwidth]{
+  \begin{figure}
+  \begin{center}
+  \includegraphics[#1]{#2}
+  \end{center}
+  \caption{#3\label{#2}}
+  \end{figure}
+}
+
+% \sgraphico[optional width=8in]{filename}{caption}
+% \sgraphico is like sgraphic, but it doesn't create a figure
+\newcommand{\sgraphico}[3][width=\textwidth]{
+  \begin{center}
+  \fbox{\includegraphics[#1]{#2}}
+  \end{center}
+%  \caption{#3\label{#2}}
+}
+
+% \sgraphicon[optional width=8in]{filename}{caption}
+\newcommand{\sgraphicon}[3][width=\textwidth]{
+  \begin{center}
+  \includegraphics[#1]{#2}
+  \end{center}
+%  \caption{#3\label{#2}}
+}
+
+\input{book-preamble}
+
+%% SIMSON HEADER END
+
+\begin{document}
+\input{book-body}
+\end{document}
+
+
+\title{Technical Privacy Auditing with Computer Forensics Tools}
+\chapter*{Part 1: Privacy Auditing: Task and Tools}
+\chapter{Introduction}
+\chapter{What Data Looks Like}
+
+In this book we will spend a lot of time looking at data buffers and
+trying to figure out what they mean. Two common ways to do this are
+looking at hex dumps (\secref{sec:hex-dumps}) and by extracting
+printable strings (\secref{sec:strings}). In order to understand
+what these values actually mean, it's important
+to first understand how numbers (\secref{sec:numbers}) and letters
+(\secref{sec:letters}) are actually stored inside a computer's memory.
+
+Much of this chapter is similar to what might be covered at the start
+of a course on computer architecture. But whereas an architecture
+course is primarily concerned with computation and data in motion,
+this chapter is concerned with understanding data at rest. 
+
+\section{Bits, Bytes, and Memory}\label{sec:numbers}
+The \emph{bit} is the fundamental unit of storage on digital computers. Bits
+have two states. Typically we call these |0| and |1|, but they can be any
+two values (e.g. true/false, yes/no or up/down). This book 
+uses the values |0| and |1| for bits.\marginpar{The word \emph{bit} is
+  a contraction of the words \emph{binary digit}.}
+
+An ordered group of 4 bits is called a \emph{nibble}. Each bit can be
+a |0| or a |1|, creating 16 possible different values. Note
+that $2^4=16$. It is conventional to use the digits 0 through 9 to
+number the first 10 possible nibble values, and use the letters A
+through F to number the next six, as shown in \figref{nibble}. By
+convention computer users call this notation \emph{hexadecimal},
+although it's also called Base 16.
+
+To avoid confusion between decimal and binary notation, this book will
+always suffix binary numbers with a ``b''. Hexadecimal values have a
+``h'' suffix. Some programming languages prefix hexadecimal strings
+with a |\x| or |0x|. 
+
+\marginpar{There are 10 kinds of people in the world. Those who know
+  binary, and those who don't.}
+
+
+\begin{figure}
+\begin{tabular}{ccc}
+binary & value & hexadecimal\\
+\hline
+0000b & 0 & 0h \\
+0001b & 1 & 1h \\
+0010b & 2 & 2h \\
+0011b & 3 & 3h \\
+0100b & 4 & 4h \\
+0101b & 5 & 5h \\
+0110b & 6 & 6h \\
+0111b & 7 & 7h \\
+1000b & 8 & 8h \\
+1001b & 9 & 9h \\
+1010b & 10& Ah \\
+1011b & 11& Bh \\
+1100b & 12& Ch \\
+1101b & 13& Dh \\
+1110b & 14& Eh \\
+1111b & 15& Fh \\
+\hline
+\end{tabular}
+\caption{A nibble is a set of 4 bits; it has 16 possible values.}\label{nibble}
+\end{figure}
+
+Modern computers operate on 8 bits at a time, a unit called a
+\emph{byte}. Because each bit in the byte can be a |0| or a |1|, and
+because the bits are ordered, the byte can represent the values
+\texttt{00000000b} through \texttt{11111111b} --- creating a
+total of $2^8=256$ possible different values. This book will normally treat
+bytes as unsigned integers in the range 0 to 255, but that is just a
+convention; the Java programming language treats bytes as signed
+integers in the range $-128$ to 127. It's also common to use present
+the value of a byte in hexadecimal notation, with the range |00|
+through |FF|.
+
+\subsection{Memory}
+
+\subsection{Registers}
+
+Computers use groups of bytes to represent larger numbers. Two bytes
+can represent 65,536 different values. Here are some examples:
+
+\begin{tabular}{cc}
+decimal & binary \\
+\hline
+0      & 00000000b 00000000b \\
+255    & 00000000b 11111111b \\
+256    & 00000001b 00000000b \\
+65,280 & 11111111b 00000000b \\
+65,535 & 11111111b 11111111b \\
+\hline
+\end{tabular}
+
+In the example above, the right-hand byte is called the \emph{least
+  significant byte} and represents the bits $2^0$ through $2^7$; the
+left-hand byte  called the \emph{most
+significant byte}; it represents the binary values $2^8$ through
+$2^{15}$. 
+
+
+Because most computer memories are arranged as an array of bytes,
+there are two ways to store these 16-bit values at a particular memory
+location. 
+
+
+% http://en.wikipedia.org/wiki/Single-precision_floating-point_format
+
+Larger numbers Two bytes can be grouped together, allowing values between 0 and
+65,535 to be represented. Four bytes
+
+\section{Text, ASCII and Unicode}\label{sec:letters}
+
+In the previous section we looekd 
+
+\section{Hex Dumps}\label{sec:hex-dumps}
+A common way to visualize binary data is to format it as a series of
+text lines, with each line containing a series of hexadecimal values (one
+for each binary byte). Such displays are called \emph{hex
+  dumps}.
+
+There are many different programs that produce hex dumps, and each
+program formats its output in a slight different manner. Fortunately
+there is enough commonality that you can usually look at a hex dump
+and figure it out. Most dumps will have a column on the left that
+displays the offset in bytes from the beginning of the data, and a
+column on the right that shows the ASCII representation of each
+byte. Dumps are typically formatted such that each line represents 32
+or 64 bytes of data.
+
+Below is a hex dump for the 28-byte string 
+|Hello World!\r\nHello World!\r\n| created with the Unix \emph{xxd}
+program. Notice that the hexadecimal numbers \emph{do not} have a
+``h'' suffix; users are expected to recognize hexadecimal values from
+context:
+
+\begin{Verbatim}
+0000000: 4865 6c6c 6f20 576f 726c 6421 0d0a 4865  Hello World!..He
+0000010: 6c6c 6f20 576f 726c 6421 0d0a            llo World!..
+\end{Verbatim}
+
+
+\section{Strings}\label{sec:strings}
+
+Computer texts use the word \emph{string} inconsistently. Sometimes
+the word refers to any sequence of zero or more bytes; sometimes it
+means zero or more characters; and sometimes it means zero or
+more printable characters. Usually the specific meaning can be
+inferred from context. 
+
+One quick way to analyze unfamiliar data is to look for printable
+strings, which is the reason that ASCII is shown in most hex
+dumps. With large blocks of data it can be hard to find the printable
+strings. Consider the file random48.bin:
+
+\begin{Verbatim}
+0000000: fdf8 7c33 a153 0516 cc72 84fc 0050 7269  ..|3.S...r...Pri
+0000010: 7661 6379 1437 ed4d e84b 0280 a74f e64b  vacy.7.M.K...O.K
+0000020: 4695 6a66 9549 2cc9 4109 83c1 3e96 766b  F.jf.I,.A...>.vk
+\end{Verbatim}
+
+The file random48.bin contains the word ``Privacy'', but it can be hard to
+find. The \emph{strings} program will extract printable
+strings from a file and display them on stdout:
+
+\begin{Verbatim}
+$ strings random48.bin 
+Privacy
+$ 
+\end{Verbatim}
+
+Because ASCII is commonly used by computer systems, 
+\emph{strings} command is a powerful way to find  identifying
+information. 
+
+\section{Exercises}
+* Look for private information with strings in files
+
+\chapter{Designing a good forensics experiment}
+\chapter{Operational Concerns}
+\chapter*{Part 2: Data Leaks in Documents and Databases}
+\chapter{Private Data in PDFs}
+\chapter{Understanding Directory-Based Container Files}
+\chapter*{Part 3: Data Leaks in Operating Systems}
+\chapter{File Systems, File Extraction, and Residual Data}
+\sgraphic{art/TK}{Most mass storage systems, including hard drives (HDs),
+  solid state drives (SSDs), and Secure Digital (SD) cards, store data
+  in blocks of data, sometimes called \emph{sectors}}
+
+Most kinds of computer data are eventually turned into \emph{files}
+and stored on some kind of
+\emph{mass storage device} (\figref{art/TK}). At the most basic level a file is
+nothing more than a sequence of zero or more bytes. In practice files
+have additional properties such as a \emph{file name}, 
+\emph{creation date}, \emph{modification date}, \emph{last access
+  data}, and so on. These other properties are called \emph{metadata},
+a word that loosely means ``data about other data.''
+
+Mass storage systems don't store files. Instead, they store blocks of
+bytes (sometimes called \emph{sectors}). These blocks are invariably
+sized as an even power of 2. In the 1990s most hard drives had a block
+size of 512 bytes and Compact Discs (CDs) had a block size of 2048
+bytes; modern hard drives have a block size of 4096 bytes. A 1~TB
+drive in a computer laptop would therefore have approximately 250
+million 4096-byte blocks. Each block on the media is referenced
+by a distinct number called a \emph{logical block address} (LBA). Most
+mass storage systems are \emph{random access}, meaning that the
+computer can read or write any block in any order, although it is
+invariably faster to read or write blocks multiple blocks at a time in numeric order.
+
+Users don't see blocks of bytes when they take an SD card out of a
+camera and try to read it on their laptop: they see folders and
+files. The translation between the mass storage system's blocks of
+bytes and the files that are shown on the computer's screen is
+performed by a piece of code inside the operating system called the
+\emph{file system}.  The file system takes the concepts of
+\emph{files} and \emph{folders} used by people and application
+programs, and maps them to specific operations on blocks of data
+stored on the mass storage device. When a program opens a named file
+and reads the first few bytes, the file system locates the file's
+metadata on the drive, determines the specific block associated with
+the start of the file, and reads that block into memory. Mass storage
+systems can only read or write complete blocks, so the file system may
+also have to buffer data between the application program and the
+drive.
+
+\section{Exploring the GEN1 SD Camera Card}
+In this section we will explore the contents of an SD camera card
+created in 2009 with a Canon PowerShot SD800IS camera. The card is called NPS-2009-CANON2.
+
+\begin{figure}
+\caption{A conceptual view of NPS-2009-CANON2\label{nps-2009-canon2-conceptual}}
+\end{figure}
+
+To create the data for this section, we started with a 32MB camera
+card and cleared every addressable sector by overwriting that sector's
+content with NULL bytes. You can do this
+easily with the program in \figref{overwrite}.
+
+
+\lstset{basicstyle=\footnotesize,numbers=left,numberstyle=\tiny}
+\lstinputlisting[caption=A simple program to clear a disk.]{fs/clear.py}
+\begin{figure}
+\begin{lstlisting}
+\end{lstlisting}
+\caption{}\label{overwrite}
+\end{figure}
+
+After the card was cleared, we put it into the PowerShot, initialized
+the card, and took 36 photos. We then removed the card from the
+camera and placed it in a Linux-based computer, where the SD card
+appeared as a virtual disk drive. In order to make a copy of the drive
+data it is necessary to know the drive name that the Linux system
+assigns. For example, if the drive appears as |/dev/sde|, then the
+data can be copied off with this Linux  command:
+
+\begin{Verbatim}
+$ sudo dd if=/dev/sde of=nps-2009-canon2-gen1.raw conv=noerror,sync
+\end{Verbatim} 
+%$ 
+
+The dd command copies blocks of data from the input file (\emph{if=})
+to the output file (\emph{of=}). Two conversion options are
+specified: \emph{noerror} tells the \emph{dd} command to continue even
+if it encounters an error, and \emph{sync} tells the program to keep
+the output stream synchronized with the input stream in the event of
+an error by writing blocks filled with NULLs.  
+
+When we were finished imaging the card we took it out of the Linux
+computer and put it back in the camera. Next we used the camera's
+interface to delete some photographs and then took some more. Then we
+imaged the card a second time, creating the ``generation 2'' disk
+image. This process was repeated a total of six times. By comparing
+the different disk images it's possible to understand how the Camera's
+firmware manages the files and directories stored on the camera card.
+
+For the remainder of this section we'll work with just the first
+generation image, which will call GEN1. You can download that file from: \url{http://digitalcorpora.org/nps-2009-canon2-gen1.raw}.
+
+
+\figref{nps-2009-canon2-conceptual} shows a conceptual view of
+GEN1's storage. The card has a Master Boot Record in its
+first sector (block 0) which has two slots: slot 1 is an unallocated
+region between blocks 0 and 50 (including, somewhat confusingly, the
+master boot record itself). Slot 2 is a DOS FAT16 file system that
+occupies blocks 51 through 60799. The FAT file system contains its own
+structures, including a \emph{Boot Sector Structure} that describes the
+file system, a \emph{root directory}, \emph{subdirectories},
+\emph{files}, and finally a \emph{file allocation table} that both
+describes which sectors belong to which file and indicates which
+sectors are free and available for new files. We'll discuss each of
+those in the following section.
+
+\subsection{The Master Boot Record (Partition Table)}
+
+The master Boot Record, more commonly known as the MBR, occupies the first
+sector of a hard drive used on most Windows-based computers. When the
+Windows computer is turned on the computer's Basic Input/Output
+System (BIOS) loads these 512 bytes into the start of the computer's
+memory and jumps to location 0. Typically the MBR contains a short
+program that loads more sectors from the hard drive into memory and
+runs them; this second boot loader loads the operating system and runs
+it.
+
+The basic structure of the MBR is described by this table:
+
+\begin{minipage}{\textwidth}
+\begin{tabular}{|c|c|c|c|c|}
+\multicolumn{5}{c}{\bf Structure of the MBR\footnote{From Wikipedia, \url{http://en.wikipedia.org/wiki/Master_boot_record}}}\\
+\hline
+\multicolumn{2}{|c|}{\bf Address} & \multicolumn{2}{c|}{}                              & \\
+\cline{1-2} \bf Hex & \bf Dec         & \multicolumn{2}{c|}{\multirow{-2}{*}{\bf Description}} & \multirow{-2}{*}{\bf Size in bytes}\\
+\hline
++000h & +0   & \multicolumn{2}{c|}{Bootstrap code; extended information} & 446 \\
+\cline{3-4}
++1BEh & +446 & Partition entry \#1 && 16 \\
++1CEh & +462 & Partition entry \#2 && 16 \\
++1DEh & +478 & Partition entry \#3 && 16 \\
++1EEh & +494 & Partition entry \#4 && 16 \\
+\hline
++1FEh & +510 & 55h & & \\
+\cline{1-3}
++1FFh & +511 & AAh & \multirow{-2}{*}{Boot Signature} & \multirow{-2}{*}{2} \\
+\hline
+\hline
+\multicolumn{4}{|r|}{\textbf{Total size: $\bf 446 + (4\times16) + 2 $}} & \textbf{512}\\
+\hline
+\end{tabular}
+\end{minipage}
+
+The basic MBR thus provides for a maximum of four partitions, each
+described by a partition entry. The entry record includes a byte
+indicating if it is active or not, the start of the partition and the
+partition's length.  Originally the start and length were encoded as a 
+3-byte CHS (Cylinder, Head, Sector) triplet; later the encoding was
+expanded to allow a 4-byte LBA (Logical Block
+Address). Because blocks
+are assumed to be 512 bytes, traditional MBR partitioning allows for a
+maximum media size of $512 \times 2^{32}=2\textrm{TiB}$ in storage.
+
+If you review the Wikipedia page you will see that no less than six
+different MBRs have been developed and deployed by manufacturers since
+MBR records were introduced by IBM PC DOS 2.0 in 1983. All of these
+systems store the bootstrap code at location 0, the first four
+partition entries starting at location |1BEh|, and have a boot
+signature in the last two blocks of the sector. This consistency is
+provided for backwards compatibility, allowing each 
+generation of disk utilities and BIOS drivers to make some kind of sense of
+whatever data they might find on a mass storage device.  Modern
+computers use a new partitioning scheme called the GUID Partition
+Table (GPT), but even these systems still include a so-called
+``Protective MBR'' that allocates the entire drive to a partition of
+type |EEh|. This partition literally protects the GPT disk in the
+event that the user attempts to mount it on a system that does not
+understand GPT partitioning: instead of inadvertently overwriting the
+media, the system will believe that the entire disk is taken up by a
+partition that the system does not understand.
+
+The SleuthKit |mmls| command will display the contents of the
+partition table of any physical device or disk image:
+
+Exercise 1: Use the SleuthKit to View the contents of the master boot
+record:
+
+\begin{Verbatim}
+C:\ mmls nps-2009-canon2-gen1.raw
+\end{Verbatim}
+
+Exercise 2: Alternatively, you can view the contents of the MBR with a
+hex dump:
+
+\begin{Verbatim}
+$ xxd -len 512 nps-2009-canon2-gen1.raw
+0000000: fa33 c08e d0bc 007c 8bf4 5007 501f fbfc  .3.....|..P.P...
+0000010: bf00 06b9 0001 f2a5 ea1d 0600 00be be07  ................
+0000020: b304 803c 8074 0e80 3c00 751c 83c6 10fe  ...<.t..<.u.....
+0000030: cb75 efcd 188b 148b 4c02 8bee 83c6 10fe  .u......L.......
+0000040: cb74 1a80 3c00 74f4 be8b 06ac 3c00 740b  .t..<.t.....<.t.
+0000050: 56bb 0700 b40e cd10 5eeb f0eb febf 0500  V.......^.......
+0000060: bb00 7cb8 0102 57cd 135f 730c 33c0 cd13  ..|...W.._s.3...
+0000070: 4f75 edbe a306 ebd3 bec2 06bf fe7d 813d  Ou...........}.=
+0000080: 55aa 75c7 8bf5 ea00 7c00 0049 6e76 616c  U.u.....|..Inval
+0000090: 6964 2070 6172 7469 7469 6f6e 2074 6162  id partition tab
+00000a0: 6c65 0045 7272 6f72 206c 6f61 6469 6e67  le.Error loading
+00000b0: 206f 7065 7261 7469 6e67 2073 7973 7465   operating syste
+00000c0: 6d00 4d69 7373 696e 6720 6f70 6572 6174  m.Missing operat
+00000d0: 696e 6720 7379 7374 656d 0000 0000 0000  ing system......
+00000e0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000f0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000100: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000110: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000120: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000130: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000140: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000150: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000160: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000170: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000180: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+0000190: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00001a0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00001b0: 0000 0000 0000 0000 0000 0000 0000 0001  ................
+00001c0: 1400 0403 60da 3300 0000 4ded 0000 0000  ....`.3...M.....
+00001d0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00001e0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00001f0: 0000 0000 0000 0000 0000 0000 0000 55aa  ..............U.
+$ 
+\end{Verbatim}
+
+Exercise 3: Finally, you can write a program in Python that will open
+up the disk image, read the sector into memory, and then print the
+fields:
+
+
+
+
+
+The first block of a FAT file system contains a \emph{Boot Sector
+  Structure} that describes the file system's parameters, including
+the sector size, the cluster size, the number of reserved sectors, the
+number of File Allocation Tables, and so on. The layout of this
+structure is described in Microsoft's FAT specification; you can also
+find it in the SleuthKit file |sleuthkit/tsk3/fs/tsk_fs.h|. The first
+few lines of the SleuthKit structure are show in \figref{BSS}.
+
+\begin{figure}
+\begin{lstlisting}
+/*
+ * Boot Sector Structure for TSK_FS_INFO_TYPE_FAT_12,
+ * TSK_FS_INFO_TYPE_FAT_16, and TSK_FS_INFO_TYPE_FAT_32
+ */
+    typedef struct {
+        uint8_t f1[3];
+        char oemname[8];
+        uint8_t ssize[2];       /* sector size in bytes */
+        uint8_t csize;          /* cluster size in sectors */
+        uint8_t reserved[2];    /* number of reserved sectors for boot sectors */
+        uint8_t numfat;         /* Number of FATs */
+        uint8_t numroot[2];     /* Number of Root dentries */
+        uint8_t sectors16[2];   /* number of sectors in FS */
+        uint8_t f2[1];
+        uint8_t sectperfat16[2];        /* size of FAT */
+        uint8_t f3[4];
+        uint8_t prevsect[4];    /* number of sectors before FS partition */
+        uint8_t sectors32[4];   /* 32-bit value of number of FS sectors */
+
+        /* The following are different for fat12/fat16 and fat32 */
+        ...
+\end{lstlisting}
+\caption{The first few bytes of the Boot Sector Structure, the first
+  sector of a FAT file system. From Sleuthkit's \texttt{tsk\_fs.h}.\label{BSS}}
+\end{figure}
+
+The FAT file system's 
+
+Because the FAT file system begins in sector 51, the number ``51''
+must be added to all internal references.
+
+occu; A listing of
+that camera card appears in Figure Tk. Various sectors on the card are
+used to store the root directory, a subdirectory ``DCIM'', and
+directory entries for the 35 JPEG
+images named XXXX through XXXX. Most of the sectors on the card are
+used to store the JPEG images themselves. But the card also contains a
+significant amount of data that not visible when the card is
+inserted into a laptop: there are deleted JPEGs and deleted directory
+entries. Some of the deleted JPEGs exist in their entirity and can be
+easily recovered using the proper tools. Others exist as fragments and
+can only be recovered with difficulty. 
+
+In this chapter you'll learn why file systems retain information after the
+user deletes it, how to find and exploit this kind of residual
+information, and how to design computer systems so that such
+information is not retained.
+
+Tools used in this chapter: hex viewer;
+
+hex editor
+
+SleuthKit precompiled binaries for
+Windows. http://sourceforge.net/projects/sleuthkit/files/sleuthkit/4.0.2/
+  Download sleuthkit-win32-4.0.2.zip and uncompress the files into
+  |c:\sleuthkit-win32-4.0.2|
+
+
+
+\section{Background: File System Structures}
+This section describes how file systems are structured on a drive. The
+examples will be based on the two most popular file systems today, the
+FAT file system developed by Microsoft in the 1980s and widely used in
+digital cameras, and the NTFS file system developed by Microsoft in
+the 1990s and used for most versions of Windows from Windows NT
+through Windows 8.
+
+
+\subsection{Partitioning and Volume Management}
+
+Although a file system can be stored directly on the drive, with the
+file sector of the drive being used to store the first sector of the
+file system, this is not commonly done. Instead, the first 1 or 2
+sectors are used for a \emph{partition table} that describes the
+locations of the file systems. In this way a single device can be used
+to simulate multiple logical devices. Two commonly used partitioning
+schemes are the \emph{Master Boot Record} and the \emph{GUID Partition
+  Table} scheme.\wikipedia{http://en.wikipedia.org/wiki/GUID_Partition_Table}
+       \wikipediab{http://en.wikipedia.org/wiki/Master_boot_record}
+
+The term \emph{physical volume} is used variously to describe a
+physical disk, a partition on a physical disk, or a Logical Unit
+Number (LUN) of a storage
+system.\wikipedia{http://en.wikipedia.org/wiki/Logical_Unit_Number}
+Physical volumes can be used directly to hold a file system or can be
+grouped together with a Logical Volume Management (LVM)
+system\wikipedia{http://en.wikipedia.org/wiki/Logical_volume_management}. An
+LVM can group multiple physical volumes together in to a single
+physical volume that is large or more reliable than the volumes that
+it built from. Volume managers can also implement
+\emph{snapshots}\wikipedia{http://en.wikipedia.org/wiki/Snapshot_(computer_storage)}
+through the use of
+\emph{copy-on-write}\wikipedia{http://en.wikipedia.org/wiki/Copy-on-write}.
+
+\subsection{Files and File Systems}
+The word \emph{file} is commonly used to describe a sequence of data
+that is stored on a computer mass storage system. On modern computers
+files are sequences of zero or more \emph{bytes}. Files have a length
+that is set at any given point in time, but can be readily
+changed. Files can have names and other associated \emph{metadata}
+such as timestamps, an owner, and a group. Files have traditionally
+been grouped together in
+\emph{directories}\wikipedia{http://en.wikipedia.org/wiki/File_directory}. also
+called \emph{folders}. 
+
+The phrase \emph{File
+  System}\wikipedia{http://en.wikipedia.org/wiki/Computer_file} is
+used to describe the part of the computer's operating
+system that manages a storage system. However, the term is also used
+to describe the very sectors on a mass storage device that contain the
+files.
+
+It is important to realize that files are an \emph{abstraction} that
+was created for the purpose of managing data. There is nothing
+inherent in the design of computers, operating systems or mass storage
+devices that requires the use of files. A raw disk can be used as
+virtual memory \emph{backing store} or as a storage system for a
+database. Instead of stored as a sequence of bytes in a file, data can be stored as
+objects that are persisted in memory, or as BLOBs in a database.
+
+It is also important to realize that any computational storage device
+or abstraction can be used to virtualize and contain any other storage
+device. That is, a file can be stored in a file system, but a file
+system can also be created and stored inside a file (this is
+essentially what a disk image is). Most operating systems can swap to raw
+partitions or to files, but file systems can also be created inside
+RAM or virtual memory.
+
+Adding to the complexity of the forensic examiner is
+\emph{encryption}, which can be applied at the interface between any
+of these abstractions. Encryption can be performed in the storage
+device itself (as in the case of an encrypting hard drive), in the
+disk driver, in the logical volume management system, in the file
+system, or at the application level.
+
+\subsection{File Systems of Forensic Interest}
+There are a variety of different kinds of file systems in use on
+modern computer systems:
+\begin{description}
+\item[Disk file systems] organize files and directories on
+  block-oriented storage systems. These are of interest to those
+  engaged in MEDEX operations. Popular file systems include FAT32
+  (used primary on removable storage devices and camera cards), NTFS
+  (Microsoft's New Technology File System), and HFS+ (Apple's
+  Hierarchical File System used on Macs and iPhones).
+\item[Distributed file systems] allow a computer to access
+  information on remote servers as if it is stored
+  locally. Distributed file systems are forensically interesting
+  because many use local storage to cache information from the remote
+  servers. Analyzing local storage can therefore give clues as to what
+  was accessed remotely, and when it was accessed.
+\item[Virtual file systems] use the file and directory abstraction to
+  make it easy to access other information. For example, the Linux
+  \url{/dev} file system is used to access devices through the file
+  system, the \url{/sys} file system is used to access features within
+  the system kernel, and the \url{/net} file system accesses the
+  automounter. Virtual file systems are not typically of interest in
+  MEDEX because they do not leave residual information on a storage
+  device. However, virtual file systems are relevant in malware
+  analysis and intrusion response.
+\end{description}
+
+As this chapter is written, specific file systems of interest include:
+\begin{description}
+\item[FAT12, FAT16 and FAT32] file systems developed by Microsoft for use with
+  DOS. FAT refers to the File Allocation Table, an array of integers
+  that is used to determine if a cluster is in use or free. (In FAT, a
+  \emph{cluster} is a block of 1, 2, 4, 8 or more disk sectors.) The number
+  refers to the size of the integers in the array (12 bits, 16 bits or
+  32 bits). Today implementations of FAT are built in to practically every
+  operating system, including Windows, Linux, MacOS, most digital
+  cameras, and practically every other device with a USB or SD
+  interface. 
+\item[NTFS] 
+\item[HFS+]
+\item[YAFFS2]
+\item[EXT2/3]
+\item[EXT4]
+\end{description}
+
+Information can be hidden in a file system by storing data in blocks
+that are allocated but not used to hold content\cite{dfrws2005:KnutEcksteinAndMarkoJahnke}. 
+
+\section{Exercise: Windows - Creating and Testing FAT32 Disks}
+
+This exercise is designed to help you understand how file systems
+store information and the opportunities for retaining
+privacy-sensitive information that is not visible to the user. 
+
+This exercise will be done with a \emph{virtual disk}. Like a physical
+mass storage device, a virtual disk consists of a set of numbered data
+blocks. But instead of storing those blocks directly in on a mass
+storage device, the blocks are stored in another file. The operating
+system treats the virtual disk like a physical drive: it can be
+formatted, files can be copied to it, and so on. But we can also
+access the underlying file that holds the virtual disk. This makes it
+easier to inspect the individual data blocks.
+
+We will use the Windows |DISKPART| command to create and manage virtual
+disks. |DISKPART| is a command-line tool that needs to run as
+Administrator.
+
+We will be using these commands:
+\begin{tabular}{ll}
+help partition & shows partition command available\\
+create vdisk & Creates a virtual disk \\
+list disk & Shows available disks \\
+list vdisk & Shows detailed information about the available VDisks\\
+list partition & Shows available partitions \\
+\end{tabular}
+
+We will create a text file on the virtual disk that has a sensitive file
+name and file contents. We will then take a screen shot and save it on
+the computer's hard drive as a JPEG. We will then delete the text file
+and empty the trash. Finally we will inspect the disk image and see if
+we can find the text file and the screen shot.
+
+
+
+\begin{steps}
+\step Click the Start button, type |diskpart| into the search field,
+and click on the |diskpart| program icon.
+\step The User Account Control will ask you to verify that you want to
+run the DiskPart, a program that can make ``changes to the computer.''
+Click ``Yes.''  The |diskpart.exe| window should appear.
+\step If you haven't done so already, right-click on the window's
+titlebar and select ``Properties.'' Click on the Layout tab and change
+the ``Screen Buffer Size'' to 9999. This will allow you to scroll
+backwards and see the entire history of your DISKPART session.
+\step Type |help| to see the list of commands that the DISKPART
+command supports. You may need to make the window larger.
+
+\step Create a 16MB virtual disk with the command:
+
+\begin{Verbatim}
+DISKPART> create vdisk file="C:\disk1.vhd" maximum=16
+\end{Verbatim}
+
+\step Attach the disk you just created:
+\begin{Verbatim}
+DISKPART> attach vdisk
+\end{Verbatim}
+
+\step Verify that the disk is attached:
+\begin{Verbatim}
+DISKPART> list disk
+...
+DISKPART> list vdisk
+\end{Verbatim}
+
+\step Now we need to create a partition, assign a letter to that
+partition, and format the drive. We will call this drive K: and format
+it with FAT. 
+\begin{Verbatim}
+DISKPART> create partition primary
+DISKPART> assign letter=k
+DISKPART> format fs=fat label="WORK"
+\end{Verbatim}
+
+At this point we have a 16MB virtual disk attached to the computer as
+drive K:. The drive's contents are stored in the file |C:\disk1.vhd|.
+
+Lastly, we want to put a file on this disk. For test purposes we are
+going to use a small file with a distinctive file name and file
+contents.
+
+\step Run the windows NotePad program by clicking the Start program,
+typing ``Notepad'' into the search field, and clicking on the icon.
+
+\step Type this text into the document:  ``The phone number is
+202-555-1212.'' You can use your own phone number and add additional
+information if you wish.
+
+\step Select ``File/Save As'' and save the file on the WORK (K:) drive
+with the name ``file-name-example-0001.txt''. 
+
+\step Close the Notepad program.
+
+\step Now we will detach the virtual disk:
+
+\begin{Verbatim}
+DISKPART> detach vdisk
+\end{Verbatim}
+\end{steps}
+
+\subsection{Looking for the files}
+The 
+
+\section{Terminology}
+\sgraphic{art/diskpart-1}{The Windows diskpart command is used to create and
+  manage physical and virtual disks.}
+
+
+Allocated
+
+Blocks
+
+Carving
+
+Clusters
+
+Deleted
+
+File Allocation Table
+
+Free List
+
+inode
+
+Hard Link
+
+Symbolic Link
+
+Master File Table
+
+Overwritten
+
+TRIM Command
+
+Undelete
+
+Unlink
+
+
+
+\section{File Deletion and Deleted File Recovery}\label{deleted_file_recovery}
+Different file system implementations delete files in different ways.
+
+Traditionally, file systems simply \emph{unlinked} files---the pointer
+to the file was removed from the directory, and the blocks associated
+with the file were returned to the free list.
+
+
+\section{Exploiting File System Metadata}
+File system metadata can be used to determine usage. 
+\cite{dfrws2011:JonathanGrier}
+
+% October 12
+\bibliographystyle{is-plain}
+\bibliography{textbook,../../domex/papers/bib/forensics,../../domex/papers/bib/garfinkel}  % sigproc.bib is the name of the Bibliography in this case
+\end{document}

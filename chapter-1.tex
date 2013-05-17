@@ -1,0 +1,143 @@
+\chapter{Introduction}
+something about the introduction
+\section{Python used in this book}
+This book makes extensive use of the Python programming language for
+its examples. All of the examples are tested under Python 3.3,
+although other versions of Python (including 2.7) will work in many
+cases. 
+
+A few aspects of Python used are not taught in other texts and will be
+described here.
+
+\subsection{Python Binary files}
+Python files can be opened as \emph{text} or as \emph{binary}. When
+opened as text, Python assumes that the files contained text
+characters that have been encoded with an appropriate codec. This can
+cause problems when reading binary data, since many binary
+combinations do not represent valid characters. To avoid this problem,
+files will normally be opened in binary mode. This is done by opening
+files with method |open(filename,"rb")|.
+
+\subsection{Python struct.unpack}
+Much of the information on computers is stored as binary encoded
+values. Such values can be easily read and written using python's
+|struct.unpack| method, which reads a binary structure and returns a
+python tuple of the decoded values.  
+
+The binary structure is decoded using a \emph{format
+  specification}. For example, this Python fragment will print the
+decimal value of the hex string DEADBEEFh:
+
+\lstinputlisting[caption=A program to print the text value of the
+  string DEADBEEFh]{intro/deadbeef.py}
+
+
+
+
+
+\section{Conventions used in this book}
+In general this book follows Wikipedia conventions:
+
+
+\subsection{Radix}
+Numbers are generally assumed to be in base 10 unless otherwise
+specified. Binary digits will be suffixed with a ``b''' octal
+is indicated with a leading ``0'' as in the case in most programming
+languages; hexadecimal numbers will have a suffix of an ``h'' in text
+but may be prefixed with |0x| or |\x|. Unfortunately there are
+exceptions which must be inferred from context. For example, hex dumps
+and cryptographic hashes are always presented as unadorned hexadecimal
+digits. Examples are shown in \tabref{nomen}.
+
+\begin{table}
+\begin{tabular}{rlcrl}
+     &              &         & Decimal  \\
+Base & Nomenclature & Example & Equivalent & Usage \\
+\hline
+2  & Binary      & 10101111b & 175  & Text\\
+8  & Octal       & 0377      & 255  & Text and code\\
+                 & |\377|    & 255  & Code\\
+10 & Decimal     & 1234      & 1234 & Text and code\\
+16 & Hexadecimal & DEADBEEFh & 3,735,928,559 & text \\
+                 & 0xFF      & 255  & Output \\
+                 & |\xFF|    & 255  & Python code\\
+\end{tabular}
+\caption{Examples of numbers in various bases used in this book.}
+\end{table}
+
+\subsubsection{Units}
+
+
+\subsection{Multipliers}
+\marginpar{1MB = 1,000,000 bytes}
+\marginpar{1MiB = 1,048,576 bytes}
+
+Today there are two standards in computing for representing sizes of
+files, storage systems, and memory banks: SI (the International System
+of Units) decimal prefixes and IEC (International Electrotechnical
+Commission) binary prefixes. This situation is confusing because until
+recently the SI prefix names \emph{kilo}, \emph{mega} and \emph{giga} were commonly used
+for both decimal and binary notation, the correct multiplier being
+inferred from usage. Today there is an effort underway to clarify
+usage. This section describes correct usage and provides hints for
+determining when usage is incorrect.
+
+SI decimal prefixes are commonly used to represent metric
+quantities. For example, the SI prefix \emph{giga} multiplies the value that follows by
+$10^9$; thus a gigabyte (GB) is
+$10^9=1,000,000,000$ bytes. (Confusingly, this is called a billion bytes
+in the US but a thousand million bytes in Great Britain, although the
+Oxford Dictionary English (British Edition) that ships with MacOS 10.8
+calls such usage ``dated.'')
+
+The IEC prefix \emph{gibi} multiples the value following by $2^{30}$. A \emph{gibibyte}
+(GiB) is thus $2^{30}=1,073,741,824$ bytes. This has been proper usage
+since 1999 when the IEC adopted standard 60027-2 for binary prefixes.
+
+The confusion dates back to the early days of computing, when the ``K''
+and ``M'' prefixes were commonly used to mean 1,024 and 1,048,576
+when describing memory systems but 1,000 and 1,000,000 when
+describing mass storage systems. The difference in terminology resulted
+from the way that these systems were addressed. Memory was addressed
+by a series of binary address lines, while electromechanical drums and
+disks were addressed by specifying a head, a track, and then counting
+sector numbers: such numbers only map to even powers-of-two when the
+number of heads, tracks and sectors are also even powers-of-two, and
+this is rarely the case due to manufacturing concerns.
+
+For much of computing history the correct sense of Ks and Ms could be
+inferred from context and, in any event, the difference between 1000
+and 1024 wasn't all that significant.
+
+The difference in interpretation became an issue in the 1990s as the
+number of people using computers mushroomed and as the commonly used
+prefixes went from Ks to Ms and then Gs, resulting in a larger
+divergence between the power-of-two measurement and the corresponding
+power-of-ten measurement. The IEC prefixes were proposed in
+1996\cite{iec:1996},
+published as an international standard in 1999, and adopted by the
+International Standards organization with the addition of prefixes for
+describing exbi (Ei=$2^{60}$), zebi (Zi=$2^{70}$) and yobi (Yi=$2^{80}$) byte
+quantities in 2008\cite{iec:80000-13:2008}.  
+
+Despite this standardization effort, today we live in a somewhat
+confusing world in which 4GB memory sticks sold as system RAM can
+store 4,294,967,296 bytes of data but 4GB microSD cards sold for cell
+phones are only warranted to store 4,000,000,000 bytes of
+data. However, since those 4 billion bytes are organized in 512-byte
+logical sectors, the microSD card actually has roughly 7,812,500
+sectors available to store user data. This number that  doesn't make much sense technically, but
+makes a great deal of sense from an economic point of view. On a
+typical flash chip a significant number of the storage cells do not
+function properly: these bad cells are mapped out of the logical
+address space during the manufacturing process. There will be more
+chips with 7.8 million functioning sectors than with 8 million. 
+
+It is likely that the IEC binary prefixes will show increased use
+with time. Therefore this book uses them to describe block size and
+sector size, since they are typically multiples of 512 ($2^9$), but 
+SI decimal prefixes are used to describe disk sizes, since that is the way
+the devices are sold to consumers.
+
+
+
