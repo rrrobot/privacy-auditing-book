@@ -1,6 +1,6 @@
 textbook.pdf: textbook.tex textbook.bib Makefile
 	pdflatex textbook
-	echo makeindex textbook -s StyleInd.ist
+	makeindex textbook -s StyleInd.ist
 	biber textbook
 	pdflatex textbook
 	pdflatex textbook

@@ -1,15 +1,23 @@
-\usepackage{xspace}             % optional spaces
-\usepackage{paralist}           % gives compactitem, etc.
+% http://tex.stackexchange.com/questions/27663/using-bold-italic-text-inside-listings
+% \usepackage{lmodern}
+\usepackage[scaled=0.90]{couriers}
+
+% http://tex.stackexchange.com/questions/17009/how-to-change-code-example-font-in-listings
 \usepackage{listings}           % source code listings
+
+
+\usepackage{xspace}             % optional spaces
 \usepackage{tabularx}           % the ``X'' for tables
 \usepackage{pifont}             % symbols
 \usepackage{color}              % some people like commenting in color
+\usepackage{multirow}
 \usepackage{fancyvrb}
   \DefineShortVerb{\|}            % makes |foo| a verbatim command
 
 
-\newcommand{\slgbooktitle}{Technical Privacy Auditing with Computer
-  Forensics Tools} \newcommand{\slgbookcopyright}{Public Domain}
+\newcommand{\slgbookauthor}{Simson L.\ Garfinkel}
+\newcommand{\slgbooktitle}{Technical Privacy Auditing with Computer Forensics Tools} 
+\newcommand{\slgbookcopyright}{Public Domain}
 \newcommand{\slgbookpublisher}{DRAFT}
 \newcommand{\slgbookurl}{www.digitalcorpora.org}
 \newcommand{\slgbookfrontmatter}{This is a work of the US
@@ -51,3 +59,4 @@
   \caption{#3\label{#2}}
   \end{figure}
 }
+

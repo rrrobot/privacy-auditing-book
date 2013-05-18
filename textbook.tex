@@ -40,7 +40,7 @@
 
 \documentclass[11pt,fleqn]{book} % Default font size and left-justified equations
 
-\usepackage[top=3cm,bottom=3cm,left=3.2cm,right=3.2cm,headsep=10pt,a4paper]{geometry} % Page margins
+\usepackage[top=3cm,bottom=3cm,left=1.5in,right=1.5in,headsep=10pt]{geometry} % Page margins
 \usepackage{xcolor} % Required for specifying colors by name
 \definecolor{ocre}{RGB}{243,102,25} % Define the orange color used for highlighting throughout the book
 
@@ -53,7 +53,10 @@
 
 % Bibliography
 \usepackage[style=alphabetic,sorting=nyt,sortcites=true,autopunct=true,babel=hyphen,hyperref=true,abbreviate=false,backref=true,backend=biber]{biblatex}
-\addbibresource{bibliography.bib} % BibTeX bibliography file
+ \addbibresource{textbook.bib} % BibTeX bibliography file
+ \addbibresource{../../domex/papers/bib/forensics.bib} % BibTeX bibliography file
+ \addbibresource{../../domex/papers/bib/garfinkel.bib} % BibTeX bibliography file
+ \addbibresource{../../domex/papers/bib/dfrws.bib} % BibTeX bibliography file
 \defbibheading{bibempty}{}
 
 % Index
@@ -64,11 +67,10 @@
 %----------------------------------------------------------------------------------------
 
 \input{orange/structure} % Insert the commands.tex file which contains the majority of the structure behind the template
-
-
 \usepackage{hyperref}
-\begin{document}
 
+\input{book-preamble}
+\begin{document}
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
@@ -79,9 +81,9 @@
 \centering
 \vspace*{9cm}
 \par\normalfont\fontsize{35}{35}\sffamily\selectfont
-\par % Book title
+\par \slgbooktitle % Book title
 \vspace*{1cm}
-{\Huge Simson L. Garfinkel}\par % Author name
+{\Huge \slgbookauthor}\par % Author name
 \endgroup
 
 %----------------------------------------------------------------------------------------
@@ -92,21 +94,16 @@
 ~\vfill
 \thispagestyle{empty}
 
-\noindent Public Domain\\ % Copyright notice
+\noindent \slgbookcopyright\\ % Copyright notice
 
-\noindent \textsc{DRAFT}\\ % Publisher
+\noindent \textsc{\slgbookpublisher}\\ % Publisher
 
-\noindent \textsc{www.digitalcorpora.org}\\ % URL
+\noindent \textsc{\slgbookurl}\\ % URL
 
-\noindent  This is a work of the US Government. In accordance with 17 USC 105,
- copyright protection is not available for any work of the US Government.
-
- This text is distributed in the hope that it will be useful, but
- WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+\noindent  \slgbookfrontmatter
  
 
-\noindent \textit{First draft, May 2013} % Printing/edition date
+\noindent \textit{\slgbookdate} % Printing/edition date
 
 %----------------------------------------------------------------------------------------
 %	TABLE OF CONTENTS
@@ -122,145 +119,7 @@
 
 \pagestyle{fancy} % Print headers again
 
-%----------------------------------------------------------------------------------------
-%	CHAPTER 1
-%----------------------------------------------------------------------------------------
-
-\chapterimage{orange/Pictures/chapter_head_2.pdf} % Chapter heading image
-
-
-\section{Paragraphs of Text}\index{Paragraphs of Text}
-
-\lipsum[1-7] % Dummy text
-
-%------------------------------------------------
-
-\section{Citation}\index{Citation}
-
-This statement requires citation \cite{book_key}; this one is more specific \cite[122]{article_key}.
-
-%------------------------------------------------
-
-\section{Lists}\index{Lists}
-
-Lists are useful to present information in a concise and/or ordered way\footnote{Footnote example...}.
-
-\subsection{Numbered List}\index{Lists!Numbered List}
-
-\begin{enumerate}
-\item The first item
-\item The second item
-\item The third item
-\end{enumerate}
-
-\subsection{Bullet Points}\index{Lists!Bullet Points}
-
-\begin{itemize}
-\item The first item
-\item The second item
-\item The third item
-\end{itemize}
-
-\subsection{Descriptions and Definitions}\index{Lists!Descriptions and Definitions}
-
-\begin{description}
-\item[Name] Description
-\item[Word] Definition
-\item[Comment] Elaboration
-\end{description}
-
-%----------------------------------------------------------------------------------------
-%	CHAPTER 2
-%----------------------------------------------------------------------------------------
-
-\chapter{Designing a good forensics experiment}
-
-\section{one}
-\section{two}
-
-%------------------------------------------------
-
-\section{Definitions}\index{Definitions}
-
-This is an example of a definition. A definition could be mathematical or it could define a concept.
-
-%------------------------------------------------
-
-%------------------------------------------------
-
-%------------------------------------------------
-
-%------------------------------------------------
-
-%------------------------------------------------
-
-%------------------------------------------------
-
-\section{Exercises}\index{Exercises}
-
-This is an example of an exercise.
-
-\begin{exercise}
-This is a good place to ask a question to test learning progress or further cement ideas into students' minds.
-\end{exercise}
-
-%------------------------------------------------
-
-\section{Problems}\index{Problems}
-
-\begin{problem}
-What is the average airspeed velocity of an unladen swallow?
-\end{problem}
-
-%------------------------------------------------
-
-\section{Vocabulary}\index{Vocabulary}
-
-Define a word to improve a students' vocabulary.
-
-\begin{vocabulary}[Word]
-Definition of word.
-\end{vocabulary}
-
-%----------------------------------------------------------------------------------------
-%	CHAPTER 3
-%----------------------------------------------------------------------------------------
-
-\chapterimage{orange/Pictures/chapter_head_1.pdf} % Chapter heading image
-\chapter{Operational Concerns}
-
-\section{Table}\index{Table}
-
-Not many tables.
-
-\chapter*{Part 2: Data Leaks in Documents and Databases}
-In this section, we'll look at actual data leaks.
-
-\section{one}
-\section{two}
-
-
-\lipsum[2]
-
-\chapter{Private Data in PDFs}
-
-\section{one}
-\section{two}
-
-
-\begin{itemize}\item foo\end{itemize}
-\section{A section }
-\lipsum[2]
-\section{A section }
-\lipsum[2]
-
-\chapter{Directory Container Files}
-\begin{itemize}\item foo\end{itemize}
-\section{A section }
-\lipsum[2]
-\section{A section }
-\lipsum[2]
-
+\input{book-body}
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
 %----------------------------------------------------------------------------------------

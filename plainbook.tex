@@ -46,20 +46,6 @@
 \usepackage{url}		% nice handling of URLs
 \usepackage{times}
 
-% Steps
-% http://tex.stackexchange.com/questions/32798/a-step-by-step-environment
-\usepackage{xparse}
-\DeclareDocumentEnvironment{steps}%
-{O{Step}}% If no argument is given the label defaults to 'Step'
-{\begin{enumerate}[label=#1 \arabic*]}%
-{\end{enumerate}}
-
-\makeatletter% http://tex.stackexchange.com/questions/29517/forcing-new-line-after-item-number-in-enumerate-environment/29518#29518
-\def\step{%
-   \@ifnextchar[ \@step{\@noitemargtrue\@step[\@itemlabel]}}
-\def\@step[#1]{\item[#1]\mbox{}\hspace*{\dimexpr-\labelwidth-\labelsep}}
-\makeatother
-
 
 \newcommand{\wikipedia}[1]{See \url{#1}}
 \newcommand{\wikipediab}[1]{ and \url{#1}}

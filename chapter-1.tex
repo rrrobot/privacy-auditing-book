@@ -2,12 +2,37 @@
 something about the introduction
 \section{Python used in this book}
 This book makes extensive use of the Python programming language for
-its examples. All of the examples are tested under Python 3.3,
-although other versions of Python (including 2.7) will work in many
-cases. 
+its examples. All of the examples are tested under Python~3.3,
+although Python~2.7 will work with most of the demonstration programs
+as well.
 
-A few aspects of Python used are not taught in other texts and will be
-described here.
+Examples in this book should run on Windows, Macintosh and Linux-based
+systems. The code was largely developed on a Mac, which is similar to
+Linux. For differences between Windows, Mac and Linux, see
+\secref{os-differences}.
+
+
+\subsection{Getting Python 3}
+\subsubsection{Windows}
+Windows users should download the most recent version of Python 3 from
+\url{http://www.python.org/getit}. Use the \emph{Windows X86-64 MSI
+  Installer} if you have a 64-bit system and a \emph{Windows x86 MSI
+  Installer} for 32-bit system. Although the 32-bit version will work
+on a 64-bit system, 32-bit programs running on a 64-bit system are
+presented with a slightly incorrect view of the computer's file
+system, which can be confusing in some instances.\footnote{Microsoft
+  uses the term Windows on Windows 64, or WOW64, to describe the
+  process of running 32-bit applications on 64 bit Windows. For a
+  complete discussion, search for WOW64 on MSDN or Wikipedia.}
+
+\subsubsection{Linux}
+On Linux systems you may need to explicitly install Python 3. Do so on
+Fedora by typing:
+
+\texttt{\$ \textbf{sudo yum install python3}}
+
+
+\subsubsection{MacOS}
 
 \subsection{Python Binary files}
 Python files can be opened as \emph{text} or as \emph{binary}. When
@@ -32,7 +57,53 @@ decimal value of the hex string DEADBEEFh:
   string DEADBEEFh]{intro/deadbeef.py}
 
 
+\section{Differences between Windows, Macintosh and Linux}
 
+This section lists key differences between the operating systems that
+can run Python. 
+
+It is our experience that most students and most forensics
+practitioners in the US are using versions of Microsoft Windows
+(mostly XP and 7), while most forensics developers and researchers are
+using either MacOS or Linux. Although these three operating systems
+have different ways of performing many of the same functions, many
+high-level languages attempt to mask the differences and provide a
+common environment to allow code portability. 
+through of as one OS and L
+
+\subsection{Path Delimiter}
+Windows uses the backslash (|\|) as a path delimiter, while Unix
+systems use the forward slash (|/|). In general this is not a problem,
+because Python run on Windows will treat either slash as a path
+delimiter.
+
+\subsection{Physical and Raw Disk Devices}
+A ``raw'' device is a device file that can be opened by user programs
+like a normal file but reads and writes are sent directly to the
+underlying physical device. Typically access to the raw disk devices 
+requires administrative privileges, since access to the raw device
+bypasses the computer's operating system.
+
+Windows uses a variety of hidden file names to access raw devices,
+including the legacy DOS devices (CON, PRN, NUL, etc.) 
+Physical drives are accessed as |\\.\PhysicalDrive0| through
+|\\.\PhysicalDriveNN|. To open the physical drive for reading use use
+mode |rb|, for writing use the ``updating'' mode |rb+|.
+
+Unix-based systems associate two pseudo-files in the |/dev/| directory with
+each physical device; additional pseudo-files map to disk
+partitions. Macs use |/dev/diskNN| for block devices and
+|/dev/rdiskNN| for raw devices. Partitions are identified by appending
+a |sJ|, where |J| is the partition number.
+
+Linux systems name block devices |/dev/sdA| where |A| is a letter |a|
+through the highest device letter; partitions are identified with an
+appended letter. Modern Linux systems also map physical devices in
+additional locations, including the directory |/dev/disk/by-uuid/| for
+a list of drives by UUID, |/dev/disk/by-partuuid| for partitions by
+UUID, |/dev/disk/by-path| for their location on the PCI or SCSI bus,
+and |/dev/disk/by-id| for device IDs. Linux systems may also map
+block devices in the |/sys/dev/block/| and character devices in |/sys/dev/char/|.
 
 
 \section{Conventions used in this book}

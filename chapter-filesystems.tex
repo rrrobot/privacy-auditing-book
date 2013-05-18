@@ -50,7 +50,6 @@ content with NULL bytes. You can do this
 easily with the program in \figref{overwrite}.
 
 
-\lstset{basicstyle=\footnotesize,numbers=left,numberstyle=\tiny}
 \lstinputlisting[caption=A simple program to clear a disk.]{fs/clear.py}
 \begin{figure}
 \begin{lstlisting}
@@ -316,22 +315,22 @@ sectors are used for a \emph{partition table} that describes the
 locations of the file systems. In this way a single device can be used
 to simulate multiple logical devices. Two commonly used partitioning
 schemes are the \emph{Master Boot Record} and the \emph{GUID Partition
-  Table} scheme.\wikipedia{http://en.wikipedia.org/wiki/GUID_Partition_Table}
-       \wikipediab{http://en.wikipedia.org/wiki/Master_boot_record}
+  Table} scheme.\url{http://en.wikipedia.org/wiki/GUID_Partition_Table}
+       \url{http://en.wikipedia.org/wiki/Master_boot_record}
 
 The term \emph{physical volume} is used variously to describe a
 physical disk, a partition on a physical disk, or a Logical Unit
 Number (LUN) of a storage
-system.\wikipedia{http://en.wikipedia.org/wiki/Logical_Unit_Number}
+system.\url{http://en.wikipedia.org/wiki/Logical_Unit_Number}
 Physical volumes can be used directly to hold a file system or can be
 grouped together with a Logical Volume Management (LVM)
-system\wikipedia{http://en.wikipedia.org/wiki/Logical_volume_management}. An
+system\url{http://en.wikipedia.org/wiki/Logical_volume_management}. An
 LVM can group multiple physical volumes together in to a single
 physical volume that is large or more reliable than the volumes that
 it built from. Volume managers can also implement
-\emph{snapshots}\wikipedia{http://en.wikipedia.org/wiki/Snapshot_(computer_storage)}
+\emph{snapshots}\url{http://en.wikipedia.org/wiki/Snapshot_(computer_storage)}
 through the use of
-\emph{copy-on-write}\wikipedia{http://en.wikipedia.org/wiki/Copy-on-write}.
+\emph{copy-on-write}\url{http://en.wikipedia.org/wiki/Copy-on-write}.
 
 \subsection{Files and File Systems}
 The word \emph{file} is commonly used to describe a sequence of data
@@ -341,11 +340,11 @@ that is set at any given point in time, but can be readily
 changed. Files can have names and other associated \emph{metadata}
 such as timestamps, an owner, and a group. Files have traditionally
 been grouped together in
-\emph{directories}\wikipedia{http://en.wikipedia.org/wiki/File_directory}. also
+\emph{directories}\url{http://en.wikipedia.org/wiki/File_directory}. also
 called \emph{folders}. 
 
 The phrase \emph{File
-  System}\wikipedia{http://en.wikipedia.org/wiki/Computer_file} is
+  System}\url{http://en.wikipedia.org/wiki/Computer_file} is
 used to describe the part of the computer's operating
 system that manages a storage system. However, the term is also used
 to describe the very sectors on a mass storage device that contain the
@@ -457,39 +456,40 @@ and empty the trash. Finally we will inspect the disk image and see if
 we can find the text file and the screen shot.
 
 
+\begin{enumerate}
 
-\begin{steps}
-\step Click the Start button, type |diskpart| into the search field,
+
+\item Click the Start button, type |diskpart| into the search field,
 and click on the |diskpart| program icon.
-\step The User Account Control will ask you to verify that you want to
+\item The User Account Control will ask you to verify that you want to
 run the DiskPart, a program that can make ``changes to the computer.''
 Click ``Yes.''  The |diskpart.exe| window should appear.
-\step If you haven't done so already, right-click on the window's
+\item If you haven't done so already, right-click on the window's
 titlebar and select ``Properties.'' Click on the Layout tab and change
 the ``Screen Buffer Size'' to 9999. This will allow you to scroll
 backwards and see the entire history of your DISKPART session.
-\step Type |help| to see the list of commands that the DISKPART
+\item Type |help| to see the list of commands that the DISKPART
 command supports. You may need to make the window larger.
 
-\step Create a 16MB virtual disk with the command:
+\item Create a 16MB virtual disk with the command:
 
 \begin{Verbatim}
 DISKPART> create vdisk file="C:\disk1.vhd" maximum=16
 \end{Verbatim}
 
-\step Attach the disk you just created:
+\item Attach the disk you just created:
 \begin{Verbatim}
 DISKPART> attach vdisk
 \end{Verbatim}
 
-\step Verify that the disk is attached:
+\item Verify that the disk is attached:
 \begin{Verbatim}
 DISKPART> list disk
 ...
 DISKPART> list vdisk
 \end{Verbatim}
 
-\step Now we need to create a partition, assign a letter to that
+\item Now we need to create a partition, assign a letter to that
 partition, and format the drive. We will call this drive K: and format
 it with FAT. 
 \begin{Verbatim}
@@ -505,24 +505,25 @@ Lastly, we want to put a file on this disk. For test purposes we are
 going to use a small file with a distinctive file name and file
 contents.
 
-\step Run the windows NotePad program by clicking the Start program,
+\item Run the windows NotePad program by clicking the Start program,
 typing ``Notepad'' into the search field, and clicking on the icon.
 
-\step Type this text into the document:  ``The phone number is
+\item Type this text into the document:  ``The phone number is
 202-555-1212.'' You can use your own phone number and add additional
 information if you wish.
 
-\step Select ``File/Save As'' and save the file on the WORK (K:) drive
+\item Select ``File/Save As'' and save the file on the WORK (K:) drive
 with the name ``file-name-example-0001.txt''. 
 
-\step Close the Notepad program.
+\item Close the Notepad program.
 
-\step Now we will detach the virtual disk:
+\item Now we will detach the virtual disk:
 
 \begin{Verbatim}
 DISKPART> detach vdisk
 \end{Verbatim}
-\end{steps}
+
+\end{enumerate}
 
 \subsection{Looking for the files}
 The 

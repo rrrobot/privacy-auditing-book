@@ -1,0 +1,34 @@
+\documentclass{article}
+\usepackage{soul,listings,xcolor}
+
+    \lstnewenvironment{teX}[1][]
+      {\lstset{language=[LaTeX]TeX}\lstset{escapeinside={(*@}{@*)},
+       numbers=left,numberstyle=\normalsize,stepnumber=1,numbersep=5pt,
+       breaklines=true,
+       %firstnumber=last,
+           %frame=tblr,
+           framesep=5pt,
+           basicstyle=\normalsize\ttfamily,
+           showstringspaces=false,
+           keywordstyle=\itshape\color{blue},
+          %identifierstyle=\ttfamily,
+           stringstyle=\color{maroon},
+        commentstyle=\color{black},
+        rulecolor=\color{black},
+        xleftmargin=0pt,
+        xrightmargin=0pt,
+        aboveskip=\medskipamount,
+        belowskip=\medskipamount,
+               backgroundcolor=\color{white}, #1
+    }}
+    {}
+    \begin{document}
+
+
+    \begin{teX}
+      \test{this is some code}
+      (*@  \textcolor{blue}{code}  @*)
+      (*@  \hl{yellow code}  @*)
+      (*@ this is a \$test @*)
+    \end{teX}
+    \end{document}
