@@ -5,6 +5,10 @@ textbook.pdf: textbook.tex textbook.bib Makefile
 	pdflatex textbook
 	pdflatex textbook
 
+g:
+	pdflatex textbook
+	open textbook.pdf
+
 plainbook: plainbook.pdf
 
 pb: plainbook.pdf

@@ -2,7 +2,7 @@
 \usepackage{soul,listings,xcolor}
 
     \lstnewenvironment{teX}[1][]
-      {\lstset{language=[LaTeX]TeX}\lstset{escapeinside={(*@}{@*)},
+      {\lstset{language=[LaTeX]TeX}\lstset{escapeinside={(@}{@)},
        numbers=left,numberstyle=\normalsize,stepnumber=1,numbersep=5pt,
        breaklines=true,
        %firstnumber=last,
@@ -27,8 +27,8 @@
 
     \begin{teX}
       \test{this is some code}
-      (*@  \textcolor{blue}{code}  @*)
-      (*@  \hl{yellow code}  @*)
-      (*@ this is a \$test @*)
+      (@  \textcolor{blue}{code}  @)
+      (@  \hl{yellow code}  @)
+      (@ this is a \$test @)
     \end{teX}
     \end{document}

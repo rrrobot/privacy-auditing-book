@@ -40,8 +40,11 @@
 
 \documentclass[11pt,fleqn]{book} % Default font size and left-justified equations
 
-\usepackage[top=3cm,bottom=3cm,left=1.5in,right=1.5in,headsep=10pt]{geometry} % Page margins
-\usepackage{xcolor} % Required for specifying colors by name
+\usepackage[top=1in,bottom=1in,left=1.5in,right=1.5in,
+  marginparwidth=1in,
+  marginparsep=12pt,
+  headsep=10pt]{geometry}           % Page margins
+\usepackage{xcolor}                 % Required for specifying colors by name
 \definecolor{ocre}{RGB}{243,102,25} % Define the orange color used for highlighting throughout the book
 
 % Font Settings
@@ -82,8 +85,13 @@
 \vspace*{9cm}
 \par\normalfont\fontsize{35}{35}\sffamily\selectfont
 \par \slgbooktitle % Book title
+
 \vspace*{1cm}
+
 {\Huge \slgbookauthor}\par % Author name
+
+\slgbookdate
+
 \endgroup
 
 %----------------------------------------------------------------------------------------

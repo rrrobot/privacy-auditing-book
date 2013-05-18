@@ -1,110 +1,7 @@
 \chapter{Introduction}
-something about the introduction
-\section{Python used in this book}
-This book makes extensive use of the Python programming language for
-its examples. All of the examples are tested under Python~3.3,
-although Python~2.7 will work with most of the demonstration programs
-as well.
-
 Examples in this book should run on Windows, Macintosh and Linux-based
 systems. The code was largely developed on a Mac, which is similar to
-Linux. For differences between Windows, Mac and Linux, see
-\secref{os-differences}.
-
-
-\subsection{Getting Python 3}
-\subsubsection{Windows}
-Windows users should download the most recent version of Python 3 from
-\url{http://www.python.org/getit}. Use the \emph{Windows X86-64 MSI
-  Installer} if you have a 64-bit system and a \emph{Windows x86 MSI
-  Installer} for 32-bit system. Although the 32-bit version will work
-on a 64-bit system, 32-bit programs running on a 64-bit system are
-presented with a slightly incorrect view of the computer's file
-system, which can be confusing in some instances.\footnote{Microsoft
-  uses the term Windows on Windows 64, or WOW64, to describe the
-  process of running 32-bit applications on 64 bit Windows. For a
-  complete discussion, search for WOW64 on MSDN or Wikipedia.}
-
-\subsubsection{Linux}
-On Linux systems you may need to explicitly install Python 3. Do so on
-Fedora by typing:
-
-\texttt{\$ \textbf{sudo yum install python3}}
-
-
-\subsubsection{MacOS}
-
-\subsection{Python Binary files}
-Python files can be opened as \emph{text} or as \emph{binary}. When
-opened as text, Python assumes that the files contained text
-characters that have been encoded with an appropriate codec. This can
-cause problems when reading binary data, since many binary
-combinations do not represent valid characters. To avoid this problem,
-files will normally be opened in binary mode. This is done by opening
-files with method |open(filename,"rb")|.
-
-\subsection{Python struct.unpack}
-Much of the information on computers is stored as binary encoded
-values. Such values can be easily read and written using python's
-|struct.unpack| method, which reads a binary structure and returns a
-python tuple of the decoded values.  
-
-The binary structure is decoded using a \emph{format
-  specification}. For example, this Python fragment will print the
-decimal value of the hex string DEADBEEFh:
-
-\lstinputlisting[caption=A program to print the text value of the
-  string DEADBEEFh]{intro/deadbeef.py}
-
-
-\section{Differences between Windows, Macintosh and Linux}
-
-This section lists key differences between the operating systems that
-can run Python. 
-
-It is our experience that most students and most forensics
-practitioners in the US are using versions of Microsoft Windows
-(mostly XP and 7), while most forensics developers and researchers are
-using either MacOS or Linux. Although these three operating systems
-have different ways of performing many of the same functions, many
-high-level languages attempt to mask the differences and provide a
-common environment to allow code portability. 
-through of as one OS and L
-
-\subsection{Path Delimiter}
-Windows uses the backslash (|\|) as a path delimiter, while Unix
-systems use the forward slash (|/|). In general this is not a problem,
-because Python run on Windows will treat either slash as a path
-delimiter.
-
-\subsection{Physical and Raw Disk Devices}
-A ``raw'' device is a device file that can be opened by user programs
-like a normal file but reads and writes are sent directly to the
-underlying physical device. Typically access to the raw disk devices 
-requires administrative privileges, since access to the raw device
-bypasses the computer's operating system.
-
-Windows uses a variety of hidden file names to access raw devices,
-including the legacy DOS devices (CON, PRN, NUL, etc.) 
-Physical drives are accessed as |\\.\PhysicalDrive0| through
-|\\.\PhysicalDriveNN|. To open the physical drive for reading use use
-mode |rb|, for writing use the ``updating'' mode |rb+|.
-
-Unix-based systems associate two pseudo-files in the |/dev/| directory with
-each physical device; additional pseudo-files map to disk
-partitions. Macs use |/dev/diskNN| for block devices and
-|/dev/rdiskNN| for raw devices. Partitions are identified by appending
-a |sJ|, where |J| is the partition number.
-
-Linux systems name block devices |/dev/sdA| where |A| is a letter |a|
-through the highest device letter; partitions are identified with an
-appended letter. Modern Linux systems also map physical devices in
-additional locations, including the directory |/dev/disk/by-uuid/| for
-a list of drives by UUID, |/dev/disk/by-partuuid| for partitions by
-UUID, |/dev/disk/by-path| for their location on the PCI or SCSI bus,
-and |/dev/disk/by-id| for device IDs. Linux systems may also map
-block devices in the |/sys/dev/block/| and character devices in |/sys/dev/char/|.
-
+Linux. 
 
 \section{Conventions used in this book}
 In general this book follows Wikipedia conventions:
@@ -140,8 +37,8 @@ Base & Nomenclature & Example & Equivalent & Usage \\
 
 
 \subsection{Multipliers}
-\marginpar{1MB = 1,000,000 bytes}
-\marginpar{1MiB = 1,048,576 bytes}
+% \note{1MB = 1,000,000 bytes}
+% \note{1MiB = 1,048,576 bytes}
 
 Today there are two standards in computing for representing sizes of
 files, storage systems, and memory banks: SI (the International System
@@ -192,17 +89,17 @@ describing exbi (Ei=$2^{60}$), zebi (Zi=$2^{70}$) and yobi (Yi=$2^{80}$) byte
 quantities in 2008\cite{iec:80000-13:2008}.  
 
 Despite this standardization effort, today we live in a somewhat
-confusing world in which 4GB memory sticks sold as system RAM can
-store 4,294,967,296 bytes of data but 4GB microSD cards sold for cell
-phones are only warranted to store 4,000,000,000 bytes of
-data. However, since those 4 billion bytes are organized in 512-byte
-logical sectors, the microSD card actually has roughly 7,812,500
-sectors available to store user data. This number that  doesn't make much sense technically, but
-makes a great deal of sense from an economic point of view. On a
-typical flash chip a significant number of the storage cells do not
-function properly: these bad cells are mapped out of the logical
-address space during the manufacturing process. There will be more
-chips with 7.8 million functioning sectors than with 8 million. 
+confusing world in which so-called ``4GB'' DRAM modules 
+store precisely 4,294,967,296 bytes
+but ``4GB'' microSD cards sold for cell
+phones store 4,000,000,000 bytes. Even more confusing, the DRAM
+module may have four ($2^{2}$) chips, each storing 1073741824
+($2^{30}$) bytes each, while the microSD card may two million flash
+pages, each with 4096 bytes of usable storage, but present that
+information as precisely 7,812,500 logical 512-byte blocks.  These
+differences are the result of different operational requirements for
+the two kinds of memory, resulting in different kinds of access
+electronics, different kinds of software, and different economics. 
 
 It is likely that the IEC binary prefixes will show increased use
 with time. Therefore this book uses them to describe block size and
@@ -211,4 +108,140 @@ SI decimal prefixes are used to describe disk sizes, since that is the way
 the devices are sold to consumers.
 
 
+\section{Python and Digital Forensics}
+This book makes extensive use of the Python programming language for
+its examples. All of the examples are tested under Python~3.3,
+although Python~2.7 will work with most of the demonstration programs
+as well.  This section describes specific aspects of the Python
+programming language that are important in our examples and that may
+be missed in an introductory Python programming class.
+
+\subsection{Reading and Writing Files with Python}
+
+When a Python program opens a file that file may be opened in one of
+two modes: \emph{text} or \emph{binary}.  When opened as text, Python
+assumes that the files contain text characters that have been encoded
+with an appropriate codec---for example, that they are Unicode files
+coded as UTF-8. Assuming such a codec qcan cause problems when reading
+binary data, since many binary combinations do not represent valid
+characters. To avoid this problem, files will normally be opened in
+binary mode. This is done by opening files with method
+|open(filename,"rb")|.
+
+\subsection{Python struct.unpack}
+Much of the information on computers is stored as binary encoded
+values. Such values can be easily read and written using python's
+|struct.unpack| method, which reads a binary structure and returns a
+python tuple of the decoded values.  
+
+The binary structure is decoded using a \emph{format
+  specification}. For example, this Python fragment will print the
+decimal value of the hex string DEADBEEFh:
+
+\lstinputlisting[caption=A program to print the text value of the
+  string DEADBEEFh]{intro/deadbeef.py}
+
+
+\subsection{Path Delimiter}
+Windows uses the backslash (|\|) as a path delimiter, while Unix
+systems use the forward slash (|/|). In general this is not a problem,
+because Python run on Windows will treat either slash as a path
+delimiter. So in general, this book will use the forward slash as a
+path delimiter, even for code that runs on Windows-based computers.
+
+\subsection{Accessing Raw Devices}
+
+A ``raw'' device is a device file that can be opened by user programs
+like a normal file but reads and writes are sent directly to the
+underlying physical device. Typically access to the raw disk devices 
+requires administrative privileges, since access to the raw device
+bypasses the computer's operating system.
+
+To access the physical drives on a Windows computer open the hidden
+physical drives |\\.\PhysicalDrive0| through
+|\\.\PhysicalDriveNN|. To open the physical drive for reading use use
+mode |rb|, for writing use the ``updating'' mode |rb+|. List the
+physical drives on your Windows system with the command:
+
+\begin{code}
+c:\ (@ \hl{wmic diskdrive list brief /format:list} @)
+\end{code}
+
+Unix-based systems associate two pseudo-files in the |/dev/| directory with
+each physical device; additional pseudo-files map to disk
+partitions. Macs use |/dev/diskNN| for block devices and
+|/dev/rdiskNN| for raw devices. Partitions are identified by appending
+a |sJ|, where |J| is the partition number.  List the physical drives
+on a Mac with the command:
+
+\begin{code}
+$ (@ \hl{ls -l /dev/disk*} @)
+\end{code}
+%$
+
+Linux systems name block devices |/dev/sdA| where |A| is a letter |a|
+through the highest device letter; partitions are identified with an
+appended letter. Modern Linux systems also map physical devices in
+additional locations, including the directory |/dev/disk/by-uuid/| for
+a list of drives by UUID, |/dev/disk/by-partuuid| for partitions by
+UUID, |/dev/disk/by-path| for their location on the PCI or SCSI bus,
+and |/dev/disk/by-id| for device IDs. Linux systems may also map
+block devices in the |/sys/dev/block/| and character devices in
+|/sys/dev/char/|. List the physical drives
+on a Mac with the command:
+
+\begin{code}
+$ (@ \hl{ls -l /dev/sd*} @)
+\end{code}
+%$
+
+
+\section{Setting Up your Computer}
+This section provides recommendations for setting up your computer to
+make the most of the examples and exercises in this book. Remember,
+these are \emph{recommendations,} not requirements.
+
+\subsection{Setting up Windows}
+Windows users should download the most recent version of Python 3 from
+\url{http://www.python.org/getit}. Use the \emph{Windows X86-64 MSI
+  Installer} if you have a 64-bit system and a \emph{Windows x86 MSI
+  Installer} for 32-bit system. Although the 32-bit version will work
+on a 64-bit system, 32-bit programs running on a 64-bit system are
+presented with a slightly incorrect view of the computer's file
+system, which can be confusing in some instances.\footnote{Microsoft
+  uses the term Windows on Windows 64, or WOW64, to describe the
+  process of running 32-bit applications on 64 bit Windows. For a
+  complete discussion, search for WOW64 on MSDN or Wikipedia.}
+
+Once you have installed Python, you may wish to modify your Windows
+console so that it has 132 rows of text and 9999 lines of
+scrollback. You can do this by running the |cmd.exe| program from the
+Start menu then right-clicking on the window's titlebar and selecting
+the ``Properties'' menu, as shown in \figref{intro/windows-console}.
+
+Windows users may also wish to become familiar with the Windows
+PowerShell, a replacement for |cmd.exe|.
+
+\sgraphic{intro/windows-console}{Setting your Windows console for 132
+  rows of text and 9999 lines of scrollback will improve the usability
+  of many text-based commands.}
+
+\subsection{Linux}
+On Linux systems you may need to explicitly install Python 3. Do so on
+Fedora by typing:
+
+\begin{code}
+$ (@ \hl{sudo yum install python3} @) 
+\end{code} 
+% $
+
+\subsection{MacOS}
+
+For Mac systems we recommend installing Python 3 with the MacPorts
+system. Download MacPorts from \url{http://macports.org/} and then type:
+
+\begin{code}
+$ (@ \hl{sudo port install python33} @) 
+\end{code} 
+% $
 

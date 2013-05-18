@@ -1,11 +1,114 @@
+
+
 \chapter{Finding Hidden Data in File Systems}
+As a computer user you are no doubt familiar with files. This
+chapter look in detail at how files are stored on \emph{mass
+  storage devices} such as hard drives, USB memory sticks, and camera
+cards. This chapter will describe how to directly extract files by
+manually decoding the information on the media placed there by the
+operating system. It will also show how to find hidden data that might
+be left behind by the computer, such as the names of files that have
+been deleted, the deleted files themselves, and other kinds of
+potentially privacy sensitive information. 
+
+\section{Disks, Sectors, Files and File Systems}
+In the 1950s engineers at IBM devised a method for storing digital
+information on a rotating ferromagnetic disc. As the disk spun a pair
+of read/write heads (one for the top side, one for the under side)
+could be moved to one of several set distances from the center of the
+disk. Each surface of the disk was thus divided into a set of stacked
+concentric tracks, called \emph{cylinders}, each divided into a set of
+adjacent sectors.
+
+ \twofigures{.5\textwidth}{fs/Cylinder_Head_Sector}{The structure of a mass storage
+   system divides each disk into multiple tracks, each of which has
+  multiple sectors.}{.5\textwidth}{fs/Disk-structure2}{something}
+
+
+
+This basic structure of storing data on sectors of spinning magnetic
+media remains in use today. A modern 3.5-inch hard drive might have two
+spinning surfaces that together store 2~terabytes of data, whereas
+IBM's 350- had 100 spinning surfaces that stored 3.75~megabytes of
+data, but the underlying principal is the same.\footnote{The actual IBM 350
+  shared a pair of heads for the 100 disk drives, requiring
+  independent seeks to reach any cylinder; it wasn't until the IBM 353
+  that each magnetic surface was given its own read/write head,
+  resulting in dramatic performance improvements. For more information
+  see \url{http://en.wikipedia.org/wiki/IBM_magnetic_disk_drives}}
+
+NOTE: Spinning disk systems are called \emph{random access} devices because
+the sectors can be read or written in any order. An alternative
+approach is to store data on a long magnetic tape. Such systems are
+called \emph{sequential access}, because each sector must be read
+sequentially, and the systems cannot generally seek to the middle of the
+tape and make specific modifications.
+
+While disk storage is very cost-effective means for storing large
+amounts of information, it requires that information to be broken up
+into identically sized blocks (\emph{sectors}), each stored at a
+specific location. Requiring users to deal with this level of detail
+would be unworkable. Instead, computers provide facilities for
+assigning labels to sequences of sectors. The first use of the early
+disk drives was to replace cardboard file boxes of punched cards that
+were used to programs and data, so it was only natural that those
+sequences of sectors were called files as well. We use the same
+terminology today.
+
+Most modern computers define a \emph{file} to be a sequence of zero or more
+bytes. In practice files can have additional properties such as one or
+more \emph{file names}, a \emph{creation date}, a \emph{last modification date},
+\emph{last access data}, and so on. Many systems also have a way of
+inferring the file's \emph{type}, or the kind of information that is
+stored inside the file. On Windows and Unix  the file type is
+inferred from the file's extension---a file named
+\emph{FOOBAR.JPG} is assumed to be a JPEG digital image.
+
+The \emph{file system} is the part of the computer's operating system
+that implements the \emph{file abstraction layer}. The file
+system maps a file name (e.g. \emph{FOOBAR.JPG}) to a set of
+sectors (e.g. sectors 102343 through 102541). The file system provides
+an API that allows program to read and write the contents of
+files, which ultimately results in the contents of specific disk sectors being
+copied into regions of memory specified by the application. File
+systems also provide a
+facility for grouping multiple files into sets called \emph{folders}
+or \emph{directories}. Finally there are provisions for creating and deleting files, renaming
+files, moving files from one directory to another, creating and
+deleting directories, and so on. Each of these changes to the file
+system structure must eventually be reflected by changes to sectors on
+the mass storage device.
+
+
+\subsection{Addressing Sectors}
+Each sector of a random access mass storage system must have a
+specific address, otherwise there would be no way to specific the
+specific sector to be read or written.
+
+Early disk systems enumerated each sector with the specific cylinder,
+head and sector (CHS) that was used to access it. This approach gave
+computer designers a great deal of control over the precise storage of
+data, but also greatly complicated the design of software. An
+alternative is to assign to each sector a \emph{logical block address}
+(LBA), typically an integer $\ge0$.
+
+
+ \index{Cylinder Head Sector}
+ \index{Logical Block Address}
+
+
+read and write has a specific address There are two ways of Early cylinder/head/sector (CHS) 
+
+\subsection{Flash, Solid State Drives, and the Flash Translation Layer}
+
+allows named files to be \emph{opened} and 
+opened the converts from a file name to a set of sectors on a mass storage
+device. The file system im
+
 Most kinds of computer data are eventually turned into \emph{files}
 and stored on some kind of
 \emph{mass storage device} (\figref{art/TK}). At the most basic level a file is
-nothing more than a sequence of zero or more bytes. In practice files
-have additional properties such as a \emph{file name}, 
-\emph{creation date}, \emph{modification date}, \emph{last access
-  data}, and so on. These other properties are called \emph{metadata},
+nothing more than a  These other properties are called \emph{metadata},
 a word that loosely means ``data about other data.''
 
 Mass storage systems don't store files. Instead, they store blocks of
@@ -49,7 +152,6 @@ card and cleared every addressable sector by overwriting that sector's
 content with NULL bytes. You can do this
 easily with the program in \figref{overwrite}.
 
-
 \lstinputlisting[caption=A simple program to clear a disk.]{fs/clear.py}
 \begin{figure}
 \begin{lstlisting}
@@ -65,9 +167,9 @@ data it is necessary to know the drive name that the Linux system
 assigns. For example, if the drive appears as |/dev/sde|, then the
 data can be copied off with this Linux  command:
 
-\begin{Verbatim}
-$ sudo dd if=/dev/sde of=nps-2009-canon2-gen1.raw conv=noerror,sync
-\end{Verbatim} 
+\begin{code}
+$ (@ \hl{sudo dd if=/dev/sde of=nps-2009-canon2-gen1.raw conv=noerror,sync} @)
+\end{code} 
 %$ 
 
 The dd command copies blocks of data from the input file (\emph{if=})
@@ -86,7 +188,8 @@ the different disk images it's possible to understand how the Camera's
 firmware manages the files and directories stored on the camera card.
 
 For the remainder of this section we'll work with just the first
-generation image, which will call GEN1. You can download that file from: \url{http://digitalcorpora.org/nps-2009-canon2-gen1.raw}.
+generation image, which will call GEN1. You can download that file
+from \url{http://digitalcorpora.org/nps-2009-canon2-gen1.raw}.
 
 
 \figref{nps-2009-canon2-conceptual} shows a conceptual view of
@@ -150,38 +253,38 @@ are assumed to be 512 bytes, traditional MBR partitioning allows for a
 maximum media size of $512 \times 2^{32}=2\textrm{TiB}$ in storage.
 
 If you review the Wikipedia page you will see that no less than six
-different MBRs have been developed and deployed by manufacturers since
+different MBRs have been developed and deployed since
 MBR records were introduced by IBM PC DOS 2.0 in 1983. All of these
 systems store the bootstrap code at location 0, the first four
 partition entries starting at location |1BEh|, and have a boot
-signature in the last two blocks of the sector. This consistency is
-provided for backwards compatibility, allowing each 
-generation of disk utilities and BIOS drivers to make some kind of sense of
+signature in the last two blocks of the sector. This consistency 
+provides for backwards compatibility, allowing each 
+generation of disk utilities and BIOS drivers to make sense of
 whatever data they might find on a mass storage device.  Modern
 computers use a new partitioning scheme called the GUID Partition
-Table (GPT), but even these systems still include a so-called
-``Protective MBR'' that allocates the entire drive to a partition of
-type |EEh|. This partition literally protects the GPT disk in the
+Table (GPT), but even these systems include something called
+a ``Protective MBR'' that allocates the entire drive to a partition of
+type |EEh|. As its name implies, this partition protects the GPT disk in the
 event that the user attempts to mount it on a system that does not
 understand GPT partitioning: instead of inadvertently overwriting the
-media, the system will believe that the entire disk is taken up by a
-partition that the system does not understand.
+GPT partition, the non-GPT system will leave it alone, since the
+entire media is in use by a partition type that the non-GPT system does not understand.
 
 The SleuthKit |mmls| command will display the contents of the
-partition table of any physical device or disk image:
+partition table of any physical device or disk image.
 
-Exercise 1: Use the SleuthKit to View the contents of the master boot
+Example: Here we use the SleuthKit to View the contents of the master boot
 record:
 
-\begin{Verbatim}
-C:\ mmls nps-2009-canon2-gen1.raw
-\end{Verbatim}
+\begin{code}
+C:\ (@ \hl{mmls nps-2009-canon2-gen1.raw} @)
+\end{code}
 
-Exercise 2: Alternatively, you can view the contents of the MBR with a
+Example: Alternatively, you can view the contents of the MBR with a
 hex dump:
 
 \begin{Verbatim}
-$ xxd -len 512 nps-2009-canon2-gen1.raw
+$ (@ \hl{xxd -len 512 nps-2009-canon2-gen1.raw} @)
 0000000: fa33 c08e d0bc 007c 8bf4 5007 501f fbfc  .3.....|..P.P...
 0000010: bf00 06b9 0001 f2a5 ea1d 0600 00be be07  ................
 0000020: b304 803c 8074 0e80 3c00 751c 83c6 10fe  ...<.t..<.u.....
@@ -217,15 +320,13 @@ $ xxd -len 512 nps-2009-canon2-gen1.raw
 $ 
 \end{Verbatim}
 
-Exercise 3: Finally, you can write a program in Python that will open
+Example: Finally, the MBR can be analyzed with a program of your own
+creation. Listing~\ref{mbrdecode} is a small program in Python that will open
 up the disk image, read the sector into memory, and then print the
-fields:
+fields. 
 
 \lstinputlisting[caption=The start of a python program to display the
-  Master Boot Record.]{fs/mbrdecode.py}
-
-
-
+  Master Boot Record.]{fs/mbrdecode.py}\label{mbrdecode}
 
 
 The first block of a FAT file system contains a \emph{Boot Sector

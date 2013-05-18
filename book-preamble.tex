@@ -4,7 +4,33 @@
 
 % http://tex.stackexchange.com/questions/17009/how-to-change-code-example-font-in-listings
 \usepackage{listings}           % source code listings
+\usepackage{xcolor}             % better colors, needed for soul
+\usepackage{soul}               % better highlighting
 
+%%
+%% BEGIN Code environment that allows (@ and @) for escaping
+%%
+  \lstnewenvironment{code}[1][]
+    {\lstset{language=[LaTeX]TeX}\lstset{escapeinside={(@}{@)},
+     breaklines=false,
+     numbers=none,
+         framesep=5pt,
+         basicstyle=\normalsize\ttfamily,
+         showstringspaces=false,
+         keywordstyle=\itshape\color{blue},
+         stringstyle=\color{maroon},
+      commentstyle=\color{black},
+      rulecolor=\color{black},
+      xleftmargin=0pt,
+      xrightmargin=0pt,
+      aboveskip=\medskipamount,
+      belowskip=\medskipamount,
+             backgroundcolor=\color{white}, #1
+  }}
+  {}
+%%
+%% END
+%%
 
 \usepackage{xspace}             % optional spaces
 \usepackage{tabularx}           % the ``X'' for tables
@@ -14,20 +40,6 @@
 \usepackage{fancyvrb}
   \DefineShortVerb{\|}            % makes |foo| a verbatim command
 
-
-\newcommand{\slgbookauthor}{Simson L.\ Garfinkel}
-\newcommand{\slgbooktitle}{Technical Privacy Auditing with Computer Forensics Tools} 
-\newcommand{\slgbookcopyright}{Public Domain}
-\newcommand{\slgbookpublisher}{DRAFT}
-\newcommand{\slgbookurl}{www.digitalcorpora.org}
-\newcommand{\slgbookfrontmatter}{This is a work of the US
-  Government. In accordance with 17 USC 105, copyright protection is
-  not available for any work of the US Government.
-  \\
-  This text is distributed in the hope that it will be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.}
-\newcommand{\slgbookdate}{First draft, May 2013}
 
 % Useful cross-reference commands
 \newcommand{\Sref}[1]{\S\ref{#1}}
@@ -59,4 +71,37 @@
   \caption{#3\label{#2}}
   \end{figure}
 }
+
+% \twofigures{width1}{image1}{caption1}
+%            {width2}{image2}{caption2}
+\newcommand{\twofigures}[6]{
+  \begin{figure}
+    \begin{tabularx}{\textwidth}{p{#1}Xp{#4}}
+  \includegraphics[width=#1]{#2} &&
+  \includegraphics[width=#4]{#5} \\
+  \caption{#3\label{#2}} &&
+  \caption{#6\label{#5}} \\
+\end{tabularx}
+\end{figure}
+}
+
+
+
+%%
+%% Bibliographical Information
+%%
+
+\newcommand{\slgbookauthor}{Simson L.\ Garfinkel}
+\newcommand{\slgbooktitle}{Technical Privacy Auditing with Computer Forensics Tools} 
+\newcommand{\slgbookcopyright}{Public Domain}
+\newcommand{\slgbookpublisher}{DRAFT}
+\newcommand{\slgbookurl}{www.digitalcorpora.org}
+\newcommand{\slgbookfrontmatter}{This is a work of the US
+  Government. In accordance with 17 USC 105, copyright protection is
+  not available for any work of the US Government.
+  \\
+  This text is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.}
+\newcommand{\slgbookdate}{First draft, May 2013}
 
