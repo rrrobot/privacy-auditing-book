@@ -37,15 +37,19 @@ data, but the underlying principal is the same.\footnote{The actual IBM 350
   resulting in dramatic performance improvements. For more information
   see \url{http://en.wikipedia.org/wiki/IBM_magnetic_disk_drives}}
 
-NOTE: Spinning disk systems are called \emph{random access} devices because
-the sectors can be read or written in any order. An alternative
-approach is to store data on a long magnetic tape. Such systems are
-called \emph{sequential access}, because each sector must be read
-sequentially, and the systems cannot generally seek to the middle of the
-tape and make specific modifications.
+\begin{description}
+\item[random access storage] is a phrase used to describe both magnetic
+  disks and flash storage devices. The phrase ``random access'' means
+  that sectors can be read or written in any order. 
+\item[sequential access storage] is the phrase used to describe
+  storage systems such as magnetic and optical tape. With these
+  systems each sector must be written and then read
+sequentially; the systems cannot generally seek to the middle of the
+storage media and make specific modifications.
+\end{description}
 
-While disk storage is very cost-effective means for storing large
-amounts of information, it requires that information to be broken up
+While disks are very cost-effective means for storing large
+amounts of information, they require that information to be broken up
 into identically sized blocks (\emph{sectors}), each stored at a
 specific location. Requiring users to deal with this level of detail
 would be unworkable. Instead, computers provide facilities for
@@ -93,8 +97,10 @@ alternative is to assign to each sector a \emph{logical block address}
 (LBA), typically an integer $\ge0$.
 
 
- \index{Cylinder Head Sector}
- \index{Logical Block Address}
+\index{Cylinder Head Sector}
+\index{CHS|see {Cylinder Head Sector}}
+\index{Logical Block Address}
+\index{LBA|see {Logical Block Address}}
 
 
 read and write has a specific address There are two ways of Early cylinder/head/sector (CHS) 
@@ -216,21 +222,24 @@ program that loads more sectors from the hard drive into memory and
 runs them; this second boot loader loads the operating system and runs
 it.
 
-The basic structure of the MBR is described by this table:
-
+\begin{table}
 \begin{minipage}{\textwidth}
-\begin{tabular}{|c|c|c|c|c|}
-\multicolumn{5}{c}{\bf Structure of the MBR\footnote{From Wikipedia, \url{http://en.wikipedia.org/wiki/Master_boot_record}}}\\
+\caption{Structure of the Master Book Record.\protect\footnote{From Wikipedia, \url{http://en.wikipedia.org/wiki/Master_boot_record}}}\label{mbr}
+\begin{tabular}{|>{\tt}c|>{\tt}c|c|c|c|}
 \hline
 \multicolumn{2}{|c|}{\bf Address} & \multicolumn{2}{c|}{}                              & \\
 \cline{1-2} \bf Hex & \bf Dec         & \multicolumn{2}{c|}{\multirow{-2}{*}{\bf Description}} & \multirow{-2}{*}{\bf Size in bytes}\\
 \hline
 +000h & +0   & \multicolumn{2}{c|}{Bootstrap code; extended information} & 446 \\
-\cline{3-4}
-+1BEh & +446 & Partition entry \#1 && 16 \\
-+1CEh & +462 & Partition entry \#2 && 16 \\
-+1DEh & +478 & Partition entry \#3 && 16 \\
-+1EEh & +494 & Partition entry \#4 && 16 \\
+\hline
+\hline
++1BEh & +446 & \multicolumn{2}{c|}{Partition entry \#1} & 16 \\
+\hline
++1CEh & +462 & \multicolumn{2}{c|}{Partition entry \#2} & 16 \\
+\hline
++1DEh & +478 & \multicolumn{2}{c|}{Partition entry \#3} & 16 \\
+\hline
++1EEh & +494 & \multicolumn{2}{c|}{Partition entry \#4} & 16 \\
 \hline
 +1FEh & +510 & 55h & & \\
 \cline{1-3}
@@ -241,9 +250,10 @@ The basic structure of the MBR is described by this table:
 \hline
 \end{tabular}
 \end{minipage}
+\end{table}
 
-The basic MBR thus provides for a maximum of four partitions, each
-described by a partition entry. The entry record includes a byte
+The basic MBR (\tabref{mbr}) provides for four partitions, each
+described by a 16-byte partition entry record. The record includes a byte
 indicating if it is active or not, the start of the partition and the
 partition's length.  Originally the start and length were encoded as a 
 3-byte CHS (Cylinder, Head, Sector) triplet; later the encoding was

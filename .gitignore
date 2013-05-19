@@ -11,3 +11,7 @@
 *.log
 *.out
 plainbook.pdf
+*.ist
+*.bcf
+*.idx
+*.run.xml
