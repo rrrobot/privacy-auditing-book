@@ -1,4 +1,4 @@
-textbook.pdf: textbook.tex textbook.bib Makefile
+textbook.pdf: textbook.tex textbook.bib Makefile $(wildcard *.tex)
 	pdflatex textbook
 	makeindex textbook -s StyleInd.ist
 	biber textbook

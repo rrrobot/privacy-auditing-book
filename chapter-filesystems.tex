@@ -11,7 +11,83 @@ be left behind by the computer, such as the names of files that have
 been deleted, the deleted files themselves, and other kinds of
 potentially privacy sensitive information. 
 
+In this chapter you'll learn why file systems retain information after
+the user deletes it. Because every file system has different
+possibilities to retain such data, you'll also need to learn how to
+read and understand file system documentation so that you can analyze
+file systems that didn't exist when this document was written. Finally
+you'll learn how to design computer systems so that such information
+is not retained.
+
+Tools used in this chapter:
+\begin{itemize}
+\item Hex dump tool
+\item SleuthKit 
+\item Python
+\end{itemize}
+
 \section{Disks, Sectors, Files and File Systems}
+This section describes how files are stored on mass storage devices
+such as flash cards used in digital cameras, solid state drives used
+in most laptops, and spinning hard drives used in high-capacity cloud
+computing environments (as well as on older laptops and desktops). The
+examples will be based on the two most popular file systems today, the
+FAT file system developed by Microsoft in the 1980s and widely used in
+digital cameras, and the NTFS file system developed by Microsoft in
+the 1990s and used for most versions of Windows from Windows NT
+through Windows 8.
+
+\subsection{Mass Storage Systems: Organization and Addressing}
+
+Mass storage systems don't store files. Instead, they store blocks of
+bytes (sometimes called \emph{sectors}). These blocks are invariably
+sized as an even power of 2. In the 1990s most hard drives had a block
+size of 512~B which Compact Discs (CDs) had a block size of 2048B;
+modern drives (both SSD and HD) have a block size of 4096 bytes. A
+1~TB drive therefore have approximately 250 million 4096-byte
+blocks. Each block on the media is referenced by a distinct number
+called a \emph{logical block address} (LBA). These drives are
+\emph{random access}, meaning that the computer can read or write any
+block in any order, although it is invariably faster to read or write
+blocks multiple blocks at a time in numeric order.
+
+Users don't see blocks of bytes when they take an SD card out of a
+camera and try to read the contents on their laptop: they see folders
+and files. The \emph{file system} is the part of the computer's
+operating system that implements the \emph{file abstraction layer},
+taking the \emph{file names} used by people and application programs,
+and mapping them to specific numbered blocks of data on the mass storage
+device.
+
+The file system provides an API that allows program to read and write
+the contents of files, which ultimately results in the contents of
+specific disk sectors being copied into regions of memory specified by
+the application. File systems also provide a facility for grouping
+multiple files into sets called \emph{folders} or
+\emph{directories}. Finally there are provisions for creating and
+deleting files, renaming files, moving files from one directory to
+another, creating and deleting directories, and so on. Each of these
+changes to the file system structure must eventually be reflected by
+changes to sectors on the mass storage device.
+
+Most modern computers define a \emph{file} to be a sequence of zero or more
+bytes. In practice files can have additional properties such as one or
+more \emph{file names}, a \emph{creation date}, a \emph{last modification date},
+\emph{last access data}, and so on. Many systems also have a way of
+specifying the file's \emph{type}, or the kind of information that is
+stored inside the file. On Windows and Unix the file type is
+inferred from the file's extension---a file named
+\emph{FOOBAR.JPG} is assumed to be a JPEG digital image.
+
+Mass storage systems can only read or write complete blocks, so the
+file system may also have to buffer data between the application
+program and the drive. This means that information on the disk can
+also be found in the computer's memory. This can become a privacy
+problem, as the data can remain in memory long after it is erased from
+the drive.
+
+
+\subsection{Historical Background}
 In the 1950s engineers at IBM devised a method for storing digital
 information on a rotating ferromagnetic disc. As the disk spun a pair
 of read/write heads (one for the top side, one for the under side)
@@ -24,8 +100,6 @@ adjacent sectors.
    system divides each disk into multiple tracks, each of which has
   multiple sectors.}{.5\textwidth}{fs/Disk-structure2}{something}
 
-
-
 This basic structure of storing data on sectors of spinning magnetic
 media remains in use today. A modern 3.5-inch hard drive might have two
 spinning surfaces that together store 2~terabytes of data, whereas
@@ -37,18 +111,7 @@ data, but the underlying principal is the same.\footnote{The actual IBM 350
   resulting in dramatic performance improvements. For more information
   see \url{http://en.wikipedia.org/wiki/IBM_magnetic_disk_drives}}
 
-\begin{description}
-\item[random access storage] is a phrase used to describe both magnetic
-  disks and flash storage devices. The phrase ``random access'' means
-  that sectors can be read or written in any order. 
-\item[sequential access storage] is the phrase used to describe
-  storage systems such as magnetic and optical tape. With these
-  systems each sector must be written and then read
-sequentially; the systems cannot generally seek to the middle of the
-storage media and make specific modifications.
-\end{description}
-
-While disks are very cost-effective means for storing large
+While disks turned out to be a very cost-effective means for storing large
 amounts of information, they require that information to be broken up
 into identically sized blocks (\emph{sectors}), each stored at a
 specific location. Requiring users to deal with this level of detail
@@ -59,91 +122,171 @@ were used to programs and data, so it was only natural that those
 sequences of sectors were called files as well. We use the same
 terminology today.
 
-Most modern computers define a \emph{file} to be a sequence of zero or more
-bytes. In practice files can have additional properties such as one or
-more \emph{file names}, a \emph{creation date}, a \emph{last modification date},
-\emph{last access data}, and so on. Many systems also have a way of
-inferring the file's \emph{type}, or the kind of information that is
-stored inside the file. On Windows and Unix  the file type is
-inferred from the file's extension---a file named
-\emph{FOOBAR.JPG} is assumed to be a JPEG digital image.
-
-The \emph{file system} is the part of the computer's operating system
-that implements the \emph{file abstraction layer}. The file
-system maps a file name (e.g. \emph{FOOBAR.JPG}) to a set of
-sectors (e.g. sectors 102343 through 102541). The file system provides
-an API that allows program to read and write the contents of
-files, which ultimately results in the contents of specific disk sectors being
-copied into regions of memory specified by the application. File
-systems also provide a
-facility for grouping multiple files into sets called \emph{folders}
-or \emph{directories}. Finally there are provisions for creating and deleting files, renaming
-files, moving files from one directory to another, creating and
-deleting directories, and so on. Each of these changes to the file
-system structure must eventually be reflected by changes to sectors on
-the mass storage device.
-
-
-\subsection{Addressing Sectors}
-Each sector of a random access mass storage system must have a
-specific address, otherwise there would be no way to specific the
-specific sector to be read or written.
-
 Early disk systems enumerated each sector with the specific cylinder,
 head and sector (CHS) that was used to access it. This approach gave
 computer designers a great deal of control over the precise storage of
-data, but also greatly complicated the design of software. An
-alternative is to assign to each sector a \emph{logical block address}
-(LBA), typically an integer $\ge0$.
+data, but also greatly complicated the design of software. The biggest
+complication was something called \emph{bad block management}\index{bad block management}---how
+the computer responded when disk sectors did not perform reliably.
+Computer systems were made faster and more reliable by moving bad
+block management into the drive itself. The interface was made
+simpler by having the computer refer to blocks by a single
+\emph{logical block address} (LBA), generally an integer greater than
+or equal to 0, and allowing the drive to map the LBA to a specific
+location on the media. 
 
+It is important to remember that files are an \emph{abstraction} that
+was created for the purpose of managing data. There is nothing
+inherent in the design of computers, operating systems or mass storage
+devices that requires the use of files. A raw disk can be used as
+virtual memory \emph{backing store} or as a storage system for a
+database. Instead of stored as a sequence of bytes in a file, data can be stored as
+objects that are persisted in memory, or as BLOBs in a database.
 
 \index{Cylinder Head Sector}
 \index{CHS|see {Cylinder Head Sector}}
 \index{Logical Block Address}
 \index{LBA|see {Logical Block Address}}
 
-
-read and write has a specific address There are two ways of Early cylinder/head/sector (CHS) 
-
 \subsection{Flash, Solid State Drives, and the Flash Translation Layer}
 
-allows named files to be \emph{opened} and 
-opened the converts from a file name to a set of sectors on a mass storage
-device. The file system im
+\emph{TK: Explain how Flash and SSDs, and the FTL}
 
-Most kinds of computer data are eventually turned into \emph{files}
-and stored on some kind of
-\emph{mass storage device} (\figref{art/TK}). At the most basic level a file is
-nothing more than a  These other properties are called \emph{metadata},
-a word that loosely means ``data about other data.''
+\subsection{Partitioning and Volume Management}
 
-Mass storage systems don't store files. Instead, they store blocks of
-bytes (sometimes called \emph{sectors}). These blocks are invariably
-sized as an even power of 2. In the 1990s most hard drives had a block
-size of 512 bytes and Compact Discs (CDs) had a block size of 2048
-bytes; modern hard drives have a block size of 4096 bytes. A 1~TB
-drive in a computer laptop would therefore have approximately 250
-million 4096-byte blocks. Each block on the media is referenced
-by a distinct number called a \emph{logical block address} (LBA). Most
-mass storage systems are \emph{random access}, meaning that the
-computer can read or write any block in any order, although it is
-invariably faster to read or write blocks multiple blocks at a time in numeric order.
+Although a file system can be stored directly on the drive, with the
+file sector of the drive being used to store the first sector of the
+file system, this is not commonly done. Instead, the first 
+sector is used to store a \emph{disk label} and  \emph{partition
+  table} that provides the media with a unique identifier and describes the
+locations of the file systems on the media. Advantages of disk labels
+and partition tables include:
+\begin{itemize}
+\item Partitions allow a single physical device can contain multiple file systems.
+\item Partitions can identify specific regions of the disk as reserved
+  or encrypted, so that the operating system doesn't inadvertently
+  damage them.
+\item The device label allows the operating system reference the media
+  by name, rather than by location such as the interface or bus. This
+  allows computer hardware to be reconfigured without having to update
+  operating system configuration.
+\end{itemize}
 
-Users don't see blocks of bytes when they take an SD card out of a
-camera and try to read it on their laptop: they see folders and
-files. The translation between the mass storage system's blocks of
-bytes and the files that are shown on the computer's screen is
-performed by a piece of code inside the operating system called the
-\emph{file system}.  The file system takes the concepts of
-\emph{files} and \emph{folders} used by people and application
-programs, and maps them to specific operations on blocks of data
-stored on the mass storage device. When a program opens a named file
-and reads the first few bytes, the file system locates the file's
-metadata on the drive, determines the specific block associated with
-the start of the file, and reads that block into memory. Mass storage
-systems can only read or write complete blocks, so the file system may
-also have to buffer data between the application program and the
-drive.
+Two commonly used partitioning schemes are the \emph{Master Boot
+  Record} (MBR) and the \emph{GUID Partition Table} scheme. We
+describe the MBR in \secref{sec:mbr} below; for information on GUID
+partitioning please see the list of references at the end of this
+chapter.
+
+The term \emph{physical volume} is used variously to describe a
+physical disk, a partition on a physical disk, or a Logical Unit
+Number (LUN) of a storage system.  Physical volumes can be used
+directly to hold a file system or can be grouped together with a
+Logical Volume Management (LVM) system. An LVM can group multiple
+physical volumes together in to a single physical volume that is large
+or more reliable than the volumes that it built from. Volume managers
+can also implement \emph{snapshots} through the use of
+\emph{copy-on-write}.
+
+\subsection{File Systems of Interest}
+There are a many different kinds of file systems in use on
+modern computer systems:
+\begin{description}
+\item[Disk file systems] organize files and directories on
+  block-oriented storage systems. 
+\item[Memory file systems] implement a file abstraction in
+  memory. Such systems can provide for increased performance when
+  compared to using a conventional file system on a simulated block
+  device. One of the most common examples of a memory file system is tmpfs\cite{Synder90tmpfs:a}.
+\item[Distributed file systems] allow a computer to access
+  information on remote servers as if it is stored
+  locally. Distributed file systems are forensically interesting
+  because many use local storage to cache information from the remote
+  servers. Analyzing local storage can therefore give clues as to what
+  was accessed remotely, and when it was accessed. Examples of
+  distributed file systems include Sun's Network File System
+  (NFS)\cite{Sandberg85designand,Pawlowski00thenfs} and Microsoft's
+  Common Internet File System (CIFS)\cite{ms-cifs}.
+\item[Virtual file systems] use the file and directory abstraction to
+  make it easy to access other information. For example, the Linux
+  |/dev| file system is used to access devices through the file
+  system, the |/sys| file system is used to access features within
+  the system kernel, and the |/net| file system accesses the
+  automounter. Virtual file systems are not typically of interest in
+  MEDEX because they do not leave residual information on a storage
+  device. However, virtual file systems are relevant in malware
+  analysis and intrusion response.
+\end{description}
+
+As this chapter is written, the following file systems are of general
+interest. The number after each file system is date that the file
+system became made generally usable:
+\begin{description}
+\item[FAT12, FAT16 and FAT32 (1980)] file systems developed by Microsoft for use with
+  DOS. FAT refers to the File Allocation Table, an array of integers
+  that is used to determine if a cluster is in use or free. (In FAT, a
+  \emph{cluster} is a block of 1, 2, 4, 8 or more disk sectors.) The number
+  refers to the size of the integers in the FAT array (12 bits, 16 bits or
+  32 bits).  FAT12 and FAT16 only supported 8.3 filenames; FAT32
+  added support for long file names that were aliases for the 8.3
+  names and ignored on older systems, thus providing for backwards
+  compatibility. The definitive specification of the FAT file system is
+  the \emph{Microsoft Extensible Firmware Initiative FAT32 File System
+    Specification}, rev. 1.03, Dec 6, 2000\cite{microsoft-efi}. Other
+  descriptions can be found in ECMA-107\cite{ECMA-107}, which only
+  covers the use of FAT12 and FAT16 on floppy drives, and The
+  
+\item[HFS, HFS+ (1985)] the Hierarchical File System, developed by Apple
+  Computer and introduced with the first Macintosh hard
+  drive. Whereas most file systems of the time used tables and arrays to store
+  information, HFS and HFS+ use b-trees.
+\item[NTFS (1993)] the New Technology File System, developed by
+  Microsoft for use with Windows NT. 
+\item[EXT2/3/4 (1993)] The extended file system, developed for use with Linux systems.
+\item[exFAT (2007)] a modification of the FAT file system designed to
+  support large files and optimized for use on flash drives.
+\item[YAFFS, YAFFS2 (2002)] ``Yet another flash file system,'' a file
+  system specifically designed for use with NAND flash chips found in
+  cell phones. Unlike other file systems, YAFFS2 specifically adapts
+  to the requirement that flash pages be cleared before they can be
+  re-written. It also handles wear-leveling and garbage collection.
+  YAFFS2 gained popularity through its use in Android, although it is
+  increasingly being replaced through the use of proprietary flash
+  translation layers (FTLs).
+\end{description}
+
+SleuthKit version 4.1 provides read-only support for all of the file
+systems listed above. Read-write support for the file systems is
+inconsistent, with most operating systems supporting FAT and NTFS,
+but support for others being inconsistent.
+
+Confusingly, the phrase \emph{file system} is used ambiguously to
+describe both the organization of data on a mass storage device and
+the code that implements the file abstraction. Thus, are multiple FAT
+implementations, only some of which are authored by
+Microsoft. Different file system implementations are supposed to be
+mutually compatible, but because of the complexity inherent in
+creasing a file system implementation, incompatibilities inevitability
+emerge.
+
+Any computational storage device or storage abstraction can be used to
+virtualize and contain any other storage device. That is, a file can
+be stored in a file system, but a file system can also be created and
+stored inside a file (this is essentially what a disk image is). For
+example, it is possible to create a USB drive that boots a copy of
+Linux but also functions under Windows: The Linux EXT file system is
+stored inside a rather large file in an outer FAT32 file system.
+
+\subsection{Encrypting File Systems}
+
+Adding to the complexity of the is \emph{encryption}, which can be
+applied at the interface between any of these abstractions. Encryption
+can be performed in the storage device itself (as in the case of an
+encrypting hard drive), in the disk driver, in the logical volume
+management system, in the file system, or at the application level.
+
+\emph{TK: More to come}
+
 
 \section{Exploring the GEN1 SD Camera Card}
 In this section we will explore the contents of an SD camera card
@@ -172,6 +315,7 @@ appeared as a virtual disk drive. In order to make a copy of the drive
 data it is necessary to know the drive name that the Linux system
 assigns. For example, if the drive appears as |/dev/sde|, then the
 data can be copied off with this Linux  command:
+
 
 \begin{code}
 $ (@ \hl{sudo dd if=/dev/sde of=nps-2009-canon2-gen1.raw conv=noerror,sync} @)
@@ -211,12 +355,12 @@ describes which sectors belong to which file and indicates which
 sectors are free and available for new files. We'll discuss each of
 those in the following section.
 
-\subsection{The Master Boot Record (Partition Table)}
+\subsection{The Master Boot Record (Partition Table)}\label{sec:mbr}
 
-The master Boot Record, more commonly known as the MBR, occupies the first
+The Master Boot Record, more commonly known as the MBR, occupies the first
 sector of a hard drive used on most Windows-based computers. When the
-Windows computer is turned on the computer's Basic Input/Output
-System (BIOS) loads these 512 bytes into the start of the computer's
+computer starts up the Basic Input/Output
+System (BIOS) loads these 512 bytes into the start of 
 memory and jumps to location 0. Typically the MBR contains a short
 program that loads more sectors from the hard drive into memory and
 runs them; this second boot loader loads the operating system and runs
@@ -252,14 +396,37 @@ it.
 \end{minipage}
 \end{table}
 
+
+\begin{table}
+\caption{Structure of the 16-byte partition
+  entry\protect{footnote{From Wikipedia,
+      \url{http://en.wikipedia.org/wiki/Master_boot_record}}}\label{mbr:partition}}
+\begin{tabular}{|>{\tt}c|c|l|}
+Offset & Length & Description \\
+\hline
++0h & 1 & Status; |80h|:active; |00h|: inactive \\
++1h & 3 & CHS address of first sector in partition \\
++4h & 1 & Partition Type Code \\
++5h & 3 & CHS address of last sector in partition\\
++8h & 4 & LBA address of first sector in partition \\
++Ch & 4 & Number of sectors in partition \\
+\hline
++0h & 16 & Total number of bytes in entry \\
+\hline
+\hline
+\end{tabular}
+\end{table}
+
+
 The basic MBR (\tabref{mbr}) provides for four partitions, each
 described by a 16-byte partition entry record. The record includes a byte
 indicating if it is active or not, the start of the partition and the
-partition's length.  Originally the start and length were encoded as a 
-3-byte CHS (Cylinder, Head, Sector) triplet; later the encoding was
-expanded to allow a 4-byte LBA (Logical Block
-Address). Because blocks
-are assumed to be 512 bytes, traditional MBR partitioning allows for a
+partition's length.  Originally the start and end were encoded as a 
+3-byte CHS (Cylinder, Head, Sector) triplet. Today the CHS entries are
+ignored and the partition is described with a pair of 32-bit LE
+numbers conveying the Logical Block Address (LBA) of the first sector
+and a sector count. Because blocks
+are assumed to be 512 bytes, this scheme allows for a
 maximum media size of $512 \times 2^{32}=2\textrm{TiB}$ in storage.
 
 If you review the Wikipedia page you will see that no less than six
@@ -280,18 +447,10 @@ understand GPT partitioning: instead of inadvertently overwriting the
 GPT partition, the non-GPT system will leave it alone, since the
 entire media is in use by a partition type that the non-GPT system does not understand.
 
-The SleuthKit |mmls| command will display the contents of the
-partition table of any physical device or disk image.
+\subsection{Viewing the MBR}
 
-Example: Here we use the SleuthKit to View the contents of the master boot
-record:
-
-\begin{code}
-C:\ (@ \hl{mmls nps-2009-canon2-gen1.raw} @)
-\end{code}
-
-Example: Alternatively, you can view the contents of the MBR with a
-hex dump:
+You can display the contents of the MBR by viewing a hex dump of the
+first sector:
 
 \begin{Verbatim}
 $ (@ \hl{xxd -len 512 nps-2009-canon2-gen1.raw} @)
@@ -330,13 +489,29 @@ $ (@ \hl{xxd -len 512 nps-2009-canon2-gen1.raw} @)
 $ 
 \end{Verbatim}
 
-Example: Finally, the MBR can be analyzed with a program of your own
-creation. Listing~\ref{mbrdecode} is a small program in Python that will open
+Decoding is not difficult, but can be time consuming. Instead of
+manually attacking the hex values, it is more effective to write a
+program that does this work for you. Listing~\ref{mbrdecode} the start
+of such a program in Python. This program  will open
 up the disk image, read the sector into memory, and then print the
 fields. 
 
 \lstinputlisting[caption=The start of a python program to display the
   Master Boot Record.]{fs/mbrdecode.py}\label{mbrdecode}
+
+
+Finally, you can view the contents of the MBR using the SleuthKit's |mmls| command:
+
+
+\begin{code}
+C:\ (@ \hl{mmls nps-2009-canon2-gen1.raw} @)
+\end{code}
+
+Use the \tt{-h} option to display all of the options that your
+version of the |mmls| command supports.
+
+Example: Finally, the MBR can be analyzed with a program of your own
+creation. 
 
 
 The first block of a FAT file system contains a \emph{Boot Sector
@@ -392,145 +567,6 @@ entries. Some of the deleted JPEGs exist in their entirity and can be
 easily recovered using the proper tools. Others exist as fragments and
 can only be recovered with difficulty. 
 
-In this chapter you'll learn why file systems retain information after the
-user deletes it, how to find and exploit this kind of residual
-information, and how to design computer systems so that such
-information is not retained.
-
-Tools used in this chapter: hex viewer;
-
-hex editor
-
-SleuthKit precompiled binaries for
-Windows. http://sourceforge.net/projects/sleuthkit/files/sleuthkit/4.0.2/
-  Download sleuthkit-win32-4.0.2.zip and uncompress the files into
-  |c:\sleuthkit-win32-4.0.2|
-
-
-
-\section{Background: File System Structures}
-This section describes how file systems are structured on a drive. The
-examples will be based on the two most popular file systems today, the
-FAT file system developed by Microsoft in the 1980s and widely used in
-digital cameras, and the NTFS file system developed by Microsoft in
-the 1990s and used for most versions of Windows from Windows NT
-through Windows 8.
-
-
-\subsection{Partitioning and Volume Management}
-
-Although a file system can be stored directly on the drive, with the
-file sector of the drive being used to store the first sector of the
-file system, this is not commonly done. Instead, the first 1 or 2
-sectors are used for a \emph{partition table} that describes the
-locations of the file systems. In this way a single device can be used
-to simulate multiple logical devices. Two commonly used partitioning
-schemes are the \emph{Master Boot Record} and the \emph{GUID Partition
-  Table} scheme.\url{http://en.wikipedia.org/wiki/GUID_Partition_Table}
-       \url{http://en.wikipedia.org/wiki/Master_boot_record}
-
-The term \emph{physical volume} is used variously to describe a
-physical disk, a partition on a physical disk, or a Logical Unit
-Number (LUN) of a storage
-system.\url{http://en.wikipedia.org/wiki/Logical_Unit_Number}
-Physical volumes can be used directly to hold a file system or can be
-grouped together with a Logical Volume Management (LVM)
-system\url{http://en.wikipedia.org/wiki/Logical_volume_management}. An
-LVM can group multiple physical volumes together in to a single
-physical volume that is large or more reliable than the volumes that
-it built from. Volume managers can also implement
-\emph{snapshots}\url{http://en.wikipedia.org/wiki/Snapshot_(computer_storage)}
-through the use of
-\emph{copy-on-write}\url{http://en.wikipedia.org/wiki/Copy-on-write}.
-
-\subsection{Files and File Systems}
-The word \emph{file} is commonly used to describe a sequence of data
-that is stored on a computer mass storage system. On modern computers
-files are sequences of zero or more \emph{bytes}. Files have a length
-that is set at any given point in time, but can be readily
-changed. Files can have names and other associated \emph{metadata}
-such as timestamps, an owner, and a group. Files have traditionally
-been grouped together in
-\emph{directories}\url{http://en.wikipedia.org/wiki/File_directory}. also
-called \emph{folders}. 
-
-The phrase \emph{File
-  System}\url{http://en.wikipedia.org/wiki/Computer_file} is
-used to describe the part of the computer's operating
-system that manages a storage system. However, the term is also used
-to describe the very sectors on a mass storage device that contain the
-files.
-
-It is important to realize that files are an \emph{abstraction} that
-was created for the purpose of managing data. There is nothing
-inherent in the design of computers, operating systems or mass storage
-devices that requires the use of files. A raw disk can be used as
-virtual memory \emph{backing store} or as a storage system for a
-database. Instead of stored as a sequence of bytes in a file, data can be stored as
-objects that are persisted in memory, or as BLOBs in a database.
-
-It is also important to realize that any computational storage device
-or abstraction can be used to virtualize and contain any other storage
-device. That is, a file can be stored in a file system, but a file
-system can also be created and stored inside a file (this is
-essentially what a disk image is). Most operating systems can swap to raw
-partitions or to files, but file systems can also be created inside
-RAM or virtual memory.
-
-Adding to the complexity of the forensic examiner is
-\emph{encryption}, which can be applied at the interface between any
-of these abstractions. Encryption can be performed in the storage
-device itself (as in the case of an encrypting hard drive), in the
-disk driver, in the logical volume management system, in the file
-system, or at the application level.
-
-\subsection{File Systems of Forensic Interest}
-There are a variety of different kinds of file systems in use on
-modern computer systems:
-\begin{description}
-\item[Disk file systems] organize files and directories on
-  block-oriented storage systems. These are of interest to those
-  engaged in MEDEX operations. Popular file systems include FAT32
-  (used primary on removable storage devices and camera cards), NTFS
-  (Microsoft's New Technology File System), and HFS+ (Apple's
-  Hierarchical File System used on Macs and iPhones).
-\item[Distributed file systems] allow a computer to access
-  information on remote servers as if it is stored
-  locally. Distributed file systems are forensically interesting
-  because many use local storage to cache information from the remote
-  servers. Analyzing local storage can therefore give clues as to what
-  was accessed remotely, and when it was accessed.
-\item[Virtual file systems] use the file and directory abstraction to
-  make it easy to access other information. For example, the Linux
-  \url{/dev} file system is used to access devices through the file
-  system, the \url{/sys} file system is used to access features within
-  the system kernel, and the \url{/net} file system accesses the
-  automounter. Virtual file systems are not typically of interest in
-  MEDEX because they do not leave residual information on a storage
-  device. However, virtual file systems are relevant in malware
-  analysis and intrusion response.
-\end{description}
-
-As this chapter is written, specific file systems of interest include:
-\begin{description}
-\item[FAT12, FAT16 and FAT32] file systems developed by Microsoft for use with
-  DOS. FAT refers to the File Allocation Table, an array of integers
-  that is used to determine if a cluster is in use or free. (In FAT, a
-  \emph{cluster} is a block of 1, 2, 4, 8 or more disk sectors.) The number
-  refers to the size of the integers in the array (12 bits, 16 bits or
-  32 bits). Today implementations of FAT are built in to practically every
-  operating system, including Windows, Linux, MacOS, most digital
-  cameras, and practically every other device with a USB or SD
-  interface. 
-\item[NTFS] 
-\item[HFS+]
-\item[YAFFS2]
-\item[EXT2/3]
-\item[EXT4]
-\end{description}
-
-Information can be hidden in a file system by storing data in blocks
-that are allocated but not used to hold content\cite{dfrws2005:KnutEcksteinAndMarkoJahnke}. 
 
 \section{Exercise: Windows - Creating and Testing FAT32 Disks}
 
@@ -687,3 +723,29 @@ with the file were returned to the free list.
 \section{Exploiting File System Metadata}
 File system metadata can be used to determine usage. 
 \cite{dfrws2011:JonathanGrier}
+
+\section{Opportunities for hiding data in File Systems}
+
+Information can be hidden in a file system by storing data in blocks
+that are allocated but not used to hold content\cite{dfrws2005:KnutEcksteinAndMarkoJahnke}. 
+
+
+\section{Further Reading}
+\subsection{Books}
+\subsection{Articles}
+\subsection{Wikipedia}
+As of this writing, the following wikipedia pages provide excellent
+insight to the concepts mentioned in this chapter:
+
+\begin{description}
+\item[\href{http://en.wikipedia.org/wiki/Copy-on-write}{Copy-on-write}]
+\item[\href{http://en.wikipedia.org/wiki/Logical_Unit_Number}{Logical
+    Unit Number}] Something about the LUN
+\item[\href{http://en.wikipedia.org/wiki/Logical_volume_management}{Logical
+    Volume Management}]
+\item[\href{http://en.wikipedia.org/wiki/Snapshot_(computer_storage)}{Snapshot
+    (Computer Storage)}]
+\end{description}
+
+
+% LocalWords:  virtualize

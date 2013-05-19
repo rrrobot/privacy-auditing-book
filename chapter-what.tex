@@ -38,25 +38,25 @@ with a |\x| or |0x|.
 
 
 \begin{figure}
-\begin{tabular}{ccc}
-binary & value & hexadecimal\\
+\begin{tabular}{>{\tt}c>{\tt}cc>{\tt}cc}
+\textrm{binary} & \textrm{octal} & decimal & \textrm{hexadecimal} & english \\
 \hline
-0000b & 0 & 0h \\
-0001b & 1 & 1h \\
-0010b & 2 & 2h \\
-0011b & 3 & 3h \\
-0100b & 4 & 4h \\
-0101b & 5 & 5h \\
-0110b & 6 & 6h \\
-0111b & 7 & 7h \\
-1000b & 8 & 8h \\
-1001b & 9 & 9h \\
-1010b & 10& Ah \\
-1011b & 11& Bh \\
-1100b & 12& Ch \\
-1101b & 13& Dh \\
-1110b & 14& Eh \\
-1111b & 15& Fh \\
+0000b & 000 & 0 & 0h & zero \\
+0001b & 001 & 1 & 1h & one \\
+0010b & 002 & 2 & 2h & two \\
+0011b & 003 & 3 & 3h & three \\
+0100b & 004 & 4 & 4h & four \\
+0101b & 005 & 5 & 5h & five \\
+0110b & 006 & 6 & 6h & six \\
+0111b & 007 & 7 & 7h & seven \\
+1000b & 010 & 8 & 8h & eight \\
+1001b & 011 & 9 & 9h & nine \\
+1010b & 012 & 10& Ah & ten \\
+1011b & 013 & 11& Bh & eleven \\
+1100b & 014 & 12& Ch & twelve \\
+1101b & 015 & 13& Dh & thirteen \\
+1110b & 016 & 14& Eh & fourteen \\
+1111b & 017 & 15& Fh & fifteen \\
 \hline
 \end{tabular}
 \caption{A nibble is a set of 4 bits; it has 16 possible values.}\label{nibble}
@@ -72,8 +72,6 @@ convention; the Java programming language treats bytes as signed
 integers in the range $-128$ to 127. It's also common to use present
 the value of a byte in hexadecimal notation, with the range |00|
 through |FF|.
-
-\subsection{Memory}
 
 \subsection{Registers}
 
@@ -91,6 +89,14 @@ decimal & binary \\
 \hline
 \end{tabular}
 
+Modern computers use registers in a variety of sizes. Many low-cost
+embedded systems use 8-bit and 16-bit registers, most cell phones use
+32-bit registers, and modern laptops, desktops and servers use
+64-bit registers. There are also 80-bit registers used for some kinds
+of scientific computing where both high resolution and high speed are required.
+
+\subsection{Memory}
+
 In the example above, the right-hand byte is called the \emph{least
   significant byte} and represents the bits $2^0$ through $2^7$; the
 left-hand byte  called the \emph{most
@@ -107,6 +113,7 @@ location.
 
 Larger numbers Two bytes can be grouped together, allowing values between 0 and
 65,535 to be represented. Four bytes
+
 
 \section{Text, ASCII and Unicode}\label{sec:letters}
 

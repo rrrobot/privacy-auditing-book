@@ -22,13 +22,14 @@ digits. Examples are shown in \tabref{nomen}.
      &              &         & Decimal  \\
 Base & Nomenclature & Example & Equivalent & Usage \\
 \hline
-2  & Binary      & 10101111b & 175  & Text\\
-8  & Octal       & 0377      & 255  & Text and code\\
-                 & |\377|    & 255  & Code\\
+2  & Binary      & \tt 10101111b & 175  & Text\\
+\hline
+8  & Octal       & \tt  0377    & 255  & Text and code\\
+   &             & \tt \\377    & 255  & Code\\
 10 & Decimal     & 1234      & 1234 & Text and code\\
-16 & Hexadecimal & DEADBEEFh & 3,735,928,559 & text \\
-                 & 0xFF      & 255  & Output \\
-                 & |\xFF|    & 255  & Python code\\
+16 & Hexadecimal & \tt DEADBEEFh & 3,735,928,559 & text \\
+   &             & \tt 0xFF      & 255  & Output \\
+   &             & |\xFF|    & 255  & Python code\\
 \end{tabular}
 \caption{Examples of numbers in various bases used in this book.}
 \end{table}
@@ -36,7 +37,7 @@ Base & Nomenclature & Example & Equivalent & Usage \\
 \subsubsection{Units}
 
 
-\subsection{Multipliers}
+\subsection{SI and IEC Multipliers}
 % \note{1MB = 1,000,000 bytes}
 % \note{1MiB = 1,048,576 bytes}
 
@@ -108,7 +109,7 @@ SI decimal prefixes are used to describe disk sizes, since that is the way
 the devices are sold to consumers.
 
 
-\section{Python and Digital Forensics}
+\section{Python}
 This book makes extensive use of the Python programming language for
 its examples. All of the examples are tested under Python~3.3,
 although Python~2.7 will work with most of the demonstration programs
@@ -116,7 +117,7 @@ as well.  This section describes specific aspects of the Python
 programming language that are important in our examples and that may
 be missed in an introductory Python programming class.
 
-\subsection{Reading and Writing Files with Python}
+\subsection{Reading and Writing Files: Binary vs.\ Text}
 
 When a Python program opens a file that file may be opened in one of
 two modes: \emph{text} or \emph{binary}.  When opened as text, Python
@@ -128,7 +129,7 @@ characters. To avoid this problem, files will normally be opened in
 binary mode. This is done by opening files with method
 |open(filename,"rb")|.
 
-\subsection{Python struct.unpack}
+\subsection{Python's struct.unpack}
 Much of the information on computers is stored as binary encoded
 values. Such values can be easily read and written using python's
 |struct.unpack| method, which reads a binary structure and returns a
@@ -200,15 +201,25 @@ $ (@ \hl{ls -l /dev/sd*} @)
 
 \subsection{SleuthKit}
 
-To Come.
+SleuthKit is...
+
+precompiled binaries for
+Windows. http://sourceforge.net/projects/sleuthkit/files/sleuthkit/4.0.2/
+  Download sleuthkit-win32-4.0.2.zip and uncompress the files into
+  |c:\sleuthkit-win32-4.0.2|
+
+
+
+
+TK
 
 \subsection{WireShark and tcpflow}
 
-To Come.
+TK
 
 \subsection{Bulk Extractor}
 
-To Come
+TK
 
 \section{Setting Up your Computer}
 This section provides recommendations for setting up your computer to
@@ -259,5 +270,7 @@ $ (@ \hl{sudo port install python33} @)
 \end{code} 
 % $
 
-\section{Other Books}
+\section{Other References}
+\subsection{Books}
 \cite{carrier-file-systems}
+\subsection{Articles}
