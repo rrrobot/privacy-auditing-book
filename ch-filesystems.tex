@@ -96,9 +96,9 @@ disk. Each surface of the disk was thus divided into a set of stacked
 concentric tracks, called \emph{cylinders}, each divided into a set of
 adjacent sectors.
 
- \twofigures{.5\textwidth}{fs/Cylinder_Head_Sector}{The structure of a mass storage
+ \twofigures{.5\textwidth}{ch-fs/Cylinder_Head_Sector}{The structure of a mass storage
    system divides each disk into multiple tracks, each of which has
-  multiple sectors.}{.5\textwidth}{fs/Disk-structure2}{something}
+  multiple sectors.}{.5\textwidth}{ch-fs/Disk-structure2}{something}
 
 This basic structure of storing data on sectors of spinning magnetic
 media remains in use today. A modern 3.5-inch hard drive might have two
@@ -301,7 +301,7 @@ card and cleared every addressable sector by overwriting that sector's
 content with NULL bytes. You can do this
 easily with the program in \figref{overwrite}.
 
-\lstinputlisting[caption=A simple program to clear a disk.]{fs/clear.py}
+\lstinputlisting[caption=A simple program to clear a disk.]{ch-fs/clear.py}
 \begin{figure}
 \begin{lstlisting}
 \end{lstlisting}
@@ -497,7 +497,7 @@ up the disk image, read the sector into memory, and then print the
 fields. 
 
 \lstinputlisting[caption=The start of a python program to display the
-  Master Boot Record.]{fs/mbrdecode.py}\label{mbrdecode}
+  Master Boot Record.]{ch-fs/mbrdecode.py}\label{mbrdecode}
 
 
 Finally, you can view the contents of the MBR using the SleuthKit's |mmls| command:
