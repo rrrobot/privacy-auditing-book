@@ -20,5 +20,5 @@ plainbook.pdf: plainbook.tex
 	pdflatex plainbook
 
 clean:
-	/bin/rm -f *.{aux,bbl,bcf,blg,log,idx,ptc,run.xml,toc}
+	/bin/rm -f *.{aux,bbl,bcf,blg,ind,ilg,idx,log,out,ptc,run.xml,toc}
 	/bin/rm -f main.pdf plainbook.pdf textbook.pdf

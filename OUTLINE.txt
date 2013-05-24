@@ -31,8 +31,8 @@ Chapter 2 - What Data Looks Like
  - ASCII and Unicode
  - Hex Dump
  - Strings
- - base64
  - Magic Numbers
+ - base64
 
 Chapter 3 - Designing a good forensics experiment
  - Why experiment?
@@ -41,7 +41,7 @@ Chapter 3 - Designing a good forensics experiment
  - Use Self-Identifying Data
  - Sampling vs. Complete Analysis
 
-Chapter - Operational Concerns
+Chapter 4 - Operational Concerns
 - Where do names come from?
  - PII in distribution software
    - @real.com
