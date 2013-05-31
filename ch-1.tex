@@ -3,18 +3,16 @@
 \section{What is Computer Forensics?}
 \section{What are Computer Forensics Tools?}
 \section{What is Personally Identifiable Information?}
-\begin{Verbatim}
-   - Legal definitions
-   - Practical definitions
-   - Practical Concerns
-     - Reuse of identifiers - at the same time, at different times
-     - Shared IDs
-     - specificity of identifiers; birthday problem
-     - IP addresses
-   - Identifiers: IPv4, IPv6, Mobile ID, SIM cards, Phone #s, email addressses
-   - GUIDs and identifiers
-    \section{What is ``Unique''}
-\end{Verbatim}
+\subsection{Legal definitions}
+\subsection{Practical definitions}
+\subsection{Practical Concerns}
+\subsubsection{Reuse of identifiers - at the same time, at different times}
+\subsubsection{Shared IDs}
+\subsubsection{specificity of identifiers; birthday problem}
+\subsubsection{IP addresses}
+\subsubsection{Identifiers: IPv4, IPv6, Mobile ID, SIM cards, Phone \#s, email addressses}
+\subsection{GUIDs and identifiers}
+\subsection{What is ``Unique''}
 \section{Unnoticed data leakage - why it's a problem}
 \subsection{Example: Geolocation Data in JPEGs}
   - Show how to find where a photo was taken with Preview on a Mac. 
@@ -48,16 +46,16 @@ digits. Examples are shown in \tabref{nomen}.
 \begin{table}
 \begin{tabular}{rlcrl}
      &              &         & Decimal  \\
-Base & Nomenclature & Example & Equivalent & Usage \\
+Base & Nomenclature & Example & Equivalent      & Usage \\
 \hline
-2  & Binary      & \tt 10101111b & 175  & Text\\
+2  & Binary      &  |10101111b|& 175            & Text\\
 \hline
-8  & Octal       & \tt  0377    & 255  & Text and code\\
-   &             & \tt \\377    & 255  & Code\\
-10 & Decimal     & 1234      & 1234 & Text and code\\
-16 & Hexadecimal & \tt DEADBEEFh & 3,735,928,559 & text \\
-   &             & \tt 0xFF      & 255  & Output \\
-   &             & |\xFF|    & 255  & Python code\\
+8  & Octal       &  |0377|     & 255            & Text and code\\
+8  & Octal       &  |\377|     & 255            & Code\\
+10 & Decimal     &  |1234|     & 1234           & Text and code\\
+16 & Hexadecimal &  |DEADBEEFh|& 3,735,928,559  & text \\
+   &             &  |0xFF|     & 255            & Output \\
+   &             &  |\xFF|     & 255            & Python code\\
 \end{tabular}
 \caption{Examples of numbers in various bases used in this book.}
 \end{table}

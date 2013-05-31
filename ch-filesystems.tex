@@ -1,29 +1,40 @@
 
 
 \chapter{Finding Hidden Data in File Systems}
-As a computer user you are no doubt familiar with files. This
-chapter look in detail at how files are stored on \emph{mass
-  storage devices} such as hard drives, USB memory sticks, and camera
-cards. This chapter will describe how to directly extract files by
-manually decoding the information on the media placed there by the
-operating system. It will also show how to find hidden data that might
-be left behind by the computer, such as the names of files that have
-been deleted, the deleted files themselves, and other kinds of
-potentially privacy sensitive information. 
+As a computer user you are no doubt familiar with files. This chapter
+looks in detail at how files are stored on \emph{mass storage devices}
+such as hard drives, USB memory sticks, and camera cards. It shows how
+two popular file systems store information in files and directories,
+and how the information on the media changes when the user attempts to
+delete a file.
 
-In this chapter you'll learn why file systems retain information after
-the user deletes it. Because every file system has different
-possibilities to retain such data, you'll also need to learn how to
-read and understand file system documentation so that you can analyze
-file systems that didn't exist when this document was written. Finally
-you'll learn how to design computer systems so that such information
-is not retained.
+As we will see, many file systems retain a significant amount of
+potentially sensitive information even after a file is deleted. This
+retention isn't \emph{inherent}, but it is \emph{common}. That is,
+system designers could create file systems that erase all traces of
+information when files are deleted, but they generally don't, because
+overwriting deleted data has real costs in terms of performance,
+battery consumption, and increased code complexity.
+
+Computer forensic tools such as Sleuth Kit take advantage of this
+\emph{residual information} that's left behind after a file deletion
+and make it possible to recover deleted files---provided that the data
+has not been overwritten by new information. Thus, the ability to
+recover files from a drive depends on how the drive
+was \emph{after} the file or files were first deleted.
+
+In order to understand how information is recovered from a drive,
+we'll need to learn how files and directories are stored in the first
+place. We'll also learn how to construct an experiment that you can
+use to determine if data is left behind or not. That's useful for
+analyzing new file systems that are not implemented by existing
+forensic tools.
 
 Tools used in this chapter:
 \begin{itemize}
 \item Hex dump tool
-\item SleuthKit 
 \item Python
+\item SleuthKit 
 \end{itemize}
 
 \section{Disks, Sectors, Files and File Systems}
@@ -31,34 +42,58 @@ This section describes how files are stored on mass storage devices
 such as flash cards used in digital cameras, solid state drives used
 in most laptops, and spinning hard drives used in high-capacity cloud
 computing environments (as well as on older laptops and desktops). The
-examples will be based on the two most popular file systems today, the
-FAT file system developed by Microsoft in the 1980s and widely used in
-digital cameras, and the NTFS file system developed by Microsoft in
-the 1990s and used for most versions of Windows from Windows NT
-through Windows 8.
+examples will be based on the two most popular file systems today:
+\begin{description}
+\item[FAT (File Allocation Table)] A simple file system developed by
+  Microsoft in the 1980s for use with the original IBM Personal
+  Computer. Today FAT is widely used in digital cameras and cell
+  phones, but it is rarely used on personal computers.
+\item[NTFS (New Technology File System)] A complex file system developed by Microsoft in
+the 1990s for Windows NT and popularized by Windows XP. Today NTFS is
+the primary file system used by desktops and laptops running Windows.
+\end{description}
+\index{File Allocation Table|see {FAT}}
+\index{FAT}
+\index{Windows 8}
+\index{New Technology File System|see {NTFS}}
+\index{NTFS}
+
+
 
 \subsection{Mass Storage Systems: Organization and Addressing}
 
 Mass storage systems don't store files. Instead, they store blocks of
 bytes (sometimes called \emph{sectors}). These blocks are invariably
 sized as an even power of 2. In the 1990s most hard drives had a block
-size of 512~B which Compact Discs (CDs) had a block size of 2048B;
-modern drives (both SSD and HD) have a block size of 4096 bytes. A
-1~TB drive therefore have approximately 250 million 4096-byte
-blocks. Each block on the media is referenced by a distinct number
+size of 512~B; modern drives (both SSD and HD) have a block size of
+4096 bytes.\footnote{Compact Discs (CDs) have a block size of 2048~B,
+  although some CD drives have a switch which allows the firmware to
+  simulate a read-only hard drive that has a block size of 512~B for
+  backwards compatibility.}
+A 1~TB drive therefore has approximately 250 million 4096-byte
+blocks. 
+
+Each block on the media is referenced by a distinct number
 called a \emph{logical block address} (LBA). These drives are
 \emph{random access}, meaning that the computer can read or write any
 block in any order, although it is invariably faster to read or write
 blocks multiple blocks at a time in numeric order.
+\index{LBA|see {Logical Block Address}}
+\index{Logical Block Address}
 
 Users don't see blocks of bytes when they take an SD card out of a
 camera and try to read the contents on their laptop: they see folders
 and files. The \emph{file system} is the part of the computer's
 operating system that implements the \emph{file abstraction layer},
 taking the \emph{file names} used by people and application programs,
-and mapping them to specific numbered blocks of data on the mass storage
-device.
-
+and mapping them to specific numbered blocks of data on the mass
+storage device. (``Linux contains an NTFS \emph{file system} so that
+it can read hard drives created on Windows-based computers.'')
+Confusingly, the phrase \emph{file system} can also be used to
+describe a specific set of sectors on a specific piece of
+media. (``The \emph{file system} was damaged when the computer
+crashed.'')
+ 
 The file system provides an API that allows program to read and write
 the contents of files, which ultimately results in the contents of
 specific disk sectors being copied into regions of memory specified by
@@ -77,7 +112,10 @@ more \emph{file names}, a \emph{creation date}, a \emph{last modification date},
 specifying the file's \emph{type}, or the kind of information that is
 stored inside the file. On Windows and Unix the file type is
 inferred from the file's extension---a file named
-\emph{FOOBAR.JPG} is assumed to be a JPEG digital image.
+\emph{FOOBAR.JPG} is assumed to be a JPEG digital image. But using
+extension to infer file type is not universal: the HTTP protocol sends
+the MIME file type along with the file length in the HTTP header when
+a file is downloaded over the web.
 
 Mass storage systems can only read or write complete blocks, so the
 file system may also have to buffer data between the application
@@ -96,9 +134,21 @@ disk. Each surface of the disk was thus divided into a set of stacked
 concentric tracks, called \emph{cylinders}, each divided into a set of
 adjacent sectors.
 
- \twofigures{.5\textwidth}{ch-fs/Cylinder_Head_Sector}{The structure of a mass storage
-   system divides each disk into multiple tracks, each of which has
-  multiple sectors.}{.5\textwidth}{ch-fs/Disk-structure2}{something}
+ \twofigures{.5\textwidth}{ch-fs/Cylinder_Head_Sector}{The structure
+   of a traditional hard drive consists of multiple platters, with
+   each platter having two read/write heads. The surface of each
+   platter is divided into concentric tracks, with each track divided
+   into a number of sectors. The set of all tracks on all of the
+   platter surfaces the same distance from the center hole are
+   referred to as a cylinder, allowing each sector to be identified by
+   a Cylinder, Head, Sector (CHS) address. Modern hard drives store more sectors on
+ the outer tracks than the inner tracks so that data is recorded at a
+ constant areal density. As a result, these drives refer to each
+ sector by a Logical Block Address (LBA), rather than by
+ CHS.}{.5\textwidth}{ch-fs/cd}{The data on an optical disc is arranged
+   as a series of blocks in a single spiral, with information recorded
+   at a constant linear density. Blocks are referred to by their
+   Logical Block Address.}
 
 This basic structure of storing data on sectors of spinning magnetic
 media remains in use today. A modern 3.5-inch hard drive might have two
@@ -135,7 +185,7 @@ simpler by having the computer refer to blocks by a single
 or equal to 0, and allowing the drive to map the LBA to a specific
 location on the media. 
 
-It is important to remember that files are an \emph{abstraction} that
+Remember that files are an \emph{abstraction} that
 was created for the purpose of managing data. There is nothing
 inherent in the design of computers, operating systems or mass storage
 devices that requires the use of files. A raw disk can be used as
@@ -197,7 +247,7 @@ modern computer systems:
 \item[Memory file systems] implement a file abstraction in
   memory. Such systems can provide for increased performance when
   compared to using a conventional file system on a simulated block
-  device. One of the most common examples of a memory file system is tmpfs\cite{Synder90tmpfs:a}.
+  device. One of the most common examples of a memory file system is tmpfs\cite{Snyder90tmpfs:a}.
 \item[Distributed file systems] allow a computer to access
   information on remote servers as if it is stored
   locally. Distributed file systems are forensically interesting
@@ -452,7 +502,7 @@ entire media is in use by a partition type that the non-GPT system does not unde
 You can display the contents of the MBR by viewing a hex dump of the
 first sector:
 
-\begin{Verbatim}
+\begin{code}
 $ (@ \hl{xxd -len 512 nps-2009-canon2-gen1.raw} @)
 0000000: fa33 c08e d0bc 007c 8bf4 5007 501f fbfc  .3.....|..P.P...
 0000010: bf00 06b9 0001 f2a5 ea1d 0600 00be be07  ................
@@ -487,7 +537,7 @@ $ (@ \hl{xxd -len 512 nps-2009-canon2-gen1.raw} @)
 00001e0: 0000 0000 0000 0000 0000 0000 0000 0000  ................
 00001f0: 0000 0000 0000 0000 0000 0000 0000 55aa  ..............U.
 $ 
-\end{Verbatim}
+\end{code}
 
 Decoding is not difficult, but can be time consuming. Instead of
 manually attacking the hex values, it is more effective to write a
@@ -496,9 +546,10 @@ of such a program in Python. This program  will open
 up the disk image, read the sector into memory, and then print the
 fields. 
 
+\begin{figure}
 \lstinputlisting[caption=The start of a python program to display the
   Master Boot Record.]{ch-fs/mbrdecode.py}\label{mbrdecode}
-
+\end{figure}
 
 Finally, you can view the contents of the MBR using the SleuthKit's |mmls| command:
 
@@ -523,7 +574,9 @@ find it in the SleuthKit file |sleuthkit/tsk3/fs/tsk_fs.h|. The first
 few lines of the SleuthKit structure are show in \figref{BSS}.
 
 \begin{figure}
-\begin{lstlisting}
+\begin{lstlisting}[caption={The first few bytes of the Boot Sector
+      Structure, the first sector of a FAT file system. From
+      Sleuthkit's \texttt{tsk\_fs.h}.\label{BSS}}]
 /*
  * Boot Sector Structure for TSK_FS_INFO_TYPE_FAT_12,
  * TSK_FS_INFO_TYPE_FAT_16, and TSK_FS_INFO_TYPE_FAT_32
@@ -546,8 +599,7 @@ few lines of the SleuthKit structure are show in \figref{BSS}.
         /* The following are different for fat12/fat16 and fat32 */
         ...
 \end{lstlisting}
-\caption{The first few bytes of the Boot Sector Structure, the first
-  sector of a FAT file system. From Sleuthkit's \texttt{tsk\_fs.h}.\label{BSS}}
+% \caption{}
 \end{figure}
 
 The FAT file system's 
@@ -588,12 +640,15 @@ disks. |DISKPART| is a command-line tool that needs to run as
 Administrator.
 
 We will be using these commands:
-\begin{tabular}{ll}
+
+\begin{tabular}{>{\tt}ll}
+\hline
 help partition & shows partition command available\\
 create vdisk & Creates a virtual disk \\
 list disk & Shows available disks \\
 list vdisk & Shows detailed information about the available VDisks\\
 list partition & Shows available partitions \\
+\hline
 \end{tabular}
 
 We will create a text file on the virtual disk that has a sensitive file
@@ -728,6 +783,9 @@ File system metadata can be used to determine usage.
 
 Information can be hidden in a file system by storing data in blocks
 that are allocated but not used to hold content\cite{dfrws2005:KnutEcksteinAndMarkoJahnke}. 
+
+\section{Constructing an experiment}
+* Creating files with self-identifying names and content.
 
 
 \section{Further Reading}
