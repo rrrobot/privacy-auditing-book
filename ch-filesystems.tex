@@ -39,25 +39,7 @@ Tools used in this chapter:
 
 \section{Disks, Sectors, Files and File Systems}
 This section describes how files are stored on mass storage devices
-such as flash cards used in digital cameras, solid state drives used
-in most laptops, and spinning hard drives used in high-capacity cloud
-computing environments (as well as on older laptops and desktops). The
-examples will be based on the two most popular file systems today:
-\begin{description}
-\item[FAT (File Allocation Table)] A simple file system developed by
-  Microsoft in the 1980s for use with the original IBM Personal
-  Computer. Today FAT is widely used in digital cameras and cell
-  phones, but it is rarely used on personal computers.
-\item[NTFS (New Technology File System)] A complex file system developed by Microsoft in
-the 1990s for Windows NT and popularized by Windows XP. Today NTFS is
-the primary file system used by desktops and laptops running Windows.
-\end{description}
-\index{File Allocation Table|see {FAT}}
-\index{FAT}
-\index{Windows 8}
-\index{New Technology File System|see {NTFS}}
-\index{NTFS}
-
+such as flash cards, solid state drives and spinning hard drives. 
 
 
 \subsection{Mass Storage Systems: Organization and Addressing}
@@ -66,11 +48,8 @@ Mass storage systems don't store files. Instead, they store blocks of
 bytes (sometimes called \emph{sectors}). These blocks are invariably
 sized as an even power of 2. In the 1990s most hard drives had a block
 size of 512~B; modern drives (both SSD and HD) have a block size of
-4096 bytes.\footnote{Compact Discs (CDs) have a block size of 2048~B,
-  although some CD drives have a switch which allows the firmware to
-  simulate a read-only hard drive that has a block size of 512~B for
-  backwards compatibility.}
-A 1~TB drive therefore has approximately 250 million 4096-byte
+4~KiB.\footnote{Compact Discs (CDs) have a block size of 2048~B.}
+A 1~TB drive therefore has approximately 250 million 4~KiB
 blocks. 
 
 Each block on the media is referenced by a distinct number
@@ -132,7 +111,17 @@ of read/write heads (one for the top side, one for the under side)
 could be moved to one of several set distances from the center of the
 disk. Each surface of the disk was thus divided into a set of stacked
 concentric tracks, called \emph{cylinders}, each divided into a set of
-adjacent sectors.
+adjacent sectors. The original IBM 350 had 50 spinning 24-inch that
+could store a total of 5 million bits, whereas a modern
+hard drive might have two spinning platters and store a 2~TB, but the
+underlying principal remains the same. 
+
+
+\sgraphic{ch-fs/BRL61-IBM_305_RAMAC}{An IBM 305 RAMAC computer system at U.S. Army Red River
+  Arsenal, with two IBM 350 disk drives in the foreground. Each IBM
+  350 consists of fifty 24-inch diameter disks, creating 100 recording
+  surfaces, each with 100 tracks, each track able to hold 100 5-bit
+  characters.\cite{ibm-350}} 
 
  \twofigures{.5\textwidth}{ch-fs/Cylinder_Head_Sector}{The structure
    of a traditional hard drive consists of multiple platters, with
@@ -148,28 +137,21 @@ adjacent sectors.
  CHS.}{.5\textwidth}{ch-fs/cd}{The data on an optical disc is arranged
    as a series of blocks in a single spiral, with information recorded
    at a constant linear density. Blocks are referred to by their
-   Logical Block Address.}
+   Logical Block Address. CD-ROM (Compact Disc Read Only Memory) media
+   is manufactured with its data; CD-R (Compact Disc-Recordable) can
+   be recorded by users, but only once; CD-RW (Compact
+  Disc-ReWritable) media can be erased and re-recorded.\textbf{TK: Draw Spiral}}
 
-This basic structure of storing data on sectors of spinning magnetic
-media remains in use today. A modern 3.5-inch hard drive might have two
-spinning surfaces that together store 2~terabytes of data, whereas
-IBM's 350- had 100 spinning surfaces that stored 3.75~megabytes of
-data, but the underlying principal is the same.\footnote{The actual IBM 350
-  shared a pair of heads for the 100 disk drives, requiring
-  independent seeks to reach any cylinder; it wasn't until the IBM 353
-  that each magnetic surface was given its own read/write head,
-  resulting in dramatic performance improvements. For more information
-  see \url{http://en.wikipedia.org/wiki/IBM_magnetic_disk_drives}}
 
-While disks turned out to be a very cost-effective means for storing large
+While disks turned out to be cost-effective  for storing large
 amounts of information, they require that information to be broken up
-into identically sized blocks (\emph{sectors}), each stored at a
+into identically sized blocks, each stored at a
 specific location. Requiring users to deal with this level of detail
 would be unworkable. Instead, computers provide facilities for
 assigning labels to sequences of sectors. The first use of the early
 disk drives was to replace cardboard file boxes of punched cards that
 were used to programs and data, so it was only natural that those
-sequences of sectors were called files as well. We use the same
+sequences of sectors were called \emph{files} as well. We use the same
 terminology today.
 
 Early disk systems enumerated each sector with the specific cylinder,
@@ -197,6 +179,37 @@ objects that are persisted in memory, or as BLOBs in a database.
 \index{CHS|see {Cylinder Head Sector}}
 \index{Logical Block Address}
 \index{LBA|see {Logical Block Address}}
+
+\subsection{FAT---A simple file system from the 1980s}
+``FAT'' is a simple file system developed by
+  Microsoft in the 1980s for use with the original IBM Personal
+  Computer. FAT is an acronym that stands for File Allocation Table, an array of integers
+  that is used to determine if a certain block of storage is free or
+  in use. There are three primary versions of
+  FAT---FAT12, FAT16 and FAT32---the primary difference being whether
+  the integers in the table are 12, 16 or 32-bits. 
+
+The integers in the FAT don't refer to individual blocks. Instead,
+they refer to \emph{clusters}. In FAT, a
+  \emph{cluster} is a contiguous set of 1, 2, 4, 8 or more disk
+  blocks, the number being determined by the file system's
+  \emph{cluster size}. (The cluster size is a per-file system
+  parameter that is established when the media is formatted.)
+  
+The definitive specification of the FAT file system is
+  the \emph{Microsoft Extensible Firmware Initiative FAT32 File System
+    Specification}, rev. 1.03, Dec 6, 2000\cite{microsoft-efi }\footnote{FAT12
+  and FAT16 were developed for floppy disks and had many significant
+  limitations---most notably, file names could only consist of eight
+  upper-case letters or numbers, a period, and then a three-character
+  extension. These so-called ``8.3 filenames'' were very difficult to
+  work with. The major innovation of FAT32 was a technique that
+  Microsoft developed that allowed long file names to be represented
+  in a manner that was invisible to legacy systems that still ran the
+  old DOS systems. As a result, every file on a FAT32 file system can
+  have two names---a long name with mixed case, and a shorter 8.3 name
+  with only uppercase letters. Today most systems will allow long file
+  names even on media formatted as FAT12 and FAT16.}
 
 \subsection{Flash, Solid State Drives, and the Flash Translation Layer}
 
@@ -273,18 +286,7 @@ interest. The number after each file system is date that the file
 system became made generally usable:
 \begin{description}
 \item[FAT12, FAT16 and FAT32 (1980)] file systems developed by Microsoft for use with
-  DOS. FAT refers to the File Allocation Table, an array of integers
-  that is used to determine if a cluster is in use or free. (In FAT, a
-  \emph{cluster} is a block of 1, 2, 4, 8 or more disk sectors.) The number
-  refers to the size of the integers in the FAT array (12 bits, 16 bits or
-  32 bits).  FAT12 and FAT16 only supported 8.3 filenames; FAT32
-  added support for long file names that were aliases for the 8.3
-  names and ignored on older systems, thus providing for backwards
-  compatibility. The definitive specification of the FAT file system is
-  the \emph{Microsoft Extensible Firmware Initiative FAT32 File System
-    Specification}, rev. 1.03, Dec 6, 2000\cite{microsoft-efi}. Other
-  descriptions can be found in ECMA-107\cite{ECMA-107}, which only
-  covers the use of FAT12 and FAT16 on floppy drives, and The
+  DOS and early versions of Windows. 
   
 \item[HFS, HFS+ (1985)] the Hierarchical File System, developed by Apple
   Computer and introduced with the first Macintosh hard
@@ -351,7 +353,7 @@ card and cleared every addressable sector by overwriting that sector's
 content with NULL bytes. You can do this
 easily with the program in \figref{overwrite}.
 
-\lstinputlisting[caption=A simple program to clear a disk.]{ch-fs/clear.py}
+\lstinputlisting[caption=\textbf{clear.py}: A simple program to clear a disk.]{ch-fs/clear.py}
 \begin{figure}
 \begin{lstlisting}
 \end{lstlisting}
@@ -652,7 +654,7 @@ list partition & Shows available partitions \\
 \end{tabular}
 
 We will create a text file on the virtual disk that has a sensitive file
-name and file contents. We will then take a screen shot and save it on
+name and file contents. Next we will take a screen shot and save it on
 the computer's hard drive as a JPEG. We will then delete the text file
 and empty the trash. Finally we will inspect the disk image and see if
 we can find the text file and the screen shot.
@@ -675,30 +677,31 @@ command supports. You may need to make the window larger.
 
 \item Create a 16MB virtual disk with the command:
 
-\begin{Verbatim}
-DISKPART> create vdisk file="C:\disk1.vhd" maximum=16
-\end{Verbatim}
+\begin{code}
+DISKPART> (@ \hl{create vdisk file="C:\textbackslash{}disk1.vhd" maximum=16} @)
+\end{code}
 
 \item Attach the disk you just created:
-\begin{Verbatim}
-DISKPART> attach vdisk
-\end{Verbatim}
+\begin{code}
+DISKPART> (@ \hl{attach vdisk} @)
+\end{code}
 
 \item Verify that the disk is attached:
-\begin{Verbatim}
-DISKPART> list disk
+\begin{code}
+DISKPART> (@ \hl{list disk} @)
 ...
-DISKPART> list vdisk
-\end{Verbatim}
+DISKPART> (@ \hl{list vdisk} @)
+\end{code}
 
 \item Now we need to create a partition, assign a letter to that
 partition, and format the drive. We will call this drive K: and format
 it with FAT. 
-\begin{Verbatim}
-DISKPART> create partition primary
-DISKPART> assign letter=k
-DISKPART> format fs=fat label="WORK"
-\end{Verbatim}
+\begin{code}
+DISKPART> (@ \hl{create partition primary} @)
+DISKPART> (@ \hl{assign letter=k} @)
+DISKPART> (@ \hl{format fs=fat label="WORK"} @)
+\end{code}
+\end{enumerate}
 
 At this point we have a 16MB virtual disk attached to the computer as
 drive K:. The drive's contents are stored in the file |C:\disk1.vhd|.
@@ -707,6 +710,7 @@ Lastly, we want to put a file on this disk. For test purposes we are
 going to use a small file with a distinctive file name and file
 contents.
 
+\begin{enumerate}[resume]
 \item Run the windows NotePad program by clicking the Start program,
 typing ``Notepad'' into the search field, and clicking on the icon.
 
@@ -721,14 +725,49 @@ with the name ``file-name-example-0001.txt''.
 
 \item Now we will detach the virtual disk:
 
-\begin{Verbatim}
-DISKPART> detach vdisk
-\end{Verbatim}
+\begin{code}
+DISKPART> (@ \hl{detach vdisk} @)
+\end{code}
 
 \end{enumerate}
 
 \subsection{Looking for the files}
 The 
+
+\section{File Deletion and Deleted File Recovery}\label{deleted_file_recovery}
+Different file system implementations delete files in different ways.
+
+Traditionally, file systems simply \emph{unlinked} files---the pointer
+to the file was removed from the directory, and the blocks associated
+with the file were returned to the free list.
+
+
+\section{Exploiting File System Metadata}
+File system metadata can be used to determine usage. 
+\cite{dfrws2011:JonathanGrier}
+
+\section{Opportunities for hiding data in File Systems}
+
+Information can be hidden in a file system by storing data in blocks
+that are allocated but not used to hold content\cite{dfrws2005:KnutEcksteinAndMarkoJahnke}. 
+
+
+\section{Further Reading}
+\subsection{Books}
+\subsection{Articles}
+\subsection{Wikipedia}
+As of this writing, the following wikipedia pages provide excellent
+insight to the concepts mentioned in this chapter:
+
+\begin{description}
+\item[\href{http://en.wikipedia.org/wiki/Copy-on-write}{Copy-on-write}]
+\item[\href{http://en.wikipedia.org/wiki/Logical_Unit_Number}{Logical
+    Unit Number}] Something about the LUN
+\item[\href{http://en.wikipedia.org/wiki/Logical_volume_management}{Logical
+    Volume Management}]
+\item[\href{http://en.wikipedia.org/wiki/Snapshot_(computer_storage)}{Snapshot
+    (Computer Storage)}]
+\end{description}
 
 \section{Terminology}
 \sgraphic{art/diskpart-1}{The Windows diskpart command is used to create and
@@ -766,44 +805,6 @@ Undelete
 Unlink
 
 
-
-\section{File Deletion and Deleted File Recovery}\label{deleted_file_recovery}
-Different file system implementations delete files in different ways.
-
-Traditionally, file systems simply \emph{unlinked} files---the pointer
-to the file was removed from the directory, and the blocks associated
-with the file were returned to the free list.
-
-
-\section{Exploiting File System Metadata}
-File system metadata can be used to determine usage. 
-\cite{dfrws2011:JonathanGrier}
-
-\section{Opportunities for hiding data in File Systems}
-
-Information can be hidden in a file system by storing data in blocks
-that are allocated but not used to hold content\cite{dfrws2005:KnutEcksteinAndMarkoJahnke}. 
-
-\section{Constructing an experiment}
-* Creating files with self-identifying names and content.
-
-
-\section{Further Reading}
-\subsection{Books}
-\subsection{Articles}
-\subsection{Wikipedia}
-As of this writing, the following wikipedia pages provide excellent
-insight to the concepts mentioned in this chapter:
-
-\begin{description}
-\item[\href{http://en.wikipedia.org/wiki/Copy-on-write}{Copy-on-write}]
-\item[\href{http://en.wikipedia.org/wiki/Logical_Unit_Number}{Logical
-    Unit Number}] Something about the LUN
-\item[\href{http://en.wikipedia.org/wiki/Logical_volume_management}{Logical
-    Volume Management}]
-\item[\href{http://en.wikipedia.org/wiki/Snapshot_(computer_storage)}{Snapshot
-    (Computer Storage)}]
-\end{description}
 
 
 % LocalWords:  virtualize

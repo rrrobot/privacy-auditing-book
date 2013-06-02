@@ -56,8 +56,7 @@ The SD card contained 60,800 512-byte sectors, for a total of
 
 For each disk image four files are distributed:
 
-   .raw -- a DD disk image that's 31,129,600 bytes in length
-   .aff -- an AFF disk image of the same file
+   .raw -- a raw disk image that's 31,129,600 bytes in length
    .E01 -- An EnCase E01 file of the disk image
    .xml -- A digital forensics XML file describing the files resident
            in the disk image.
@@ -79,7 +78,7 @@ MD5(/corp/drives/nps/nps-2009-canon2/nps-2009-canon2-gen6.raw)=750b509d8fbed37a5
 $ 
 \end{Verbatim}
 
-You can't calculate the hash of an AFF or E01 file in this manner,
+You can't calculate the hash of an E01 file in this manner,
 however, because these files contain additional metadata that is not
 part of the disk image.  Both of these formats also store hash codes
 directly in the disk image. This allows you to \emph{validate} the
@@ -156,70 +155,6 @@ $
 %% END NO FILL
 
 
-\subsection{AFF1 files}
-AFF1 files can store MD5 and SHA1 inside. You can display the
-information with the afinfo command:
-
-%% BEGIN NO FILL
-\begin{Verbatim}
-% afinfo -a /corp/drives/nps/nps-2009-canon2/nps-2009-canon2-gen6.aff
-/corp/drives/nps/nps-2009-canon2/nps-2009-canon2-gen6.aff is a AFF file
-
-/corp/drives/nps/nps-2009-canon2/nps-2009-canon2-gen6.aff
-                                        data       
-Segment                       arg      length    data
-=======                 =========    ========    ====
-badflag                         0        512   BAD SECTOR....9....5}..:.7.>....
-badsectors                      2          8   = 0 (64-bit value)
-afflib_version                  0          7   ``3.5.5''
-creator                         0          9   afconvert
-aff_file_type                   0          3   AFF
-acquisition_commandline         0         67   afconvert /corp/drives/nps/nps-2
-pagesize                 16777216          0   
-sectorsize                    512          0   
-page0                           1   16498776   x....XU...?W...-..]''R. ..JH.t).(
-page1                           1   14171768   x...uX.....c..Q.2d...HI7J.t)]...
-imagesize                       2          8   = 31129600 (64-bit value)
-md5                             0         16   750B 509D 8FBE D37A 5213 480A ACCF DC61 
-sha1                            0         20   4742 C325 F105 83DA B1EB 4C55 D0D4 
-                                               5AB3 BEB9 9EB3 
-image_gid                       0         16   258E FE7D 86A0 B08C BD89 8123 A206 9E22 
-acquisition_date                0         20   2009-04-13 20:09:54.
-
-Total segments:              15   (15 real)
-  Page  segments:             2
-  Hash  segments:             0
-  Signature segments:         0
-  Null segments:              0
-  Empty segments:             0
-
-Total data bytes in segments: 30671230
-Total space in file dedicated to segment names: 143
-Total overhead for 15 segments: 360 bytes (15*(16+8))
-Overhead for AFF file header: 8 bytes
-%  
-\end{Verbatim}
-%% END NO FILL
-
-The afverify command can be used to verify that the hash in the file
-matches the hash of the pages:
-
-%% BEGIN NO FILL
-\begin{Verbatim}
-% afverify /corp/drives/nps/nps-2009-canon2/nps-2009-canon2-gen6.aff
-/corp/drives/nps/nps-2009-canon2/nps-2009-canon2-gen6.aff: no signing certificate present. 
-SHA1 stored in file:     4742c325f10583dab1eb4c55d0d45ab3beb99eb3
-MD5 stored in file:      750b509d8fbed37a5213480aaccfdc61
-
-  Read              0/      31129600 bytes; done in n/a
-  Read       16777216/      31129600 bytes; done in 00:00:00
-
-Calculated SHA1: 4742c325f10583dab1eb4c55d0d45ab3beb99eb3  VERIFIES
-Calculated MD5:  750b509d8fbed37a5213480aaccfdc61          VERIFIES
-% 
-\end{Verbatim}
-%% END NO FILL
-
 
 
 \subsection{Exercises}
@@ -227,18 +162,17 @@ Calculated MD5:  750b509d8fbed37a5213480aaccfdc61          VERIFIES
 \item Download an install the following programs in this order:
 \begin{itemize}
 \item   libewf
-\item afflib
 \item  sleuthkit
 \end{itemize}
-\item Download nps-2009-canon2-gen6.aff, nps-2009-canon2-gen6.e01 and nps-2009-canon2-gen6.raw
+\item Download nps-2009-canon2-gen6.e01 and nps-2009-canon2-gen6.raw
 \item Verify the SHA1 of each file. Verify the RAW with the openSSL
   command and make sure that it matches what is in this book. Use the
   ewfverify and afverify commands to verify that the hash codes stored
-  in the AFF and E01 files match the computed values.
-\item Convert the RAW file to an AFF and E01 files. Notice that the
-  files are different than the distribution AFF and E01 files.
+  in the E01 files match the computed values.
+\item Convert the RAW file to an E01 files. Notice that the
+  files are different than the distribution E01 files.
 \item Verify your converted files.
-\item Convert the distribution AFF and E01 files back to raw files and
+\item Convert the distribution E01 files back to raw files and
   use the Unix |cmp| command to show that the resulting files match
   the distribution raw file.
 \end{itemize}
