@@ -1,6 +1,14 @@
 %% Body of computer forensics textbook
 %% Assumes foratting has been set up.
 
+\newif\ifpartone\partonetrue
+\newif\ifparttwo\parttwotrue
+\newif\ifpartthree\partthreetrue
+\newif\ifpartfour\partfourtrue
+
+% Turn off lots
+\partonefalse\parttwofalse\partfourfalse
+
 % http://tex.stackexchange.com/questions/17009/how-to-change-code-example-font-in-listings
 \lstset{basicstyle=\small\ttfamily,numbers=left,numberstyle=\tiny}
 \newcounter{bookpart}\setcounter{bookpart}{0}
@@ -9,20 +17,29 @@
     \phantomsection
     \addcontentsline{toc}{chapter}{\textcolor{ocre}{Part \arabic{bookpart}: #1}}
 }
-\bookpart{Privacy Auditing: Task and Tools}
-\input{ch-1}
-\input{ch-what}
-\input{ch-experiment}
-\input{ch-operational}
-\bookpart{Working with Documents and Files}
-\input{ch-pdfs}
-\input{ch-chunkfiles}
-\input{ch-dirfiles}
-\bookpart{Working with Disks and Disk Images}
-\input{ch-filesystems}
-\input{ch-diskimages}
-\input{ch-carving}
-\bookpart{Working with RAM}
-\bookpart{Network Analysis}
-\appendix
-\input{ch-dataviz}
+
+\ifpartone
+  \bookpart{Privacy Auditing: Task and Tools}
+  \input{ch-1}
+  \input{ch-what}
+  \input{ch-experiment}
+  \input{ch-operational}
+\fi
+\ifparttwo
+  \bookpart{Working with Documents and Files}
+  \input{ch-pdfs}
+  \input{ch-chunkfiles}
+  \input{ch-dirfiles}
+\fi
+\ifpartthree
+  \bookpart{Working with Disks and Disk Images}
+  \input{ch-filesystems}
+  \input{ch-diskimages}
+  \input{ch-carving}
+\fi
+\ifpartfour
+  \bookpart{Working with RAM}
+  \bookpart{Network Analysis}
+  \appendix
+  \input{ch-dataviz}
+\fi

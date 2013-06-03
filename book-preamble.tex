@@ -14,6 +14,11 @@
 
 
 
+% Make spacing look better
+\renewcommand{\topfraction}{0.99}
+\renewcommand{\floatpagefraction}{0.99}
+
+
 % http://tex.stackexchange.com/questions/27663/using-bold-italic-text-inside-listings
 % \usepackage{lmodern}
 \usepackage[scaled=0.90]{couriers}
@@ -26,7 +31,8 @@
 \usepackage{listings}           % source code listings
 \usepackage{xcolor}             % better colors, needed for soul
 \usepackage{soul}               % better highlighting
-\usepackage{bibentry}
+%\usepackage{bibentry}
+\newcommand{\bibentry}[1]{}
 
 % http://tex.stackexchange.com/questions/32457/make-all-figures-and-tables-framed-by-default
 % \usepackage[framestyle=fbox,framefit=yes,heightadjust=all,framearound=all]{floatrow} 
@@ -64,6 +70,7 @@
 \usepackage{pifont}             % symbols
 \usepackage{color}              % some people like commenting in color
 \usepackage{multirow}
+\usepackage{varioref}
 \usepackage{fancyvrb}
   \DefineShortVerb{\|}            % makes |foo| a verbatim command
 
