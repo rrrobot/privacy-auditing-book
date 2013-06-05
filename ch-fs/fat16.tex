@@ -1,0 +1,31 @@
+% Draw grid that looks like a FAT16 volume
+\newcommand{\dbox}[3]{\draw[#1] (#2 -.4, #3 - .4) rectangle (#2 + .4, #3 + .4);}
+\newcommand{\Dbox}[3]{\fill[#1] (#2 -.4, #3 - .4) rectangle (#2 + .4, #3 + .4);}
+\begin{tikzpicture}[x=.25cm,y=.25cm]
+\foreach \y in {1,...,8} {
+  \foreach \x in {1,...,40} {
+    \dbox{}{\x}{\y}
+  }
+}
+  \Dbox{color=red}{1}{8}  
+  \foreach \x in {3,...,4} { \Dbox{color=blue}{\x}{8}  }
+  \foreach \x in {5,...,6} { \Dbox{color=green}{\x}{8}  }
+  \foreach \x in {7,...,8} { \Dbox{color=pink}{\x}{8}  }
+                           { \Dbox{color=cyan}{9}{8} }
+  \foreach \x in {11,...,30} { \Dbox{color=yellow}{\x}{8}  }
+  \foreach \x in {31,...,40} { \Dbox{color=purple}{\x}{8}  }
+  \foreach \x in {1,...,15} { \Dbox{color=purple}{\x}{7}  }
+
+{\small
+  \Dbox{color=red}{1}{-1}  ; \node [right] at (1,-1) {MBR};
+  \Dbox{color=blue}{6}{-1} ; \node [right] at (6,-1) {FAT1};
+  \Dbox{color=green}{11}{-1} ; \node [right] at (11,-1) {FAT2};
+  \Dbox{color=pink}{16}{-1}  ; \node [right] at (16,-1) {Root};  
+  \Dbox{color=cyan}{20}{-1}  ; \node [right] at (20,-1) {Subdirs};
+  \Dbox{color=yellow}{26}{-1} ; \node [right] at (26,-1) {File \#1};
+  \Dbox{color=purple}{32}{-1} ; \node [right] at (32,-1) {File \#2};
+  \dbox{}{38}{-1} ; \node [right] at (38,-1) {Free};
+}
+\end{tikzpicture}
+\renewcommand*{\dbox}{}
+\renewcommand*{\Dbox}{}

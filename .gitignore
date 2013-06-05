@@ -15,3 +15,5 @@ plainbook.pdf
 *.idx
 *.run.xml
 textbook.pdf
+.DS_Store
+orange/main.pdf
