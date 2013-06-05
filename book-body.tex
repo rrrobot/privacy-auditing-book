@@ -5,9 +5,11 @@
 \newif\ifparttwo\parttwotrue
 \newif\ifpartthree\partthreetrue
 \newif\ifpartfour\partfourtrue
+\newif\ifpartfive\partfivetrue
+\newif\ifpartsix\partsixtrue
 
 % Turn off lots
-\partonefalse\parttwofalse\partfourfalse
+% \partonefalse\parttwofalse\partthreefalse\partfourfalse
 
 % http://tex.stackexchange.com/questions/17009/how-to-change-code-example-font-in-listings
 \lstset{basicstyle=\small\ttfamily,numbers=left,numberstyle=\tiny}
@@ -17,6 +19,9 @@
     \phantomsection
     \addcontentsline{toc}{chapter}{\textcolor{ocre}{Part \arabic{bookpart}: #1}}
 }
+
+\DeclareFieldFormat[inproceedings]{date}{\ifbibliography{\mkbibparens{#1}}{#1}}
+
 
 \ifpartone
   \bookpart{Privacy Auditing: Task and Tools}
@@ -38,8 +43,14 @@
   \input{ch-carving}
 \fi
 \ifpartfour
-  \bookpart{Working with RAM}
   \bookpart{Network Analysis}
+\fi
+\ifpartfive{
+  \bookpart{Advanced Topics}
+  \input{ch-encryption}
+  \input{ch-ram}
+\fi
+\ifpartsix{
   \appendix
   \input{ch-dataviz}
 \fi
