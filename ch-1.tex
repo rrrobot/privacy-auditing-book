@@ -156,35 +156,6 @@ SI decimal prefixes are used to describe disk sizes, since that is the way
 the devices are sold to consumers.
 
 
-\section{Setting Up your Computer}
-This section provides recommendations for setting up your computer to
-make the most of the examples and exercises in this book. Remember,
-these are \emph{recommendations,} not requirements.
-
-Once you have installed Python, you may wish to modify your Windows
-console so that it has 132 rows of text and 9999 lines of
-scrollback. You can do this by running the |cmd.exe| program from the
-Start menu then right-clicking on the window's titlebar and selecting
-the ``Properties'' menu, as shown in \figref{intro/windows-console}.
-
-Windows users may also wish to become familiar with the Windows
-PowerShell, a replacement for |cmd.exe|.
-
-\sgraphic{intro/windows-console}{Setting your Windows console for 132
-  rows of text and 9999 lines of scrollback will improve the usability
-  of many text-based commands.}
-
-\subsection{MacOS}
-
-For Mac systems we recommend installing Python 3 with the MacPorts
-system. Download MacPorts from \url{http://macports.org/} and then type:
-
-\begin{code}
-$ (@ \hl{sudo port install python33} @) 
-\end{code} 
-% $
-
-
 
 \section{Python}
 This book makes extensive use of the Python programming language for
@@ -309,6 +280,53 @@ On MacOS, install matplotlib for Python 3.3 with:
 $ (@ \hl{sudo port install py33-matplotlib} @)
 \end{code}
 %$
+
+\section{Setting Up your Computer}
+This section provides recommendations for setting up your computer to
+make the most of the examples and exercises in this book. Remember,
+these are \emph{recommendations,} not requirements.
+
+\subsection{Windows}
+Once you have installed Python, you may wish to modify your Windows
+console so that it has 132 rows of text and 9999 lines of
+scrollback. You can do this by running the |cmd.exe| program from the
+Start menu then right-clicking on the window's titlebar and selecting
+the ``Properties'' menu, as shown in \figref{intro/windows-console}.
+
+Windows users may also wish to become familiar with the Windows
+PowerShell, a replacement for |cmd.exe|.
+
+\sgraphic{intro/windows-console}{Setting your Windows console for 132
+  rows of text and 9999 lines of scrollback will improve the usability
+  of many text-based commands.}
+
+If you do not have a C++ compiler, you should install one. Many
+Windows users will feel most comfortable with an integrated
+development environment (IDE). We
+recommend:
+
+\begin{itemize}
+\item Code::Blocks\furl{http://sourceforge.net/projects/codeblocks/},
+  a popular Open Source IDE that includes the mingw compiler suite 
+\item Orwell Dev-C++
+  (\url{http://sourceforge.net/projects/orwelldevcpp/})
+\item Visual Studio Express 2012 for Windows
+  Desktop\furl{http://www.microsoft.com/visualstudio/eng/products/visual-studio-express-products},
+  Microsoft's compiler, allows development in C++, C\# and
+  VB.NET. Runs on Windows 7 and later versions.
+
+\subsection{Linux}
+
+\subsection{MacOS}
+
+For Mac systems we recommend installing Python 3 with the MacPorts
+system. Download MacPorts from \url{http://macports.org/} and then type:
+
+\begin{code}
+$ (@ \hl{sudo port install python33} @) 
+\end{code} 
+% $
+
 
 \section{Open Source Forensic Tools}
 
