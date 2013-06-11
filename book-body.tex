@@ -19,14 +19,13 @@
     \phantomsection
     \addcontentsline{toc}{chapter}{\textcolor{ocre}{Part \arabic{bookpart}: #1}}
 }
-
 \DeclareFieldFormat[inproceedings]{date}{\ifbibliography{\mkbibparens{#1}}{#1}}
 
 
 \ifpartone
   \bookpart{Privacy Auditing: Task and Tools}
   \input{ch-1}
-  \input{ch-what}
+  \input{ch-what}  % What data looks like
   \input{ch-experiment}
   \input{ch-operational}
 \fi
@@ -55,3 +54,4 @@
   \appendix
   \input{ch-dataviz}
 \fi
+
