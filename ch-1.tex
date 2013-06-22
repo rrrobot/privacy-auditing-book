@@ -1,10 +1,124 @@
 \chapter{Introduction}
-\section{What is Privacy Auditing?}
-\section{What is Computer Forensics?}
-\section{What are Computer Forensics Tools?}
-\section{What is Personally Identifiable Information?}
-\subsection{Legal definitions}
-\subsection{Practical definitions}
+\epigraph{Three can keep a secret, if two of them are dead.}{Benjamin
+  Franklin}
+
+This book is about finding secrets that were present in computer
+systems, sent over the Internet or a wireless network, or
+inadvertently left in a digital document. 
+
+Over the years a wide variety of programs running on many different
+kinds of computers have been responsible for significant privacy
+violations. The violations are typically \emph{unintentional}---the
+people who wrote these programs didn't create them with the goal of
+violating privacy. Instead, the programs have had bugs that caused
+private information to be inadvertently retained or distributed. The
+bugs are typically so subtle that most people using the program don't
+realize that their private information is potentially being
+compromised. And because the private information leaked by these bugs
+is typically embedded in a form that is invisible or easily ignored,
+the bugs can persist for weeks, months, or even years before they are
+discovered and fixed.
+
+\section{Technical Privacy Auditing}
+
+This book describes some of the ways that private information has been
+leaked in modern information systems and explains how you could have
+found those leaks using tools that are freely available. We call this
+process ``technical privacy auditing'' because it uses technical
+tools to find privacy problems in software.
+
+Most of the technical privacy failures that we know about were not
+discovered by the companies that wrote the software in
+question. Instead, the bugs were typically discovered by students,
+journalists, and computer enthusiasts---people who looked at the data
+and saw something that they thought just didn't belong. 
+The basic premise of this book is that many such privacy snafus can
+be discovered through straightforward visual inspection. The goal of
+this book is to teach you to understand what you are looking at, so
+that you will be in a position to discover new privacy violations in
+the future.
+
+The root cause of many technical privacy violations is the complexity
+of modern information systems. Today's computers are vast, with
+gigabytes of storage, tens of thousands of application programs, and
+real-time connections to data networks that continually download ever 
+more code and data. A typical cell phone with 16 gigabytes of memory can
+store literally hundreds of thousands of digital photographs, hours of
+video, or months of audio recorded from its internal
+microphone. It's very easy for a programmer to overlook some small
+piece of storage that may hold some very sensitive piece of
+information. 
+
+\subsection{Notable Privacy Leaks}
+
+For example, in April 2011 two security researchers discovered that
+Apple's iOS~4 operating system was tracking the movements of every
+iPhone and iPad and storing that information in a database on the
+mobile device. This database was copied to the users'
+desktop or laptop computer whenever they backed up their mobile
+device. Pete Warden and Alasdair Allan discovered
+the file by accident while they were working on a project to create
+visualizations called \emph{heat maps}. The two were apparently
+looking for geospatial information that they could visualize with
+their software then they stumbled upon a large database of such data
+in the iPhone's backup
+files~\cite{apple-tracking}. The two developed an application that
+took the data and plotted it on a map, with larger dots indicating
+more data points~(\figref{heatmap}). A media uproar resulted---fueled
+in no small part by Warden and Allan's program, which allowed anyone
+with an iPhone to see precisely where they had been tracked. 
+Apple later released a
+statement stating that the database was
+not the user's locations, but the location of nearby wireless access
+points that was used by the iPhone's location services to determine
+the phone's position. Apparently the phone downloaded this information
+as it moved around to aid in real-time geolocation without the need to
+use the phone's built-in GPS. The fact that the database was never cleared and
+continued to be updated even when the phone's location services was
+disabled was a ``bug,'' according to Apple---a bug that was fixed
+shortly after it was publicized by Warden and Allan~\cite{apple-tracking-statement}. 
+
+\begin{figure}
+\includegraphics[width=\textwidth]{ch-1/5637893141_ba59f2d989_o.png}
+\caption{In April 2011 two researchers discovered that Apple's iOS 4
+  operating system recorded the location of nearby Wi-Fi access points
+  to aid in geolocation. Due to a bug the database was never
+  cleared. As a result, the database could easily be used to create a
+  map of every place that the iPhone had been. (C) 2011 John
+  Niedermeyer. {\small (Licensed under Creative Commons
+  Attribution-NonCommercial-ShareAlike 2.0 Generic)}}.\label{heatmap}
+% http://www.flickr.com/photos/nedward/5637893141
+\end{figure}
+
+Privacy leaks such as Apple's are insidious because they are
+invisible both to users and to the companies that produce
+hardware and software. Sometimes these problems result when a program
+developed for a small group of technical users is deployed to a user
+base that is largely and less technically inclined. Other times they
+are simply bugs and technical oversights that were not detected when
+the program was developed because nobody looked deeply at the data. 
+
+Other examples of privacy leaks include:
+\begin{itemize}
+\item Microsoft leaking windows registration information (cite)
+\item VA Laptop
+\item In May 2013 a firm called Decipher Forensics revealed that Snapchat, an application that sends photos with a
+  self-destruct timer, didn't actually delete photos as
+  promised. Instead the program simply renamed the photos so that they
+  could not be seen with normal tools on the telephone\cite{ksl-snap-chat}.
+\end{itemize}
+
+\subsection{Personally Identifiable Information?}
+Most of the leaks described in the previous section share a common
+theme: each involved the collection and possible release of personally
+identifiable information (PII).
+
+*EXPLAIN WHAT IT IS*
+
+\subsubsection{Legal definitions}
+
+\subsubsection{Practical definitions}
+
 \subsection{Practical Concerns}
 \subsubsection{Reuse of identifiers - at the same time, at different times}
 \subsubsection{Shared IDs}
@@ -13,6 +127,69 @@
 \subsubsection{Identifiers: IPv4, IPv6, Mobile ID, SIM cards, Phone \#s, email addressses}
 \subsection{GUIDs and identifiers}
 \subsection{What is ``Unique''}
+
+\section{Digital Forensics Tools}
+
+This book describes how to find leaks of personal information using
+digital forensics tools. The previous section gave a brief description
+of different kinds of 
+
+
+The tools that this book introduces for technical privacy auditing are
+commonly used for digital forensics and for data
+  recovery. \emph{Digital forensics} is a branch of forensic sciences
+  that involves the investigation of material found on digital
+  devices. Digital Forensics \emph{examiners} employ a variety of
+  tools and techniques to find information that might be useful for
+  solving a crime, understanding an electronic break-in, or simply
+  establishing if information has been stolen or inappropriately
+  accessed. 
+
+
+all too easy for a program to inadvertently collect a piece of private
+information and then leave it in memory, save it in a file, or send it
+over a network. 
+
+Programs can have privacy-related bugs for years without being noticed 
+
+have been 
+
+Modern computers are extraordinarily complex systems with vast amounts
+of storage, high-performance network connections, and all kinds of
+sensors. Today a 
+
+Since the dawn of the consumer Internet in the 1990s there have been
+many cases in which sensitive information was inadvertently released
+because a computer program did not behave properly. 
+
+The secrets are typically
+private information that was created and or distributed with a
+computer program. 
+
+
+Over the past 
+Typically some user trusted the program to protect
+their privacy but it didn't. by a piece
+of software that was trusted by their users to protect their privacy
+but which failed to do so. We know about 
+
+someone trusted, but that acted in program se secrets were not put
+there intentionally---they 
+
+. Specifically, this book is about
+finding secrets that are \emph{hidden}, \emph{invisible}, or simply
+easy to \emph{overlook}. Secrets that shouldn't be present, but
+are. Secrets that are present in computer systems, sent over
+information networks, or .
+
+Many 
+
+\section{Privacy and Public Policy }
+
+\subsection{Non-Technical Privacy Audits}
+
+\subsection{Allowable Leaks}
+
 \section{Unnoticed data leakage - why it's a problem}
 \subsection{Example: Geolocation Data in JPEGs}
   - Show how to find where a photo was taken with Preview on a Mac. 
@@ -314,6 +491,7 @@ recommend:
   Desktop\furl{http://www.microsoft.com/visualstudio/eng/products/visual-studio-express-products},
   Microsoft's compiler, allows development in C++, C\# and
   VB.NET. Runs on Windows 7 and later versions.
+\end{itemize}
 
 \subsection{Linux}
 
