@@ -38,9 +38,9 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[11pt,fleqn]{book} % Default font size and left-justified equations
+\documentclass[11pt,fleqn,twoside]{book} % Default font size and left-justified equations
 
-\usepackage[top=1in,bottom=1in,left=1.5in,right=1.5in,
+\usepackage[top=1in,bottom=1in,left=1.25in,right=1.25in,
   marginparwidth=1in,
   marginparsep=12pt,
   headsep=10pt]{geometry}           % Page margins
@@ -56,10 +56,10 @@
 
 % Bibliography
 \usepackage[style=alphabetic,sorting=nyt,sortcites=true,autopunct=true,babel=hyphen,hyperref=true,abbreviate=false,backref=true,backend=biber]{biblatex}
- \addbibresource{textbook.bib} % BibTeX bibliography file
- \addbibresource{../../domex/papers/bib/forensics.bib} % BibTeX bibliography file
- \addbibresource{../../domex/papers/bib/garfinkel.bib} % BibTeX bibliography file
- \addbibresource{../../domex/papers/bib/dfrws.bib} % BibTeX bibliography file
+ \addbibresource{bib/textbook.bib}  % BibTeX bibliography file
+ \addbibresource{bib/forensics.bib} % BibTeX bibliography file
+ \addbibresource{bib/garfinkel.bib} % BibTeX bibliography file
+ \addbibresource{bib/dfrws.bib}     % BibTeX bibliography file
 \defbibheading{bibempty}{}
 
 % Index
@@ -112,7 +112,6 @@
 
 \noindent  \slgbookfrontmatter
  
-
 \noindent \textit{\slgbookdate} % Printing/edition date
 
 %----------------------------------------------------------------------------------------
@@ -137,11 +136,12 @@
 \chapter*{Bibliography}
 \addcontentsline{toc}{chapter}{\textcolor{ocre}{Bibliography}}
 \section*{Books}
-\addcontentsline{toc}{section}{Books}
-\printbibliography[heading=bibempty,type=book]
+For a list of books, please see page~\vref{section:books}.
+% \addcontentsline{toc}{section}{Books}
+% \printbibliography[heading=bibempty,type=book]
 \section*{Articles}
 \addcontentsline{toc}{section}{Articles}
-\printbibliography[heading=bibempty,type=article]
+\printbibliography[heading=bibempty,nottype=book]
 
 %----------------------------------------------------------------------------------------
 %	INDEX

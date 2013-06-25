@@ -1,17 +1,38 @@
-\chapter{What Data Looks Like}
+\chapter{What Data Look Like}
 
-In this book we will spend a lot of time looking at data buffers and
-trying to figure out what they mean. Two common ways to do this are
-looking at hex dumps (\secref{sec:hex-dumps}) and by extracting
-printable strings (\secref{sec:strings}). In order to understand
-what these values actually mean, it's important
+Sometimes you can see data leakage by simply analyzing a file with an
+ordinary utility, as we did in the last chapter when we discovered an
+easy way to read geolocation data hidden in a JPEG. Other times
+the leakage may be less obvious---indeed, the reason the leakage may be present
+is that there are no readily available tools to view the
+information. As a result, the software developers know that the
+information is present but don't think that it's relevant, and people
+who are in a position to know that the leakage is relevant don't have
+the technical ability to determine that it's present.
+
+The only way to overcome the need to have specialized tools is to
+learn how to write your own. As a result, this book spends a lot of
+time showing data buffers and explaining how to understand what the
+information means. 
+
+This chapter starts with the creation of a Portable Document Format
+(PDF) file that contains hidden information (\secref{sec:make-pdf}). Using this file, we'll
+explore two popular ways of looking at data it contains---by looking
+at \emph{hex dumps}  (\secref{sec:hex-dumps}) and by extracting
+printable strings (\secref{sec:strings}).
+
+In order to understand what the hex dump and extracted strings actually mean, it's important
 to first understand how numbers (\secref{sec:numbers}) and letters
 (\secref{sec:letters}) are actually stored inside a computer's memory.
-
 Much of this chapter is similar to what might be covered at the start
 of a course on computer architecture. But whereas an architecture
 course is primarily concerned with computation and data in motion,
 this chapter is concerned with understanding data at rest. 
+
+\section{Make a leaky PDF!}\label{sec:make-pdf}
+
+
+
 
 \section{Bits, Bytes, and Memory}\label{sec:numbers}
 The \emph{bit} is the fundamental unit of storage on digital computers. Bits
@@ -78,8 +99,8 @@ through |FF|.
 Computers use groups of bytes to represent larger numbers. Two bytes
 can represent 65,536 different values. Here are some examples:
 
-\begin{tabular}{cc}
-decimal & binary \\
+\begin{tabular}{c>{\tt}c}
+decimal & \textrm{binary} \\
 \hline
 0      & 00000000b 00000000b \\
 255    & 00000000b 11111111b \\
@@ -178,6 +199,10 @@ $
 Because ASCII is commonly used by computer systems, 
 \emph{strings} command is a powerful way to find  identifying
 information. 
+
+\section{Magic Numbers}
+
+\section{BASE16, BASE64 and BASE85}
 
 \section{Exercises}
 Look for private information with strings in files
