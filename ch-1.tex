@@ -547,7 +547,6 @@ and install them in into |c:\sleuthkit|.
 \subsubsection{Bulk Extractor on Linux}
 \subsubsection{Bulk Extractor on Macintosh}
 
-<<<<<<< HEAD
 \sgraphic{intro/windows-console}{Setting your Windows console for 132
   rows of text and 9999 lines of scrollback will improve the usability
   of many text-based commands.}
@@ -565,14 +564,32 @@ $ (@ \hl{sudo yum install python3} @)
 \end{code} 
 % $
 
-\subsubsection{Hex Dumps under Linux}
+\subsubsection{Hex Dumps under Linux (Fedora)}
+
+Popular tools for creating hex dumps on Linux include \texttt{od}
+(octal dump) and \texttt{xxd}.  The \texttt{od} is part of the base
+release. xxd must be installed from the package
+\texttt{vim-common}\footnote{We're not sure why xxd is part of
+  vim-common. If you didn't know this, yo ucould find it out with the
+  command \texttt{yum whatprovides}:
+\begin{code}
+$ (@ \hl{yum whatprovides xxd} @)
+Loaded plugins: langpacks, presto, refresh-packagekit
+2:vim-common-7.3.712-1.fc18.x86_64 : The common files needed by any version of the VIM editor
+Repo        : fedora
+Matched from:
+Filename    : /usr/bin/xxd
+$
+} with the yum command:
+
+\begin{code}
+$ (@ \hl{sudo yum install vim-common} @)
 
 \subsection{MacOS}
-=======
+
 \section{Other References}
 \subsection{Books}\label{section:books}
 The following books are referenced in this book:
->>>>>>> 6016c5bf76ea49c5b40270cce00bff8b00a967b7
 
 \printbibliography[heading=bibempty,type=book]
 
