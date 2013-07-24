@@ -1,0 +1,35 @@
+% http://tex.stackexchange.com/questions/83441/tex-free-floating-anchors
+
+\documentclass{article}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+
+\newcommand{\AnchoredRegion}[4][]{%
+    % #1= draw options
+    % #2= name of this node
+    % #3= x,y offset from south west of current page
+    % #4= content for node
+    \begin{tikzpicture}[overlay,remember picture, outer sep=0, inner sep=5pt]
+        \node [#1] (#2) at
+            ($(current page.south west)+(#3)$)
+            {#4};
+    \end{tikzpicture}%
+}
+
+\newcommand{\DrawLines}[3][]{%
+    \begin{tikzpicture}[overlay,remember picture, outer sep=0, inner sep=5pt]
+        \draw [ultra thick, #1] (#2) to (#3);
+    \end{tikzpicture}%
+}%
+
+\newcommand*{\TextA}{\parbox{3.0cm}{\raggedright Some small text over two lines.}}%
+\newcommand*{\TextB}{\parbox{3.0cm}{\raggedright Some longer piece of text that takes up three lines.}}%
+\newcommand*{\TextC}{\parbox{3.0cm}{\raggedright Some even longer piece of text thatjust goes on and on and on and on..... Well you get the idea.}}%
+
+\begin{document}
+    \AnchoredRegion[fill=yellow!40]{YellowRegionA}{7,7}{10}
+    \AnchoredRegion[fill=yellow!40]{YellowRegionB}{7,8}{11}
+    \AnchoredRegion[fill=yellow!40]{YellowRegionC}{7,9}{12}
+    \DrawLines[out=130,in=-130,-stealth,black]{YellowRegionA.east}{YellowRegionB.east}
+    \DrawLines[out=130,in=-130,black,distance=6cm]{YellowRegionB.east}{YellowRegionC.east}
+\end{document}
