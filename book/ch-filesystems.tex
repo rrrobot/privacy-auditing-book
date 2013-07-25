@@ -1023,5 +1023,91 @@ in File Systems'' chapter of \emph{Technical Privacy Auditing with
 
 
 
+\section{Exercises}
+
+\begin{enumerate}
+\item Download GEN1 (nps-2009-canon2-gen1.raw) and show a hex dump of the
+  images' first sector.
+\item Draw a box around hex bytes in the dump that
+  correspond to the first slot in the partition table.
+\item Show a hex dump of the GEN1 Boot Sector Structure.
+\item Run the \texttt{mbrdecode.py} program shown in the chapter on
+  GEN1 and provide the results.
+\item Extend \texttt{mbrdecode.py} to decode and print all of the
+  fields in the Boot Sector Structure. You will do this by:
+\begin{enumerate}
+  \item Determining the block number in which the BSS resides. (Hint:
+    it's the first block of the partition.)
+  \item Reading the block into a buffer.
+  \item Using \texttt{struct.unpack} to decode the buffer. (You
+  can do this in a single statement or with a series of statements as
+  we do in the Listing.)
+  \item Printing each value. 
+\end{enumerate}
+
+
+\item Extend \texttt{mbrdecode.py} to print the contents of the root
+  directory.  You will do this by:
+\begin{enumerate}
+  \item Determining the location and length of the root directory
+    from the BSS.
+  \item Reading the root directory into a buffer.
+  \item Creating a function that takes a buffer and prints each
+    directory entry that the buffer contains. 
+\end{enumerate}  
+
+\item In order to work with files it is necessary to read the File
+  allocation table. Using the information you learned in the previous
+  step, provide the sector numbers where the FAT starts and stops.
+
+\item Modify the \texttt{mbrdecode.py} program to read the
+  entire FAT into an integer array. 
+
+  Recall that sectors on a FAT volume used to hold user data are
+  called \emph{clusters};  each cluster may consist of one or
+  more sectors (blocks). Each file can therefore be referred to by the
+  number of the cluster where the first byte of file data is
+  stored. The FAT array for each cluster contains a pointer to the
+  location of the next cluster or a special value indicating there are
+  no more data clusters. Each file is therefore described by a linked
+  list of cluster numbers, and all of the linked lists for all of the
+  files are stored within the fAT.
+
+  For the remainder of this problem set we will be working with two
+  files. File \#517 is the
+  directory \verb|\DCIM\100CANON\| while File \#1029 is the JPEG image
+  \verb|IMG_0001.JPG| in that directory.
+
+  Once you have modified \texttt{mbrdecode.py} to read the entire FAT
+  into memory, modify it further to print all of the cluster numbers 
+  associated with File \#517. Provide a list of the clusters.
+
+\item Provide a list of the clusters associated with File \#1029.
+
+\item Now that you have a list of data clusters, you can read the
+  contents of the files and decode them!  Read File \#517 into a
+  buffer and print its contents using the function you wrote that
+  decodes file directories. Provide this output.
+
+\item Read File \#1029 and store the results in a file on your host
+  computer called \emph{FILE1029.jpg}. Show the contents of that file.
+
+\end{enumerate}
+  
+Extra credit:
+
+
+\begin{enumerate}
+\item Write a program that starts at the root
+  directory and recursively lists the name, modification date, and
+  size of every file on the disk.
+\item Create a virtual disk using the instructions in the chapter. Put
+  a few files on the disk and delete a few of them. Read the directory
+  and explain which files can be recovered with file recovery
+  utilities. Write a file recovery utility and try to recover one or
+  more of the deleted files.
+\end{enumerate}
+
+
 
 % LocalWords:  virtualize repurpose
