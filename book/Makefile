@@ -1,13 +1,13 @@
-textbook.pdf: textbook.tex bib/textbook.bib Makefile $(wildcard *.tex) $(wildcard */*.tex) $(wildcard */*.py)
-	pdflatex textbook
-	makeindex textbook -s StyleInd.ist
-	biber textbook
-	pdflatex textbook
-	pdflatex textbook
+book.pdf: book.tex ../bib/textbook.bib Makefile $(wildcard *.tex) $(wildcard */*.tex) $(wildcard */*.py)
+	pdflatex book
+	makeindex book -s orange/StyleInd.ist
+	biber book
+	pdflatex book
+	pdflatex book
 
 g:
-	pdflatex textbook
-	open textbook.pdf
+	pdflatex book
+	open book.pdf
 
 plainbook: plainbook.pdf
 
@@ -21,4 +21,4 @@ plainbook.pdf: plainbook.tex
 
 clean:
 	/bin/rm -f *.{aux,bbl,bcf,blg,ind,ilg,idx,log,out,ptc,run.xml,toc}
-	/bin/rm -f main.pdf plainbook.pdf textbook.pdf
+	/bin/rm -f main.pdf plainbook.pdf book.pdf

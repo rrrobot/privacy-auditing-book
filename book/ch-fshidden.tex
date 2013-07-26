@@ -1,0 +1,20 @@
+\chapter{Finding Hidden Data in and Between File Systems}
+
+
+\section{File Deletion and Deleted File Recovery}\label{deleted_file_recovery}
+Different file system implementations delete files in different ways.
+
+Traditionally, file systems simply \emph{unlinked} files---the pointer
+to the file was removed from the directory, and the blocks associated
+with the file were returned to the free list.
+
+
+\section{Exploiting File System Metadata}
+File system metadata can be used to determine usage. 
+\cite{dfrws2011:JonathanGrier}
+
+\section{Opportunities for hiding data in File Systems}
+
+Information can be hidden in a file system by storing data in blocks
+that are allocated but not used to hold content\cite{dfrws2005:KnutEcksteinAndMarkoJahnke}. 
+
