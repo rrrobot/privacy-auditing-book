@@ -1,0 +1,181 @@
+\chapter{Disk Images}
+
+\section{Section}
+
+Today there are three fundamental kinds of forensic data:
+
+\begin{itemize}
+\item Disk Images
+\item Memory Images
+\item Packets intercepted on a network.
+\end{itemize}
+
+Most research to date has been done with Disk images. Most data is
+stored on disk, and most forensic investigations have been for the
+purpose of finding information that is on a disk (such as in the case
+of a child pornography investigation), or in trying to understand
+information left behind on a disk (for example, after an intrusion or
+malware incident.
+
+It is also common to find the other kinds of information on disk
+images. Memory is frequently stored on disk images from swapping
+(e.g. PAGEFILE.SYS on Windows) or system hibernation
+(HIBER.SYS). Packets are found on image files when the disks were used
+to store the results of a network interception.
+
+Working with image files can consists of these activities:
+
+
+\begin{itemize}
+\item Copying the data from the source drive into the image file, a
+  process called \emph{drive imaging}.
+\item Computing the checksum of the disk image.
+\item Validating the copy against the original.
+\item Creating a digital signature for the disk image.
+\item Self-validating the copy.
+\item Making backup copies of the disk image, and validating the integrity
+  of the backups.
+\item Converting the disk image into a form that can be used by your
+  forensic tool
+\end{itemize}.
+
+On the \url{digitalcorpora.org} website there are several disk images with
+which you can work. We're going to do our initial work with the image
+nps-2009-canon2-gen6. This image is usually stored in the directory
+/corp/drives/nps/nps-2009-canon2/.
+
+The nps-2009-canon2 disk images are a series of images created with a
+Canon digital camera and a 32MB SD card. First the card was
+\emph{cleared} using |dd| on a Linux computer. The card was then
+inserted into the digital camera, a series of photos were taken, and
+the card was removed and imaged. The card was put back into the
+camera, some of the photos were deleted, and new photos were
+taken. This process was repeated five times, creating a total of six
+disk images, nps-2009-canon2-gen1 through nps-2009-canon2-gen6.
+
+The SD card contained 60,800 512-byte sectors, for a total of
+31,129,600 bytes (30,400 KiB).
+
+For each disk image four files are distributed:
+
+   .raw -- a raw disk image that's 31,129,600 bytes in length
+   .E01 -- An EnCase E01 file of the disk image
+   .xml -- A digital forensics XML file describing the files resident
+           in the disk image.
+
+
+It is customary in digital forensics to use cryptographic hashes to
+verify the integrity of a disk image. When the disk is first imaged
+the hash is recorded in a secure manner (typically written in in
+investigator's notebook). From that point forward, the image can be
+manually validated by recomputing the hash and comparing it to the
+original recording.
+
+The hash of a raw file can be easily calculated the ``openssl''
+command:
+
+\begin{Verbatim}
+$ openssl md5 /corp/drives/nps/nps-2009-canon2/nps-2009-canon2-gen6.raw
+MD5(/corp/drives/nps/nps-2009-canon2/nps-2009-canon2-gen6.raw)=750b509d8fbed37a5213480aaccfdc61
+$ 
+\end{Verbatim}
+
+You can't calculate the hash of an E01 file in this manner,
+however, because these files contain additional metadata that is not
+part of the disk image.  Both of these formats also store hash codes
+directly in the disk image. This allows you to \emph{validate} the
+contents of a disk image with a command that calculates the hash by
+examining the data and comparing it with the stored value. 
+
+\subsection{E01 files}
+You can use the ewfinfo command to view the metadata information of a
+disk image:
+
+\begin{Verbatim}
+% ewfinfo /corp/drives/nps/nps-2009-canon2/nps-2009-canon2-gen6.E01 
+ewfinfo 20090927 (libewf 20090927, libuna 20090901, libbfio 20090927, zlib 1.2.3, libcrypto 0.9.8)
+
+Acquiry information
+Acquiry date:Mon Apr 12 08:12:32 2010
+System date:Mon Apr 12 08:12:32 2010
+Operating system used:Darwin
+Software version used:20090927
+Password:N/A
+
+EWF information
+File format:EnCase 6
+Sectors per chunk:64
+Error granularity:64
+Compression type:no compression
+GUID:dc032794-bef0-2c45-8ede-8cc01ed31683
+
+Media information
+Media type:removable disk
+Is physical:no
+Bytes per sector:512
+Amount of sectors:60800
+Media size:29 MiB (31129600 bytes)
+
+Digest hash information
+MD5:750b509d8fbed37a5213480aaccfdc61
+
+% 
+\end{Verbatim}
+
+
+You can verify the contents of an E01 file using the ewfverify
+command:
+
+%% BEGIN NO FILL
+\begin{Verbatim}
+$ ewfverify /corp/drives/nps/nps-2009-canon2/nps-2009-canon2-gen6.E01 
+ewfverify 20090927 (libewf 20090927, libuna 20090901, libbfio
+20090927, zlib 1.2.3, libcrypto 0.9.8)
+
+Verify started at: Mon Jun  7 14:20:20 2010
+
+This could take a while.
+
+Status: at 0%.
+        verified 32 KiB (32768 bytes) of total 29 MiB (31129600 bytes).
+
+...
+
+Status: at 100%.
+        verified 29 MiB (31129600 bytes) of total 29 MiB (31129600 bytes).
+
+Verify completed at: Mon Jun  7 14:20:20 2010
+
+Read: 29 MiB (31129600 bytes) in 0 second(s).
+
+MD5 hash stored in file:750b509d8fbed37a5213480aaccfdc61
+MD5 hash calculated over data:750b509d8fbed37a5213480aaccfdc61
+
+ewfverify: SUCCESS
+$ 
+\end{Verbatim}
+%% END NO FILL
+
+
+
+
+\subsection{Exercises}
+\begin{itemize}
+\item Download an install the following programs in this order:
+\begin{itemize}
+\item   libewf
+\item  sleuthkit
+\end{itemize}
+\item Download nps-2009-canon2-gen6.e01 and nps-2009-canon2-gen6.raw
+\item Verify the SHA1 of each file. Verify the RAW with the openSSL
+  command and make sure that it matches what is in this book. Use the
+  ewfverify and afverify commands to verify that the hash codes stored
+  in the E01 files match the computed values.
+\item Convert the RAW file to an E01 files. Notice that the
+  files are different than the distribution E01 files.
+\item Verify your converted files.
+\item Convert the distribution E01 files back to raw files and
+  use the Unix |cmp| command to show that the resulting files match
+  the distribution raw file.
+\end{itemize}
+

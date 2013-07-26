@@ -1,0 +1,1289 @@
+%
+% This magic lets the Makefile create both the one-column version
+% and the two-column version without the need to edit this file
+%
+
+\documentclass[11pt,letter]{article}
+\usepackage{simson}
+
+\newcommand{\be}{\textit{bulk\_extractor}\xspace}
+\newcommand{\citeN}[1]{\cite{#1}}
+
+\begin{document}
+\title{A Survey of Digital Forensics Research}
+\author{Simson L.\ Garfinkel}
+\maketitle
+\pagenumbering{arabic}
+
+\input{introduction}      1
+
+\chapter{Handling Digital Evidence}
+The fundamental nature of digital information makes the practice of
+digital forensics fundamentally different from other kinds of forensic
+processes.  Whereas forensic scientists may have just a few drops of
+blood or a few bullet fragments with which to work, digital data is
+marked by its volume, the ease with which it may be copied, and the
+ability to change it without a trace of the previous value.
+
+Many mass storage systems have the some kind of \emph{hardware
+  write-protect} that can be used to prevent accidental overwriting or
+erasure. For example, 9-track tape features a
+write-protection ring which, when removed, prevented the tape from
+being written on, while $5\frac{1}{4}''$ floppy disks had notches cut into
+the side that could be covered to inhibit writing. Early disk systems
+also had hardware write-protect, but mass market hard drives that
+became available in the mid 1980s did not have such a feature. As a
+result, several approaches emerged to allow examination of digital
+data while minimizing the chances of changing it: write
+blockers, mirror drives, and forensic disk images.
+% Poil - GFDL - 2005
+% http://en.wikipedia.org/wiki/File:Tapeprotection.jpg
+
+\section{Write Blockers}
+
+A write blocker is a device or program that provides a kind of
+write-protection for a mass storage system by blocking attempts to
+write to the media. Write blocking can be performed in hardware or
+software. 
+
+There are many different approaches to implementing a write
+blocker. For example, a write blocker can allow \emph{read} commands
+to pass while immediately returning an error condition when a
+\emph{write} command is attempted. Alternatively the \emph{write}
+commands may be executed on a different piece of media, sometimes
+called a \emph{shadow drive}, giving the operating system the
+appearance of a successful write while leaving the original media
+undamaged.
+
+Write blockers can be used to allow an examiner to directly examine
+subject data on the original media. Alternatively, they can be used to allow the subject
+data to be safely copied to a second piece of media called a
+\emph{mirror drive}. It is important that the mirror drive be
+\emph{cleared} before the copy is made to assure that there is no
+\emph{cross-case contamination}, which happens when data are
+inappropriately mixed between cases. Clearing is especially important
+if the subject drive has errors or if the mirror drive is larger than
+the subject drive.
+
+\section{Disk Imagers}
+The copy from the subject drive to the mirror drive is performed with
+a program called a \emph{disk imager}.
+
+\section{Digital Evidence Containers}
+
+Mirror copies can be unwieldy to use, especially when the target
+drives are very large. An added annoyance is that many drives contain
+a large number of highly compressible data, such as sectors filled
+with NULLs. Yet another problem is that there is no easy way to tell
+if the copy is accurate or if the copy has been modified after it was
+originally made.
+
+\emph{Digital evidence containers} allow for digital evidence to be
+copied into an archive that is \emph{compressed} (to allow for easier data
+handling), \emph{integrity checked}  (so that the examiner can verify
+the original data), \emph{annotated} with metadata such as the time
+that the evidence was copied, the name of the investigator who created
+the archive, the location where the copy was made, and other similar
+information. Unlike ZIP or gzip files, these containers must also
+allow for \emph{random access} their contents, as it would not be
+efficient to decompress a multi-gigabyte data stream for the purpose
+of accessing just a few sectors.
+
+Additional requirements include \emph{Encryption}, so that access to
+the evidence can be restricted to those that have a password or
+decryption key; metadata specifically devoted to
+\emph{chain-of-custody} and \emph{provenance}, so that the movement of
+evidence through an organization or a forensic pipeline can be
+electronically recorded; and \emph{external references}, so that the
+evidence container can point to information present on other storage
+systems. 
+
+\section{File System Analysis and File Extraction}
+
+
+\subsection{Files and File Systems}
+The word \emph{file} is commonly used to describe a sequence of data
+that is stored on a computer mass storage system. On modern computers
+files are sequences of zero or more \emph{bytes}. Files have a length
+that is set at any given point in time, but can be readily
+changed. Files can have names and other associated \emph{metadata}
+such as timestamps, an owner, and a group. Files have traditionally
+been grouped together in
+\emph{directories}\wikipedia{http://en.wikipedia.org/wiki/File_directory}. also
+called \emph{folders}. 
+
+The phrase \emph{File
+  System}\wikipedia{http://en.wikipedia.org/wiki/Computer_file} is
+used to describe the part of the computer's operating
+system that manages a storage system. However, the term is also used
+to describe the very sectors on a mass storage device that contain the
+files.
+
+It is important to realize that files are an \emph{abstraction} that
+was created for the purpose of managing data. There is nothing
+inherent in the design of computers, operating systems or mass storage
+devices that requires the use of files. A raw disk can be used as
+virtual memory \emph{backing store} or as a storage system for a
+database. Instead of stored as a sequence of bytes in a file, data can be stored as
+objects that are persisted in memory, or as BLOBs in a database.
+
+It is also important to realize that any computational storage device
+or abstraction can be used to virtualize and contain any other storage
+device. That is, a file can be stored in a file system, but a file
+system can also be created and stored inside a file (this is
+essentially what a disk image is). Most operating systems can swap to raw
+partitions or to files, but file systems can also be created inside
+RAM or virtual memory.
+
+Adding to the complexity of the forensic examiner is
+\emph{encryption}, which can be applied at the interface between any
+of these abstractions. Encryption can be performed in the storage
+device itself (as in the case of an encrypting hard drive), in the
+disk driver, in the logical volume management system, in the file
+system, or at the application level.
+
+\subsection{File Systems of Forensic Interest}
+There are a variety of different kinds of file systems in use on
+modern computer systems:
+\begin{description}
+\item[Disk file systems] organize files and directories on
+  block-oriented storage systems. These are of interest to those
+  engaged in MEDEX operations. Popular file systems include FAT32
+  (used primary on removable storage devices and camera cards), NTFS
+  (Microsoft's New Technology File System), and HFS+ (Apple's
+  Hierarchical File System used on Macs and iPhones).
+\item[Distributed file systems] allow a computer to access
+  information on remote servers as if it is stored
+  locally. Distributed file systems are forensically interesting
+  because many use local storage to cache information from the remote
+  servers. Analyzing local storage can therefore give clues as to what
+  was accessed remotely, and when it was accessed.
+\item[Virtual file systems] use the file and directory abstraction to
+  make it easy to access other information. For example, the Linux
+  \url{/dev} file system is used to access devices through the file
+  system, the \url{/sys} file system is used to access features within
+  the system kernel, and the \url{/net} file system accesses the
+  automounter. Virtual file systems are not typically of interest in
+  MEDEX because they do not leave residual information on a storage
+  device. However, virtual file systems are relevant in malware
+  analysis and intrusion response.
+\end{description}
+
+As this chapter is written, specific file systems of interest include:
+\begin{description}
+\item[FAT12, FAT16 and FAT32] file systems developed by Microsoft for use with
+  DOS. FAT refers to the File Allocation Table, an array of integers
+  that is used to determine if a cluster is in use or free. (In FAT, a
+  \emph{cluster} is a block of 1, 2, 4, 8 or more disk sectors.) The number
+  refers to the size of the integers in the array (12 bits, 16 bits or
+  32 bits). Today implementations of FAT are built in to practically every
+  operating system, including Windows, Linux, MacOS, most digital
+  cameras, and practically every other device with a USB or SD
+  interface. 
+\item[NTFS] 
+\item[HFS+]
+\item[YAFFS2]
+\item[EXT2/3]
+\item[EXT4]
+\end{description}
+
+Information can be hidden in a file system by storing data in blocks
+that are allocated but not used to hold content\cite{dfrws2005:KnutEcksteinAndMarkoJahnke}. 
+
+\subsection{File System Structures and Terminology}
+
+Blocks
+
+Clusters
+
+inode
+
+Hard Link
+
+Symbolic Link
+
+Master File Table
+
+File Allocation Table
+
+Free List
+
+Unlink
+
+\subsection{Classification of file system information}
+
+Allocated
+
+Deleted
+
+ - Recoverable through undeletion
+
+ - Recoverable through carving
+
+Partially overwritten
+
+\subsection{SSDs and the ``TRIM'' command}
+\cite{dfrws2011:TimothyVidasAndChengyeZhangAndNicolasChristin}
+
+
+\section{File Deletion and Deleted File Recovery}\label{deleted_file_recovery}
+Different file system implementations delete files in different ways.
+
+Traditionally, file systems simply \emph{unlinked} files---the pointer
+to the file was removed from the directory, and the blocks associated
+with the file were returned to the free list.
+
+
+\section{Exploiting File System Metadata}
+File system metadata can be used to determine usage. 
+\cite{dfrws2011:JonathanGrier}
+
+% October 12
+\input{file_systems}      3
+\setcounter{chapter}{3}
+\chapter{Files, File Types, and File Type Identification}
+
+In computer system engineering the term \emph{stream} is typically
+used to denote a sequence of zero or more bytes that can be
+sequentially accessed. The term \emph{file} is usually taken to mean a
+sequence of zero or more bytes that is saved in some kind of storage
+device so that it can be repeatedly accessed. 
+
+Because files have zero or more bytes, every file inherently has a
+\emph{file length}. The bytes are known as the \emph{file contents}. Together these are known as \emph{file
+  properties}. 
+
+There are other characteristics that we
+commonly observe in files, such as file names, time stamps, owners,
+\etc. \tabref{file-properties}  presents a list of file
+properties seen on some operating systems. But it is easy to find counter examples of files that lack any
+(or all) of the optional characteristics presented in
+\tabref{file-properties}. As a result, all that we
+can say about files definitively is that they have zero or more bytes,
+they are \emph{written} (that is, a program can copy bytes from
+the computer's memory into the file), and they can be \emph{read}
+(the computer can copy bytes from the file back into main memory). At
+their most basic level, files are persisted streams. 
+
+
+\begin{table}
+\begin{tabularx}{\textwidth}{lX}
+Property & Description \\
+\hline
+\\
+\multicolumn{2}{l}{\textit{\small mandatory file properties:}}\\
+File Contents & A sequence of bytes that makes up the file.\\
+File Length   & The number of bytes in the \emph{file contents}.\\
+\\
+\multicolumn{2}{l}{\textit{\small optional file properties:}}\\
+File Name & A sequence of 1 or more characters that can be used to reference the file. Files can have
+zero, one, or multiple names.\\
+Creation time (crtime) & The date and time when the file was created.\\
+Modification time (mtime) & The date and time that the file's contents were last modified.\\
+Access time (atime) & The date and time when a  byte of the file was last read.\\
+Change time (ctime) & The date and time that the file's metadata was last modified. On Unix-based file systems
+   the change time is frequently treated as if it were a creation time.\\
+Inode number & Many file systems use a single integer to describe the location of a metadata block that provides a pointer to the file's contents. The block is called an \emph{inode} (index node).\\
+Link Count (nlink) & On file systems that support \emph{hard links} (multiple names pointing at the same inode), the link count tracks the number of links.\\
+Owner (uid) & The owner of a file is typically the operating system user that has the ability to change the file's properties. It is typically the creator of the file, although the owner can be changed.\\
+Group (gid) & In addition to owners, most file systems allow a file to be put in one or more groups. Group membership can then be used to allow or prevent access to the file.\\
+mode & Unix-based systems encode a ``mode'' in file system entries that are used to denote special files, such as those representing physical devices, FIFOs, sockets, and symbolic links.\\
+Access Control Lists (ACLs) & An extended list of users and groups that are allowed (or disallowed) access to the file.
+\end{tabularx}
+\caption{Mandatory and optional file properties}\label{file-properties}
+\end{table}
+
+Files have been one of the primary abstractions provided by operating
+systems for manipulating data for more than fifty years. Files are
+the primary way that most computer information is stored, including:
+
+\begin{itemize}
+\item Documents (\eg Microsoft Word Files, Adobe Acrobat files)
+\item Digital photographs (\eg JPEG files)
+\item Programs (\eg executables)
+\item Databases (\eg Oracle database files, SQLite files)
+\end{itemize}
+
+As a result of their popularity, the identification, recovery and
+manipulation of files is one of the primary tasks of computer
+forensics. 
+
+It's important to remember, however, that files are just
+\emph{abstractions}---there is nothing inherent in the design of
+memory or storage systems that dictates the use of files. Indeed,
+there are many examples on modern computer systems of information that
+is typically \emph{not} stored in files on a running computer system
+(although the information, like any information, can be extracted and
+stored in a file). Information that is typically not stored in files includes:
+
+\begin{itemize}
+\item The contents of RAM, including system memory and video memory.
+\item CPU registers, the page translation table, and the translation
+  lookaside buffer (TLB).
+\item BIOS ROM or Flash RAM used for booting the computer.
+\item Boot blocks on the mass storage device.
+\item Partitions used for virtual memory. (Operating systems such
+  as Unix traditionally swapped to a swap partition; only recently
+  have operating systems started swapping to files.)
+\item Partitions managed directly by a database. (Some databases
+  directly access the raw storage to avoid the overhead of going
+  through the file system.)
+\end{itemize}
+
+With the move to cloud-based services such as Facebook and Google
+Docs, files are sure to become less important in computer forensics
+over the next fifty years. This is because the storage on the client
+will increasingly be used to cache information stored on a remote
+server, and the information those servers will be stored in databases,
+rather than in files.
+
+Although a file is nothing more than a sequence of bytes, we typically
+think about files in higher-level terms. 
+
+\section{File Type}
+
+The term \emph{file type} is commonly used to describe the format of
+the data inside the file or the program that created it. However
+because of an accident of history, we also think of a file's type as
+being the file's \emph{extension}---that is, the three or four
+characters that come after the final period in the file's name.
+
+For example, digital cameras will create files with names like
+\emph{DSC0001.JPG} that contain digital images. Most people think of
+these files as ``JPEGs'' because the names end with the letters ``.jpg'' or
+``.jpeg''.  But what really makes a file a JPEG is
+its conformance to a format dictated by the Joint Photographic Experts
+Group (JPEG)'s 1992 standard, known formally as ISO/IEC IS 10918-1 and
+as ITU-T Recommendation T.81. That format defines a ``chunk-based''
+container file format that begins with the byte sequence |FF D8| and
+ends with the byte sequence |FF D9|.
+
+Likewise, files created by Microsoft's popular Word file have the
+extension ``.doc'' or ``.docx''. Some people call these files ``DOC''
+or ``DOCX'' files. In fact, files created by Word with the ``.doc''
+extension are typically byte streams formatting according to Microsoft's Object Linking and
+Embedding (MSOLE) format; look inside these files and you will see data
+structures reminiscent of the FAT32 file system. Files with the ``.docx'' extension are
+typically ZIP compression archives that contain structured XML that is
+interpreted by Word to display an editable word processing
+document. (However, encrypted ``.docx'' files follow a different
+standard altogether.)
+Microsoft Excel uses the same MSOLE and ZIP formats when saving files
+with the ``.xls'' and ``.xlsx'' extensions, respectively.
+
+In practice, the phrase \emph{file type} can mean one of several things:
+
+\begin{itemize}
+\item \textbf{The file's \emph{extension}.} Early computer systems
+  required that file names be in the format of eight characters, a
+  period, and three characters. The three characters after the period
+  are called the extension and were used on some computers to denote
+  the program that was used to write and read the file. Microsoft
+  Windows allowed extensions to be any length and directly associated
+  application programs with extensions through the Windows Registry;
+  double-clicking on a file's icon caused the application program
+  registered for that file extension to run and open the file.
+\item \textbf{The file's Internet media type (also known its MIME
+  type).} The internet media type is a sequence of letters that are
+  transmitted with every byte stream is that is downloaded over the
+  Internet using the HTTP protocol. JPEG files are downloaded with the
+  Internet media type ``image/jpeg''. \wikipedia{http://en.wikipedia.org/wiki/Internet_media_type}. 
+\item \textbf{The file's \emph{magic numbers} or \emph{file
+    header}}. Both terms are used to describe a sequence of bytes at the
+  beginning of the file that hold information about the file and may
+  be used to identify it in some way.
+\end{itemize}
+
+Closely related to file type are:
+\begin{itemize}
+\item The file's \emph{header}.
+\item The file's \emph{footer}.
+\end{itemize}
+
+Let us explore each of these in turn and see how they influence
+file type and interpretation when performing computer forensics.
+
+\subsection{File Extensions}
+
+\emph{to be written.}
+
+\subsection{Internet Media Types}
+
+\emph{to be written}
+
+\subsection{Magic Numbers}
+
+The term \emph{magic number} is used to denote a constant byte or set
+of bytes that typically appears at the beginning of a file. A common
+magic number is the letters ``MZ'' denoting the start of a DOS or
+Windows executable or Dynamic-Link Library (DLL). The SQLite database
+uses the 15 letters ``SQLite format 3'' as its magic number. Magic numbers are
+thus not really numbers, but actually sequences of characters. ``MZ'' has
+the numeric value 23117 or 19802 depending on whether one is using
+little-endian or big-endian math (\figref{calc-mz}). (Even though the
+string ``SQLite format 3'' has a numeric value, it would never be used
+in practice.)
+
+\begin{figure}
+\begin{Verbatim}
+>>> ord('M') | ord('Z')<<8
+23117
+>>> hex(23117)
+'0x5a4d'
+>>> 
+>>> ord('M')<<8 | ord('Z')
+19802
+>>> hex(19802)
+'0x4d5a'
+\end{Verbatim}
+\caption{Computing the decimal and hex values of the character
+  sequence ``MZ'' in little-endian and big-endian format with
+  Python.}\label{calc-mz}
+\end{figure}
+
+While some file formats require magic numbers, others do not. Files in
+the Hyper Text Markup Language originally were supposed to begin with
+the string ``|<html|'' and nowadays should begin with the string
+``|<!DOCTYPE|'', but most web browsers will do their best to display
+any text as HTML if they detect HTML tags.
+
+\subsection{File Headers}
+
+\emph{To be written. Note that the file header may contain fields
+  which contain metadata.}
+
+\subsection{File Footers}
+
+\section{Container Files}
+
+\subsection{Chunk-based Container Files}
+
+
+\subsubsection{GIF}
+\emph{how GIF came about}
+
+\subsubsection{TIFF}
+\emph{What can be stored in a TIFF}
+
+\subsubsection{JPEG}\label{jpeg-format}
+\subsubsection{PNG}
+
+\subsection{Directory-based Container Files}
+
+\subsubsection{ZIP}
+
+\subsubsection{PDF}
+
+\subsection{Opportunities for Stegnagraphy}
+The structure of these files means that there are many opportunities
+to hide data in a container file that will be ignored by legitimate
+software and processed by covert-communications programs.
+
+\subsubsection{Stegnagraphy with Chunk-Based Files}
+Create new chunk types that will be ignored.
+
+Hide information at the end of each chunk.
+
+Danger is that some programs may look for such data (or even error),
+so it's important to test. It may be desirable to encrypt the data and
+include cover data that gives the impression that the text is
+legitimately placed there by a program that the analyst simply doesn't
+have access to. For example, a new chunk type containing a string such
+as ``gamma correction'' or ``color calibration.''
+
+\subsubsection{Stegnagraphy with Directory-Based Files}
+
+ZIP and PDF.
+
+Store information in regions not associated with files.
+
+Embed new file types that are ignored.
+
+\subsubsection{Traditional Stegnography}
+Finally, multi-media files can be used for traditional
+stegnaraphy. For example, the bottom bits of a picture can be used to
+encode another image....
+
+
+
+\section{File Type Identification}
+
+Because we do not have a really firm definition for ``file type,''
+it's not clear what's meant by file type identification. Do we mean
+finding an application that can ``open'' a file? Do we mean being able
+to extract the content from a file so that it can be viewed/indexed/processed?
+
+\subsection{Front-Reading vs. Rear-Reading}
+
+\emph{JPEG files read from the front; ZIP files read from the back;
+  this is a problem}
+
+
+\subsection{The \emph{file} command and libmagic}
+
+\emph{to be written}
+
+\section{Content Extraction}
+
+An alternative to file type identification is content extraction.
+
+\subsection{Text extraction with the \emph{strings} command}
+
+
+
+\section{Exercises}
+
+What is the numeric value of ``SQLite format 3'' in base 10? Provide
+both big-endian and little-endian values, as well as the  program you
+used to calculate the value. 
+
+\input{file_type_identification}  4               % October 20
+\section{Carving Algorithms and Applications}
+In computer forensics we use the term  ``carving'' to describe the
+process of searching for data based on its content, rather than
+retrieving data based on metadata or other kinds of extrinsic
+information. Carving is one of the primary techniques for recovering deleted
+files and it is widely used both in computer forensics and (more
+broadly) in data recovery.
+
+File carving consists of three distinct steps:
+\begin{enumerate}
+\renewcommand{\theenumi}{Step (\arabic{enumi})}
+\item The bytes that make up a file are \emph{identified}.
+\item The identified bytes are \emph{validated}.\label{step-validate}
+\item The validated bytes are \emph{saved}.\label{step-save}
+\end{enumerate}
+
+In the next section we will walk step-by-step through the design and
+implementation of a simple carver. We will then explore ways to
+improve the carver's performance. A carving taxonomy appears in
+\tabref{carving_taxonomy}. Approaches for carving fragmented files is
+discussed in \secref{carving-fragmented}. Finally, this chapter will
+explore carving structured objects other than files such as network
+packets and multimedia data.
+
+\section{Simple File Carving of Contiguous Files}
+\subsection{Carving JPEGs: An Example}
+
+To see how carving works in practice, consider the quintessential 
+example of carving digital JPEG photographs.
+
+The Joint Photographic Experts Group (JPEG) digital image format is
+widely used for the storage and transmission of digitized
+photographs. JPEG files are comprised of several segments that include
+a header, a color table, a set of Huffman encoded data, and a footer,
+and may also include icons and EXIF data
+(\figref{art/carving_jpeg}). (The JPEG format will be described in
+more detail in \Sref{jpeg-format}.) What makes carving JPEG files
+easily is the fact that JPEG files begin with one of two
+characteristic four-byte-headers and end with a characteristic
+two-byte-footer. Thus, it is possible to scan a disk image for any
+occurrence of the four-byte-header that is followed by the
+two-byte-footer, and write the four-byte sequence, the intervening
+bytes, and the two-byte sequence into a file. This file \emph{may} be
+a JPEG; you can find out by giving the file a |.jpg| extension and
+double-clicking on it. And while it is true that the four-byte-footer
+will occur by chance in random data, the chance is actually quite
+small---just $\frac{2}{4,294,967,296}=\frac{1}{2,147,483,648}$. This
+translates to roughly 500 false positives on a terabyte drive.
+
+Here is a very simple JPEG carver written in Python:
+
+\begin{figure}
+{\small
+\lstset{language=python}
+\lstinputlisting[basicstyle=\footnotesize,
+  showstringspaces=false]{carving/demo_carver.py}
+}
+\caption{A simple JPEG carver}\label{jpeg-carver}
+\end{figure}
+
+The carver takes a single argument, the name of a raw disk image to
+carve. It maps the entire file into memory and starts searching for
+the  3-byte JPEG common header (|FF D8 FF|). If the string is found the carver then searches
+for the JPEG footer (|FF D9|). If the footer is found the header, the
+footer, and the bytes between them are saved. Since there is no way
+for the program to know the original file name, the JPEG is given the
+name |savefileN.jpg| where |N| starts at 1 and increases. The process
+then repeats. This approach is called header/length carving.
+
+Running this program on the disk image \emph{nps-2009-canon2-gen6.raw}
+finds 68 so-called JPEGs. You can then click on each one and see if it
+is a valid file; throw the ones that are not valid into the
+trash. Essentially, the computer has implemented carving step 1, the
+identification, while the user is performing the validation
+(\ref{step-validate}) and deciding what to save
+(\ref{step-save}). \figref{carving/carving_files} shows the first 12
+files recovered. The disk \emph{canon2-gen6} disk image was specially
+created to test JPEG carving programs. As can be seen from
+\figref{jpeg-carver}, some files can be recovered in
+their entirety, while others can only be recovered in part, and some
+are strangely corrupted.
+
+An alternative to header/footer carving is header/length carving. With
+this approach the carver identifies the header, then decodes the
+header (and possibly other structures) to determine the length of the
+original file. Microsoft OLE files can be identified with
+Header/Length carving, as the files begin with a characteristic header
+that points to a table that can be used to infer the length of the
+OLE file. (Microsoft OLE files do not have a characteristic footer.)
+
+ZIP files contain both a characteristic header and a characteristic
+footer. Information in the footer can be used to determine the length
+of the original ZIP file if the header is missing. Thus ZIP files can
+be recovered using footer/length carving.
+
+
+\sgraphic{carving/carving_files}{The first 12 files recovered using
+  the carver shown in \figref{jpeg-carver}}
+
+The file recovery program Lazarus\cite{lazarus} appears to be the
+first publicly available file carver. Lazarus took each 1KiB or 2KiB
+block of a partition to be recovered and saved it in a file, then
+analyzed the file with the Unix \emph{file} command. If the file's
+type matched a desired type, Lazarus extended the file with
+additional blocks from the file system as long as the new blocks had
+similar entropy characteristics as the first block. Although slow and
+inefficient, this process worked to recover a variety of graphic file
+formats.
+
+The Defense Computer Forensics Lab developed a carving program called
+CarvThis in 1999.  That program inspired Special Agent Kris Kendall to
+develop a proof-of-concept carving program in March 2001 called
+\emph{snarfit}. Special Agent Jesse Kornblum joined Kendall while both
+were at the US Air Force Office of Special Investigations and the
+resulting program, Foremost, was released as an open source carving
+tool. 
+
+Richard and Roussev reimplemented Foremost the program with the goal of
+enhancing performance and decreasing memory usage. The resulting tool
+was called Scalpel~\cite{scalpel}. Scalpel version 1.60 was
+released in December 2006.
+
+Foremost and Scalpel use a configuration file that defines
+the headers and footers of each file type to be carved. When the
+headers and footers are found they and the data between them are saved
+in a file with the given extension; the program also produces a
+detailed report
+indicating the location from which each file was recovered.
+
+\subsection{How not to Improve the Carver}
+In practical, the simple header/footer carving implemented by Foremost
+and Scalpel (as well as our python example) generate a large number of
+invalid files---what we term \emph{false positives} above. So after
+the first carvers were created, their developers immediately set about
+to improve their performance by decreasing the amount of false
+positives returned.
+
+Carving can be thought of as a recognition task. The disk image is
+filled with byte runs. A certain number of those runs are the desired
+files; the rest are not. Carving can therefore be thought of as a
+\emph{recognition task} and evaluated accordingly. The \emph{recall}
+of a carver is the percentage of files in the disk image that are
+properly identified; the \emph{precision}  is the percentage of
+recognized files that are actually the desired file type. Ideally we
+would like recall and accuracy to both be 100\%. The simple carver
+described above has a recall rate of 100\% for contiguous files but
+0\% for fragmented files, and a precision that is determined by
+occurrence of headers and footers in the data that are not associated
+with intact files.
+
+At first blush, there are two obvious ways to improve the simple carving
+algorithm presented above. Both are wrong:
+
+\begin{enumerate}
+\item Most file systems store the first byte of
+each file aligned with a disk sector, so the carving programs can be
+configured to ignore the four-byte-header if the header does not start on a
+sector boundary.
+
+\item Most JPEGs are smaller than 15 megabytes, so if the
+distance between the four-byte-header and the two-byte-footer is more
+than 15 megabytes (or, in practice, any user-configurable threshold),
+the header can be ignored. 
+
+\end{enumerate}
+
+These approaches are wrong because they impact carver
+performance both negatively (by decreasing the recall rate) and
+unnecessarily (because there are alternatives that do not impact
+recall rate).
+
+In the first case, even though file systems like NTFS start
+files on block boundaries, JPEGs may be present in many locations
+other than files. JPEG's can be stored as BLOBs in databases; they can
+be stored ZIP archive (ZIP detects that the JPEG file is compressed
+and will insert it in the archive without further compression); it can
+be emebdded in a Microsoft Word |.doc| or |.docx| file. JPEGs can even
+be embedded in other JPEG files as icons. In each of these cases, each
+JPEG header will have a $\frac{511}{512}=99.8\%$ chance of \emph{not}
+starting on a block boundary. Thus, restricting carving to block
+boundaries may cause the analyst to ignore many files of forensic
+import. (Indeed, there are cases in which the JPEG itself could not be
+recovered, but important information recovered from the JPEG's 
+embedded icon).
+
+Restricting the size of the recovered file can also be
+problematic. While most JPEG files are indeed smaller than 15
+megabytes, some are not. It would be unfortunate indeed if a carving
+tool failed to find a huge, high-resolution on a subject disk simply
+because the examiner did not believe that there were any large JPEGs
+to be found!
+
+\sgraphic{art/carving_jpeg}{The internal structure of a JPEG file
+  contains a header that starts with the bytes \texttt{FF D8 FF E0} or
+  \texttt{FF D8 FF E1} followed by an optional Icons and EXIF section,
+  followed by a color table, the huffman encoded image data, and
+  finally a footer that ends with the bytes \texttt{FF D9}.}
+
+
+Despite this analysis, these are in fact the data reduction strategies
+implemented by both Foremost and Scalpel. That is, they allow the user
+to specify a maximum file size and whether or not to carve files that
+are not on block boundaries. The authors of the carvers took this
+approach rather than developing alternative approaches for increasing
+precision. 
+
+
+\begin{table}
+\begin{description}
+\item[Carving] Recovering data based on its content, rather than on
+  metadata pointing to the content.
+\item[Precision (of carvers)]
+\item[Recall (of carvers)]
+\item[False Positives (of carvers)]
+\item[False Negatives (of carvers)]
+\item[Header/Footer Carving] a method for carving files out of raw
+data using a distinct header (start of file marker) and footer (end of
+file marker). This algorithm works by finding all strings contained
+within the disk image with a set of headers and footers and submitting
+them to the validator. 
+
+\item[Header/Maximum Size Carving] This approach submits strings to the validator that begin with each
+discernible header and continue to the end of the disk image. A
+binary search is then performed on the strings that validate to find
+the longest string sequence that still validates. A method for carving
+files out of raw data using a distinct header (start of file marker)
+and a maximum (file) size. This approach works because many file
+formats (e.g. JPEG, MP3) do not care if additional data is appended to
+the end of a valid file.
+
+\item[Header/Embedded Length Carving] Some file formats (MSOLE, ZIP) have distinctive headers that indicate
+the start of the file, but have no such distinctive flag for the
+end. This approach starts by scanning the image file for sectors that can be
+identified as the start of the file. These sectors are taken as the
+\emph{seeds} of objects. The seeds are then grown one sector at a
+time, with each object being passed to the validator, until the
+validator returns the length of the object or a \verb+V_ERR+,
+indicating that a complete file does not exist. If an embedded length
+is found, this information is used to create a test object for
+validation. Once an object is found with a given start sector, the
+carver moves to the next sector. 
+
+\item[Footer/Length Carving]
+\item[Fragment Recovery Carving]
+\item[Hash-based Carving]
+\item[File Trimming] ``Trimming'' is the process of removing content from the end of an
+object that was not part of the original file. If there is a well-defined file footer, as is
+the case with JPEG and ZIP files, the file can be trimmed to the
+footer. For byte-at-a-time formats that do not have obvious footers, the files can 
+be trimmed a character at time until the file no longer validates; the last
+trimmed byte is the re-appended to the file.  Alternatively, the files
+can be read with a data flow system; bytes that are read can be trimmed.
+\end{description}
+\caption{Carving Terminology}
+\end{table}
+
+\section{Object Validation}
+
+A better approach for reducing false positives and therefore
+increasing precision is to parse the carved
+object and determine if it is in fact a valid file. This process is
+call \emph{object validation}. For performance reasons it is best
+to apply object validation after
+content is selected from the carving target but before it is saved to
+a file. In practice, however, many authors have created two-stage
+carving systems where the first stage employs a traditional carver
+such as Scalpel and the second stage uses object validation to delete
+the false positives and thus improve precision. 
+
+Validation is best performed in multiple layers. An initial ``fast
+validation'' step can rapidly verify a file's internal
+structures. Objects that pass the fast validation step can be
+subjected to a 
+
+\subsection{Fast Object Validation of Container Structures}
+
+
+Many files of forensic interest are in fact \emph{container files}
+that can have several internal sections. For example, JPEG files 
+contain metadata, color tables, and finally the Huffman-encoded image~\cite{jpeg-format}.
+ZIP files contain a directory and multiple compressed files~\cite{zip-format}. Microsoft
+Word files contain a Master Sector Allocation Table (MSAT), a Sector
+Allocation Table (SAT), a Short Sector Allocation Table (SSAT) a
+directory, and one or more data streams~\cite{msole-format}. All of
+these structures have integers
+and pointers; validating these requires little more than checking to
+see if an integer is within a predefined range or if a pointer points
+to another valid structure. 
+
+For example the first sector of an Office file contains a CDH header.
+The CDH must contain a hex {\tt FE} as the 29th character and a {\tt
+FF} as the 30th character; these bytes are ideal candidates for Header 
+validation. Once a candidate CDH is found, the pointers can be
+interpreted. If any of these numbers are negative or larger than the
+length of the object divided by 512, the CDH is not valid, and a
+Microsoft Office file validator can reject the object. Checking these
+and other structures inside an object can be very fast if the entire
+object is resident in memory.
+
+Information in the container structures can also provide guidance to
+the carver. For example, when a candidate CDH is found in the drive
+image, the values of the MSAT and SSAT pointers can be used to place a
+lower bound on the size of the file --- if the MSAT points to sector
+1000, then the file must be at least 512,000 bytes long. Being able to
+set a lower bound is not important when performing Header/Maximum File
+Size carving (\secref{header/maximum}), but it is important when
+performing Fragment Recovery Carving (\secref{recovery-carving}).
+
+Container structure validation is more likely than Header/Footer
+validation to detect incorrect
+byte sequences or sectors inside the object being validated because
+more bytes are examined. But we have seen many examples of
+carving candidates
+that have valid container structures but which
+nevertheless cannot be opened by Microsoft Word---or which open in
+Microsoft Word but then display text that is obviously wrong. 
+
+The time spent on fast
+validation is insignificant compared to decompression, and an object
+that fails fast validation will not need to be decompressed or
+rendered, a performance win. JPEGs can be rapidly validated by
+verifying their chunk-based structure. ZIP files can be validated by
+verifying that each of the central directory entries point to
+appropriate local headers. Office files can be validated by verifying
+their internal structure.
+
+Mikus added fast validation of Microsoft OLE files to Foremost while
+working on his master's thesis at the Naval Postgraduate
+School~\cite{mikus}. Sadly, the code was not ported to Scalpel. 
+
+
+
+\subsection{Validation by Decompression}
+\sgraphic{carving/mars-partial}{}
+Once the container structures are validated, the next step is to
+validate the actual data that is contained. This is more
+computationally intensive, but in many cases it will discover internal
+inconsistencies that allow the validator to reject the candidate object.
+
+For example, the last section of a JPEG-formatted file consists of a
+Huffman-coded representation of the picture. If this section cannot be
+decompressed, the picture cannot be displayed and the object can be
+deemed invalid. A computationally intensive way to do this is by
+decompressing the picture; a faster way is by examining all
+of the Huffman symbols and checking to see if they are valid or not.
+
+The text sections of a Microsoft Office file can likewise be extracted
+and used for validation. If the text is not valid---for example, if it
+contains invalid characters---then the object validator rejects.
+
+
+The JPEGs shown in \figref{art/carving_jpeg} are validated by
+attempting to render them using the JPEG viewer embedded in the
+Macintosh operating system. The decompression algorithm used to
+display JPEGs has the property that invalid data can be detected
+because it cannot be decompressed. Thus, a JPEG that is truncated can
+frequently be displayed up to the point of corruption, as shown in
+\figref{art/carving_jpeg}. But it is important to note that simple
+decompression is not sufficient for validation, since there are
+byte sequences that will decompress but which are clearly not
+correct (\figref{carving/mars-partial}).
+
+\cite{memon:sht} observed that the obvious errors in JPEGs such as
+\figref{carving/mars-partial} can be used as a signal that a block is
+not part of the JPEG, even though no error is encountered in
+decompressing. The algorithm works by computing the the color change
+between successive scan lines of the JPEG. 
+
+
+\section{Carving Fragmented Files}
+
+Until now we have only discussed carving of files that are
+contiguous---that is, files that are written to the disk as an
+uninterrupted sequence of bytes in adjacent sectors. A more serious
+problem is that files can be \emph{fragmented}. That is, a single file
+can be split into two or more pieces that are then stored in
+non-consecutive locations on a hard drive. Although fragmenting a file
+significantly decreases file system performance (even for solid state
+drives), a file system might fragment a file because the file is
+written in pieces, or because there is no available space on the hard
+drive to store the file, or even because of a poor file system
+implementation.
+
+File fragmentation is a serious problem for many file carvers because
+there is no obvious way to reassemble the various fragments into
+intact files without the use of file system metadata. Consider
+\figref{art/carving_gap}: whereas carving a file with a single
+fragment requires only identifying the file's starting and ending
+sectors, carving a file that is fragmented in two pieces requires solve for four
+unknowns: $s_1$, $e_1$, $s_2$ and $e_2$. 
+
+\sgraphic{art/carving_gap}{A JPEG that is fragmented in two piece
+  consists of a header that begins at sector $s_1$, the end of the
+  first fragment at sector $e_1$, a gap, the start of the second
+  fragment at sector $s_2$, and the JPEG's footer at sector
+  $e_2$. Note that if $s_2-e_1=\textrm{gap}$ is positive if the second fragment is on the
+  disk after the first fragment, and negative if the second fragment
+  is on the disk \emph{before} the first fragment. In Bifragment Gap Carving the sectors $s_1$ and $e_2$ are
+  known; the carver must find $e_1$ and $s_2$.}
+
+
+To date three algorithms have been described for fragment recovery
+carving:
+
+\subsubsection{Bifragment Gap Carving}\label{gap-carving}
+
+If a region of sectors in a disk image begins with a valid header and
+ends with a valid footer but does not validate, one possibility is
+that the file was in fact fragmented into two or more pieces
+and that the header and footer reside in different fragments.
+In the Garfinkel corpus there are 
+many cases of bifragmented files where the gap between the first
+fragment and the second is a relatively small number of
+disk sectors. 
+
+The 2006 Challenge contained several instances of JPEG files that
+were in two fragments, with one or more sectors of junk inserted in
+the middle. Aside from the large number of fragmented files in the
+challenge and the fact that the gap size was rarely an integral power of
+two, the scenario was quite realistic. 
+
+To carve this kind of scenario Garfinkel developed \emph{split
+carving}, an approach which involves assembling repeated trial
+objects from two or more sector runs to form candidate objects which
+are then validated. Here we present an improved algorithm for split carving, which
+was call \emph{bifragment gap carving} (\figref{art/carving_gap}):
+
+\begin{itemize}
+\item 
+Let $f_1$ be the first fragment that extends
+from sectors $s_1$ to $e_1$ and $f_2$ be the second fragment that
+extends from sectors $s_2$ to $e_2$. 
+\item Let $g$ be the size of the gap between the two fragments, that
+  is, $g=s_2-(e_1+1)$.
+\item Starting with $g=1$, try all gap sizes until $g=e_2-s_1$
+\item For every $g$, try all consistent values of $e_1$ and $s_2$. 
+\end{itemize}
+
+Essentially, this algorithm places a gap between the start and the end
+flags, concatenating the sector runs on either side of the gap, and
+growing the gap until a validating sequence is found. This algorithm
+is $O(n^2)$ for carving a single object for file formats that have
+recognizable header and footer; it is $O(n^4)$ for finding all
+bifragmented objects of a particular type in a target, since every
+sector must be examined to determine if it is a header or not, and
+since any header might be paired with any footer.
+
+\subsection{Bifragment Carving with Constant Size and Known Offset}
+
+Bifragmented MSOLE documents cannot be carved with gap carving because there is no
+recognizable footer. However, the CDH can be recognized. 
+Recall that the CDH has a pointer that points to
+the MSAT and the SAT. Because the CDH is the first sector of the file
+it always appears in the first fragment. If the MSAT occurs in the
+second fragment (and it frequently does, because the MSAT tends to be
+written near the end of the MSOLE file), then it is actually possible
+to find this self-referential sector by examining every sector in the
+disk image. (There is a small probability that a sector will
+match by chance, but the probability is quite small.)
+
+We have developed a carver that makes use of this information to find
+and recover MSOLE files that are fragmented in this fashion. The
+carver starts with $s_1$, the address of a CDH, and uses the
+information in the header to find $m_1$, the first block of the
+MSAT. From $m_1$ the carver can determine $L$, the length of the final
+file, as well as the sector offset within the file where $m_1$ must
+necessary appear (\figref{msatcarving}).
+
+The carver now employs an algorithm similar to gap carving except that
+the two independent variables are the number of sectors in the first
+fragment and the starting sector of the second fragment. The length of
+the two fragments must sum to $L$ and the second fragment must include
+sector $m_1$. This carving algorithm is $O(n^3)$ if the CDH location
+is known and the MSAT appears in the second fragment, and $O(n^4)$ if
+the forensic analyst desires to find all bifragmented MSOLE files in
+the disk image. A variant of this algorithm can be used if the MSAT is
+in the first fragment and portions of the SAT (which is not
+contiguous) are in the second fragment. We saw both of these cases in
+the 2006 Challenge.
+
+If the entire SAT is within the first fragment, the second fragment
+must be found by validating individual data objects within the
+Microsoft compound document. This case did not appear in the 2006
+Challenge.
+
+
+\begin{figure}
+\includegraphics[width=\columnwidth]{carving/msatcarving}
+\caption{In Bifragment Carving with Constant Size and Known Offset the
+sectors $s_1$ and $m_1$ and $f_1+f_2$ are known; the carver must find
+$e_1$, $s_2$ and $e_2$.}\label{msatcarving}
+\end{figure}
+
+Applying this carver to the 2006 Challenge we were able to recover all of the Microsoft Word
+and Excel files that were split into two pieces. However, in one case
+we had numerous false positives---files that would open in Microsoft Word but
+which obviously contained incorrect data. The files opened in Word
+because our MSOLE validator was able to produce file objects that
+contained valid CDH, MSAT, SAT and SSAT, but which still had
+substituted internal sectors. Some of the files opened instantly in
+Word while others took many tens of seconds to open. However, the
+number of file positives was low, and we were able to manually
+eliminate the incorrect ones.
+
+One of the Office files in the  challenge was in three pieces. Using
+two of these fragments Our carver produced a file that could be opened
+in Word and that contained most but not all of the text. Using this
+text we were able to locate a source file on the Internet that was
+similar but not identical to the file in the Carving
+challenge. However, enough of the 512-byte sectors were the same that
+we were able to determine the outlines of the three fragments. We then
+manually carved these three fragments into a single file, opened it,
+and verified that it was correct.
+
+
+\section{Hash Based Carving}
+
+\subsubsection{Hash-Based  Carving with frag\_find}\label{hash-based}
+Carving is traditionally defined in computer forensics as the
+searching for data objects based on \emph{content}, rather than
+following pointers in metadata\cite{garfinkel:carving07}. Traditional
+carvers operate by searching for headers and footers; some carvers
+perform additional layers of object validation. Hash-based carving, in
+contrast, searches a disk for ``master'' files already in a corpus by
+performing sector-by-sector hash comparisons.
+
+\newcommand{\master}{\textbf{master}\xspace}
+%\newcommand{\image}{\textbf{image}\xspace}
+\newcommand{\filemap}{\texttt{filemap}\xspace}
+\newcommand{\shamap}{\texttt{shamap}\xspace}
+We have developed a tool called |frag_find| that achieves high-speed
+performance on standard hardware. Here we describe the algorithm using
+the terminology proposed by Dandass
+\etal~\cite{dandass2008,collange2009}, although our algorithm 
+does not require their hardware-based acceleration techniques that
+are the basis of their research:
+
+\begin{compactenum}
+\item For each \master file a \filemap data structure is created that
+  can map each master file sector to a set of sectors in the image
+  file. A separate \filemap is created for each master.
+\item Every sector of each master file is scanned. For each sector the
+  MD5 and SHA-1 hashes are computed. The
+MD5 code is used to set a corresponding bit in a $2^{24}$ bit
+Bloom filter. The SHA-1 codes are stored in a data structure called
+the \shamap that maps SHA-1 codes to one or more sectors in which that
+hash code is found. 
+\item Each sector of the image file is scanned. For each sector
+  the MD5 hash is computed and the corresponding bit checked in
+  the Bloom filter. This operation can be done at nearly disk
+  speed. Only when a sector's MD5 is found in the Bloom filter is
+  the sector's SHA-1 calculated. The \shamap structure is consulted;
+  for each matching sector found in the \shamap, the sector number of
+  the IMAGE file is added to the corresponding
+  sector in each master \filemap.
+\item Each \filemap is scanned for the longest runs of
+  consecutive image file sectors. This run is noted and then removed from
+  the \filemap. The process is repeated until the \filemap contains no
+  more image file sectors. 
+\end{compactenum}
+
+Our hash-based carving algorithm covers both fragmented master files and the
+situation where portions of a master are present in multiple locations
+in the image file.
+
+Our original hash-based carving implementation used
+Adler-32\cite{RFC1950} instead of MD5 as the fast hash, but subsequent
+testing found that most MD5 implementations are actually faster than
+most Adler-32 implementations due to extensive hand-optimization that
+the MD5 implementations have received. Although the new algorithm
+could dispense with SHA-1 altogether and solely use MD5, the MD5
+algorithm is known to have deficiencies. If the results of hash-based
+carving are to be presented in a court of law, it is preferable to use
+SHA-1. To further speed calculation we found it useful to precompute
+the SHA-1 of the NULL-filled sector; whenever the system is asked to
+calculate the value of this sector, this value is used instead.
+
+We prefer to use \emph{sectors} for hash-based
+carving because they are the minimum allocation unit of the disk
+drive. Larger block sizes are more efficient, but larger blocks
+complicate the algorithm because of data alignment and partial write
+issues. As a result, hash-based carving may fail to identify valid
+data when used with block sizes larger than the sector size.
+
+
+\section{Carving Challenges}
+
+Carrier, Casey and Venema created the 2006 DFRWS Carving Challenge
+to spur innovation in carving
+algorithms~\cite{dfrws2006-challenge}. The Challenge consisted of a
+49,999,872 byte ``challenge file'' containing data blocks from text
+files, Microsoft office files, JPEG files, and ZIP 
+archives, but having no file system metadata such as inodes or
+directory entries. Some of the files in the Challenge were
+contiguous, while others were split into two or three fragments. The
+goal was to reconstruct the original files
+that had been used to create the challenge. 
+
+
+
+
+\setcounter{chapter}{5}\input{unicode}        % October 27
+\input{similarity}% November 2
+\section{Document Metadata}
+\input{metadata} % November 9
+\chapter{Residual Data and Bulk Data Analysis}
+
+
+\subsection{Residual Data in Web Browsers}
+\cite{dfrws2011:JunghoonOhAndSeungbongLeeAndSangjinLee}
+
+\subsection{Bulk Data Analysis}
+% Net carving
+% zip reconstruction
+
+\cite{dfrws2011:RobertBeverlyAndSimsonGarfinkelAndGregCardwell}
+\cite{dfrws2011:RalfBrown}
+
+
+\input{memory_analysis} % November 23
+\section{Memory Analysis}
+\cite{dfrws2011:JamesOkolicaAndGilbertPeterson}
+\input{time_analysis} 
+\section{Large Scale Forensics}
+% DFXML
+
+Scalability is a fundamental problem with computer forensics
+practice. Practitioners have no control over the systems that they
+analyze: while many criminals use computers that are a few years old,
+some criminals will use top-of-the-line computer systems. Thus,
+examiners are frequently in the position of being forced to analyze
+top-of-the-line systems with their own systems that are either
+top-of-the-line or a few years out of date. This creates what
+\citeN{dfrws2004:DrGoldenGRichardIII} 
+termed the \emph{performance wall}---no matter how well software is
+written, it will never be able to analyze a suspect's system in a
+reasonable amount of time. The solution, Richard argued, is a
+distributed digital forensics framework---a system that both stores
+data and performs analysis in a distributed fashion.
+
+* cross-drive analysis
+
+\section{Preservation and Archiving}
+
+\emph{Explaint he problem}
+
+Significant work has been done on the development of file types for
+long term preservation and archiving. The Library of Congress has a
+major Digital Preservation effort
+[http://www.digitalpreservation.gov/] with a collection of recommended
+formats for long term archives.  The National Archives and Records
+Administration has an initiative to assist agencies in developing
+“selecting sustainable formats for electronic records.” 
+
+Unfortunately, much of the work that has been done by LoC and NARA is
+for authoring of digital content and is therefore less appropriate for
+forensics efforts.
+
+What we require of a long-term file archiving format:
+
+\begin{description}
+\item[Public specification] so that we understand all of the bytes that are stored in each data object.
+\item[Open source implementation]— ideally multiple implementations so that they can be cross-validated — so that in the future we will be able to create new software that can read our legacy documents.
+\item[Widespread Adoption and Use]  As indicated by NARA, “Formats adopted for widespread use have a higher probability of being sustainable over time.”   
+\end{description}
+
+\begin{description}
+\item[ASCII text files] with lines delimited by |\r\n|
+\item[UNICODE files] in UTF-8	(Unicode defines an end-of-line semantics)
+\item[Avoid HTML] it’s not clear how it would be displayed.)
+\end{description}
+
+Styled Text:
+
+options:
+- RTF
+
+2-D visual Images 
+
+NARA recommends digital photographic records in TIFF II format version 4.0, 5.0 and 6.0, or in JPEG format. 
+Given the wide support for GIF, PNG, and JPEG file formats, it makes sense to accept these types for exploited images. Windows currently does not support JPEG2000, so this type should not be accepted. GIF and PNG are lossless compression algorithms.
+Options:
+•	GIF87a / GIF89a
+•	PNG
+•	JPEG
+•	JPEG2000
+
+
+Rendered Pages:
+- PDF/A (ISO 19005)  	— an archiving form of PDF with no JavaScript and all fonts embedded.
+
+
+
+Audio:
+NARA recommends that archived audio be in Audio Interchange File Format (AIFF), Uncompressed Waveform audio format (WAV), Audio Format (AU), Uncompressed Broadcast Wave Format (BWF), Free format Lossless Audio Codec (FLAC), or Motion Pictures Expert Group (MPEG) 4 Audio Lossless Coding format (ALS). In all cases NARA prefers an audio recording depth of 24 bits per sample, with a minimum depth of 16 bits per sample, and a sampling rate of 96 Khz with a minimum sampling rate of 44.1 KHz.  NARA’s recommendations are clearly driven by the decide to create an national archive record. 
+
+For archiving exploited audio, it makes sense to store the original audio and a playback audio. Audio is relatively small in size compared to video, imposing little penalty for storing the original files. A copy should also be made in an archive format to assure longterm playability of the captured media. 
+
+•	MPEG4 ALS. (Currently there are relatively few products that support MPEG4 ALS, but this is expected to change over time
+. Ffmpeg currently supports MPEG4 ALS.)
+
+Video:
+
+NARA finds Audio-Visual Interleave Format (AVI), Material Exchange Format (MXF), and Quicktime Format (MOV) to be preferred audio formats, and recommends lossless codes such as Motion JPEG 2000 or HuffyUV. When these are not practical, NARA suggests using MPEG2, MPEG4, DV or MJPEG2000 lossy codecs.
+
+\section{Enterprise-Scale Forensics and Incident Response}
+\cite{dfrws2011:MichaelCohenAndDarrenBilbyAndGermanoCaronni}
+
+
+\input{visualization}
+\section{network forensics} 
+- tcpflow, netminer, 
+
+\section{Miscellaneous Topics}
+\section{Anonymization}
+\cite{dfrws2011:BilalShebaroAndJedidiahCrandall}
+
+\section{Datamining and Machine Learning}
+Datamining can be used to find evidence that is inconsistent
+with the rest of a disk. 
+\citeN{dfrws2005:BrianDCarrierAndEugeneHSpafford} used outlier
+analysis to find files that were inconsistent with others. For
+example, when attackers replace files in the \emph{/bin} directory
+with altered versions, it is typical for the attacker to reset the
+file's modification timestamp to match the original. However, other
+metadata is harder to match, such as the file's inode number or even
+its physical location on the drive.  Carrier and Spafford's approach
+would find such files, although they did not report the number of
+false positives that the technique generated based on typical
+operating system use. 
+
+(Garfinkel carving paper)
+
+
+
+\section{Conclusion}\label{conclusion}
+\section{Acknowledgments}
+\def\showURL{}
+\def\urlprefix{}
+{\fontsize{9}{10}\selectfont
+\bibliography{lit_forensic,forensics,garfinkel,rfcs,dfrws}
+\bibliographystyle{elsarticle-harv}    % 
+
+%\input bulk_extractor.bbl
+}
+\end{document}
+
+
+% LocalWords:  Scalability modalities cryptographic virtualize
