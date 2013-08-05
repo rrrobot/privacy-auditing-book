@@ -1,8 +1,17 @@
 \chapter{Introduction}
+\setlength{\epigraphwidth}{3in}
 \epigraph{Three can keep a secret, if two of them are dead.}{Benjamin
   Franklin}
 
-Computers have a hard time keeping secrets.  Consider these two cases:
+This book is about finding secrets that were present in computer
+systems, sent over the Internet or a wireless network, or
+inadvertently left in a digital document. Specifically, this book is about
+finding secrets that are \emph{hidden}, \emph{invisible}, or simply
+easy to \emph{overlook}. Secrets that shouldn't be present, but
+are. Secrets that are present in computer systems, sent over
+information networks, or stored on digital systems.
+
+Sometimes it seems that computers sometimes have a hard time keeping secrets.  Consider these two cases:
 
 \begin{itemize}
 \item In April 2011, the UK Parliament posted an Adobe Acrobat Portable
@@ -46,11 +55,6 @@ thereafter\cite{apple-tracking-statement}.
   Attribution-NonCommercial-ShareAlike 2.0 Generic)}}.\label{heatmap}
 % http://www.flickr.com/photos/nedward/5637893141
 \end{figure}
-
-
-This book is about finding secrets that were present in computer
-systems, sent over the Internet or a wireless network, or
-inadvertently left in a digital document. 
 
 Over the years a wide variety of programs running on many different
 kinds of computers have been responsible for significant privacy and
@@ -104,95 +108,270 @@ invisible. They can be present for years in a piece of software that's
 used by millions of people. They can be exploited against the interest
 of their users. And they are frequently present because nobody looked deeply at the data. 
 
-\subsection{Personally Identifiable Information?}
-Most of the leaks described in the previous section share a common
-theme: each involved the collection and possible release of personally
-identifiable information (PII).
-
-\tk{Explain what PII is}
-
-\subsubsection{Legal definitions}
-
-\tk{Explain legal definition of PII}
-
-\subsubsection{Practical definitions}
-
-\tk{Provide a practical definition of PII}
-
-\subsection{Practical Concerns}
-
-
-\subsubsection{Reuse of identifiers - at the same time, at different times}
-\subsubsection{Shared IDs}
-\subsubsection{specificity of identifiers; birthday problem}
-\subsubsection{IP addresses}
-\subsubsection{Identifiers: IPv4, IPv6, Mobile ID, SIM cards, Phone \#s, email addressses}
-\subsection{GUIDs and identifiers}
-\subsection{What is ``Unique''}
-
 \section{Digital Forensics Tools}
 
-This book describes how to find leaks of personal information using
+This book teaches approaches for finding leaks of personal information using
 digital forensics tools. The previous section gave a brief description
-of different kinds of 
+of two kinds of leaks that have happened in recent years. This
+section gives a brief introduction to digital forensics, the digital
+forensics process (called the ``model'' by practitioners), and how the
+leaks described in the first section could have been found using
+digital forensics tools.
 
+\subsection{Digital Forensics}
 
-The tools that this book introduces for technical privacy auditing are
-commonly used for digital forensics and for data
-  recovery. \emph{Digital forensics} is a branch of forensic sciences
-  that involves the investigation of material found on digital
-  devices. Digital Forensics \emph{examiners} employ a variety of
-  tools and techniques to find information that might be useful for
-  solving a crime, understanding an electronic break-in, or simply
-  establishing if information has been stolen or inappropriately
-  accessed. 
+\emph{Digital Forensics} (DF) is a branch of forensic sciences that
+involves the investigation digital devices and the data that they
+contain for the purpose of proving or disproving a hypothesis about an
+event that took place in the past. For example, digital forensics
+tools can be used to extract a deleted photograph from a cell phone
+and present that photograph in a court of law. The forensic process
+can be used to determine whether or not the photograph was taken by the
+phone's camera or downloaded to the phone over a network. The process
+can also be used to establish when and where the photo was taken.
 
+In recent years the rise of television forensic shows like CSI and
+NCIS have presented a somewhat distorted view of DF to
+the general public. While the shows accurately convey the important
+role that DF has in some cases, television forensics departs from
+reality in many important ways. 
 
-all too easy for a program to inadvertently collect a piece of private
-information and then leave it in memory, save it in a file, or send it
-over a network. 
+On television, forensics is portrayed as being swift and
+certain. Forensics software is graphical, easy-to-use, and fast. For
+dramatic reasons the forensics team typically has just one or two
+specialists that know how to perform a forensics analysis, and they know how
+to use \emph{every} tool that the organization has---digital tools,
+fingerprints, chemistry, and even nuclear physics. There are typically
+no false positives or mismatches in televised forensics. Data that are
+overwritten or encrypted can usually be recovered (unless the plot
+requires that they not be), and it is nearly impossible to delete
+anything. Sadly, such portrayals have caused victims and  juries alike
+to have unrealistic expectations about the technical capabilities of
+government agencies, something that has come to be known as \emph{the
+  CSI Effect}\cite{csi-effect}\cite{beyond-csi-effect}.
 
-Programs can have privacy-related bugs for years without being noticed 
+Privacy in the digital world would be at considerable risk if digital
+forensics truly had such powers: anyone who desired could violate any
+secret anywhere. Fortunately, the reality of digital forensics is far
+less exciting---and decidedly more pro-privacy.
 
-have been 
+In the real world, data that are overwritten generally cannot be
+recovered, and data that are encrypted usually cannot be
+decrypted. This is good news from a privacy perspective: it means that
+technical measured, properly applied, really can protect computer
+users from accidental data leaks. 
 
-Modern computers are extraordinarily complex systems with vast amounts
-of storage, high-performance network connections, and all kinds of
-sensors. Today a 
+From its inception, DF has served two different purposes:
 
-Since the dawn of the consumer Internet in the 1990s there have been
-many cases in which sensitive information was inadvertently released
-because a computer program did not behave properly. 
+\begin{enumerate}
+\item \textbf{Extracting information from physical devices related to
+  a crime.} In the pre-digital age a suspect's address book or
+calendar might be entered directly into evidence and handed to the
+jury. That's not possible in the digital age, when those materials
+might be on a password-protected computer or hidden somewhere inside a
+mobile phone. In many cases forensic techniques make it possible to
+recover data that have been deleted or hidden but not yet
+overwritten. 
 
-The secrets are typically
-private information that was created and or distributed with a
-computer program. 
+\item \textbf{Understanding the details of crimes that are inherently
+  digital (``cyber crime'').} DF tools allow the examination of
+data from crimes that have no analog in the pre-digital world, such as
+breaking in to a computer over a network or planting malware on a
+person's mobile phone. In these kinds of cases, DF tools may be the
+only way to understand what has happened and attempt to determine the
+responsible party. 
 
+\end{enumerate}
 
-Over the past 
-Typically some user trusted the program to protect
-their privacy but it didn't. by a piece
-of software that was trusted by their users to protect their privacy
-but which failed to do so. We know about 
+DF is powerful because computer systems are windows into the
+past. Many digital systems retain vast quantities of
+information---either intentionally, in the form of log files and
+archives, or inadvertently, as a result of software that does not
+cleanly erase memory and files after it runs. As a result, it
+is frequently possible for investigators to recover old email
+messages, chat logs, Google search terms and other kinds of data
+that were created
+weeks, months, or even years in the past. Such contemporaneous records
+can reveal an individual's state-of-mind or intent \emph{at the time
+  the crime was being committed}.
 
-someone trusted, but that acted in program se secrets were not put
-there intentionally---they 
+The next section describes how digital forensic tools can be used to
+accomplish these goals.
 
-. Specifically, this book is about
-finding secrets that are \emph{hidden}, \emph{invisible}, or simply
-easy to \emph{overlook}. Secrets that shouldn't be present, but
-are. Secrets that are present in computer systems, sent over
-information networks, or .
+\subsection{The Digital Forensics Model}
 
-Many 
+Even though every case is different, DF practitioners have developed an
+approach to conducting investigations called the 
+\emph{digital forensics model}\cite{pollitt:models}. The 
+elements of the model include:
 
-\section{Detecting data leakage as an experimental science}
-\subsection{Detecting data leakage attempts to prove a negative}
+\begin{description}
+\item[Preparation] Before performing an investigation, those involved
+  must prepare themselves by deciding upon the standards and
+  procedures that will be followed; receiving the necessary training;
+  and obtaining the appropriate equipment and software required for
+  investigations. 
 
+  To use the example of the cell phone from above,
+  preparation may involve obtaining specialized hardware that can extract the
+  memory from a cell phone and practicing one's technique on phones that are not part
+  of the investigation.
 
-Examples in this book should run on Windows, Macintosh and Linux-based
-systems. The code was largely developed on a Mac, which is similar to
-Linux. 
+\item[Collection and Preservation]
+  Before data can be analyzed, they   must be removed from the
+  device being analyzed and preserved to create a lasting
+  record. Without this step, it may not be possible to repeat an
+  analysis at a later point in time. 
+
+  In our example, this step might involve the actual extraction of data
+  from the cell phone into a single file called a \emph{physical
+    image} that records all of the phone's applications, phone data, user data,
+  and deleted files. Such a physical image might be 64GB in size or
+  even larger.
+
+\item[Examination and Extraction] Working with the preserved data, an
+  examiner will explore for any information that might be
+  relevant to the investigation at hand. Once that information is
+  found, it is extracted and isolated.
+
+  In our example, this step might involve the extraction of each
+  digital photograph from the \emph{physical image} and the storage of
+  each photograph in its own file. The files might be named according
+  to where they were found in the physical image (e.g. 62071808.jpg)
+  rather than with the name that they were given by the phone
+  (e.g. IMG001.JPG). The examiner might also extract \emph{metadata}
+  from each photograph such as the time and GPS coordinates associated
+  with each exposure and the serial number of the camera that took the
+  photograph. This information might be stored in a separate file for
+  each photograph (e.g. 62071808.txt) or might be stored in a single
+  spreadsheet for all of the photographs (e.g. jpeg-metadata.xls).
+
+\item[Analysis] Once the specific data being analyzed has been
+  extracted, the analyst will construct one or more hypotheses that
+  uses the digital evidence to explain possible past activities. A
+  hypothesis may draw from multiple digital devices---an email message
+  sent from a desktop computer to a cell phone, for example---or the
+  hypothesis may incorporate events in the physical world, like a
+  power failure or theft. During this phase a good analyst will also
+  try to construct alternative hypotheses that are consistent with the
+  evidence but which point to different conclusions. 
+
+  In our example, the hypothesis may be that a specific photograph was
+  taken with the phone in question. This may be supported by the
+  photograph having similar metadata to a photograph taken a few
+  minutes earlier or later. An alternative hypothesis may be that the
+  photograph was downloaded to the phone over a network.
+
+\item[Reporting and Testimony] Finally, the analyst will
+  produce a written report or give testimony in a courtroom.
+  Judges and juries can't examine digital evidence for
+  themselves---even if they had the training and the technical skills
+  to do so, performing their own analysis would be inappropriate:
+  their role in the legal process is to evaluate the law, the evidence
+  and make a legal determination, not to perform technical
+  analysis. Reports and testimony must therefore be 
+  \emph{complete}---they must describe the tools and procedures
+  that were followed, clearly document what was found, and then
+  separately provide the technical interpretation of the
+  evidence. 
+
+  In our example, the analyst might prepare a report documenting how
+  the phone's contents were copied, the tools that were used to
+  extract the photographs and their corresponding metadata, and how
+  the evidence is consistent with the analyst's hypothesis. 
+
+\end{description}
+
+The model brings reliability and repeatability to the process, helping
+to assure that different examiners working with the same data will
+arrive at the same conclusion. 
+
+Because they can look into the past and uncover hidden data, DF tools
+are increasingly used beyond the courtroom. Security professionals use
+DF tools to analyze network intrusions---not to convict the attacker,
+but to understand how the attacker gained access to plug the
+hole. Data recovery firms use DF tools to resurrect files from drives
+that have been inadvertently formatted or damaged. 
+
+\subsection{A Microscope for finding Personally Identifiable Information (PII) }
+
+Our goal is to use
+the model for privacy auditing. We want to detect the presence of
+information that is personally identifying or potentially
+sensitive. To do this, we'll use DF tools as a kind of digital
+microscope. Like a biologist looking for bacteria or other signs of
+contamination, if we find sensitive information, we'll know that there is a potential
+for a privacy leak.
+
+The term \emph{personally identifiable
+  information} (PII) is frequently used as shorthand sensitive
+information that should not be disclosed, and we'll use that shorthand
+here. The term is unfortunate, however, as not all personally identifiable information is
+sensitive and not all sensitive information leaks personally
+identifiable information. Nevertheless the term is widely used and
+even enshrined in many US laws, so we will use it here as well.
+
+Our basic approach will be to treat privacy auditing as an
+experimental science. We will create specially manufactured documents,
+computer media and network streams that are likely to contain known
+PII. We will then use DF tools to see if we can find the PII that we
+have inserted. This will allow us to both understand how the tools
+work and how the PII moves through a digital system. Finally, we will
+apply the same tools to documents, media and network streams acquired
+in the ``wild''---in the digital environment---and see if those wild
+samples contain PII. If they do, we have documented a privacy failing.
+
+Others have used DF tools for this purpose. For example, in 2009 the
+Inspector General of the United States Department of Defense issued a
+report in which forensic software was used to test hard drives leaving
+the government service. The IG found that ``DOD Components did not
+properly sanitize, document, or fully account for excess unclassified
+IT equipment before it was released to other Federal, DOD, or
+non-Federal organizations.''\cite{D-2009-104}
+
+Both of the privacy leaking examples at the beginning of this chapter
+could have been readily prevented by applying the digital forensics
+model:
+
+\begin{enumerate}
+\item \textbf{The UK PDF files.} The reports in the British
+  newspapers demonstrated  that it didn't take specially trained DF
+  practitioners using expensive tools to recover the data from the
+  MoD's improperly redacted PDF files. All that was required was a
+  copy of Adobe Acrobat Reader. 
+
+  Applying the DF model would have put the MoD in a better position to
+  preventing the disclosure in the first place. Starting with proper
+  training, the organization would have been better positioned to
+  understand the difference between removing sensitive information and
+  simply covering it up. After the files were sanitized, forensic tools
+  could have been used to search for key words, terms,
+  or labels associated with sensitive or restricted information: if
+  such keywords were found, the tools could have been used to identify
+  the process failings. When the redaction process was corrected and
+  re-applied, the tools could then verify that the redaction had been
+  completed as expected.
+
+\item \textbf{The Apple Geolocation Database.} Likewise, Warden and Allan didn't
+  require special forensic tools to find the covert geolocation
+  database that was present in iOS~4. The database was a standard SQLite3
+  file, and the file was stored as part of the iPhone ``backup''
+  database present on every Macintosh or Windows computer that was
+  synched with an iPhone using Apple's iTunes program. The database
+  was ready to be found by any privacy professional that did an audit
+  of those files, for the simple fact that it was larger that all of
+  the other databases in the backup: whereas most of the databases were typically
+  10KB to 100KB in size, the geolocation database from some iPhones was
+  in the 10MB to 100MB range. The database was so large because it was
+  never pruned; it was a privacy violation for the same rason.
+
+  The computer forensics model applied to the iPhone system could have
+  readily caught the privacy leak before the iPhone software was
+  released to the general public. An important part of the Analysis
+  step is to look for and try to explain outliers: the database
+  was such an outlier that should have attracted attention. 
+\end{enumerate}
+
 
 \section{Conventions used in this book}
 In general this book follows \emph{Wikipedia Manual of
@@ -215,32 +394,37 @@ traditional disk sector has |512| bytes (|512|~B).
 
 \subsection{Radix}
 Numbers are generally assumed to be in base 10 unless otherwise
-specified. Binary digits will be suffixed with a |b|; octal
-is indicated with a leading |0| as in the case in most programming
-languages; hexadecimal numbers will have a suffix of an |h| in text
-but may be prefixed with |0x| or |\x|. Unfortunately there are
-exceptions which must be inferred from context. For example, hex dumps
+specified. Binary digits are suffixed with a |b|; octal
+is indicated with a leading |0| as in most programming
+languages; hexadecimal numbers may be prefixed with |0x| or |\x| or
+have a |h| suffix. Unfortunately there are
+exceptions that must be inferred from context. For example, hex dumps
 and cryptographic hashes are always presented courier as unadorned hexadecimal
 digits. Examples are shown in \tabref{nomen}.
 
 \begin{table}
-\begin{tabular}{rlcrl}
+\begin{tabular}{cllrl}
      &              &         & Decimal  \\
 Base & Nomenclature & Example & Equivalent      & Usage \\
+\hline
 \hline
 2  & Binary      &  |10101111b|& 175            & Text\\
 \hline
 8  & Octal       &  |0377|     & 255            & Text and code\\
-8  & Octal       &  |\377|     & 255            & Code\\
+   &             &  |\377|     & 255            & Code\\
+\hline
 10 & Decimal     &  |1234|     & 1234           & Text and code\\
+\hline
 16 & Hexadecimal &  |DEADBEEFh|& 3,735,928,559  & text \\
    &             &  |0xFF|     & 255            & Output \\
    &             &  |\xFF|     & 255            & Python code\\
+\hline
+\hline
 \end{tabular}
 \caption{Examples of numbers in various bases used in this book.}
 \end{table}
 
-\subsubsection{Units}
+\subsection{Units}
 
 Natural phenomena discussed in this book are described in Metric
 units. Manufactured objects are described in either Metric units or
@@ -260,16 +444,13 @@ Commission) binary prefixes. This situation is confusing because until
 recently the SI prefix names \emph{kilo}, \emph{mega} and \emph{giga} were commonly used
 for both decimal and binary notation, the correct multiplier being
 inferred from usage. Today there is an effort underway to clarify
-usage. This section describes correct usage and provides hints for
-determining when usage is incorrect.
+usage. 
 
 SI decimal prefixes are commonly used to represent metric
 quantities. For example, the SI prefix \emph{giga} multiplies the value that follows by
 $10^9$; thus a gigabyte (GB) is
-$10^9=1,000,000,000$ bytes. (Confusingly, this is called a billion bytes
-in the US but a thousand million bytes in Great Britain, although the
-Oxford Dictionary English (British Edition) that ships with MacOS 10.8
-calls such usage ``dated.'')
+$10^9=1,000,000,000$ bytes. The ``B'' multiplier is short for
+``billion,'' which is a US billion. 
 
 The IEC prefix \emph{gibi} multiples the value following by $2^{30}$. A \emph{gibibyte}
 (GiB) is thus $2^{30}=1,073,741,824$ bytes. This has been proper usage
@@ -279,9 +460,9 @@ The confusion dates back to the early days of computing, when the ``K''
 and ``M'' prefixes were commonly used to mean 1,024 and 1,048,576
 when describing memory systems but 1,000 and 1,000,000 when
 describing mass storage systems. The difference in terminology resulted
-from the way that these systems were addressed. Memory was addressed
-by a series of binary address lines, while electromechanical drums and
-disks were addressed by specifying a head, a track, and then counting
+from the way that these systems are addressed. Memory is  addressed
+with a series of binary address lines, while electro-mechanical drums and
+disks are addressed by specifying a head, a track, and then counting
 sector numbers: such numbers only map to even powers-of-two when the
 number of heads, tracks and sectors are also even powers-of-two, and
 this is rarely the case due to manufacturing concerns.
@@ -297,9 +478,9 @@ divergence between the power-of-two measurement and the corresponding
 power-of-ten measurement. The IEC prefixes were proposed in
 1996\cite{iec:1996},
 published as an international standard in 1999, and adopted by the
-International Standards organization with the addition of prefixes for
-describing exbi (Ei=$2^{60}$), zebi (Zi=$2^{70}$) and yobi (Yi=$2^{80}$) byte
-quantities in 2006\cite{iec:80000-13:2008}.  
+International Standards organization. In 2006 addition of prefixes were
+adopted for
+exbi (Ei=$2^{60}$), zebi (Zi=$2^{70}$) and yobi (Yi=$2^{80}$)\cite{iec:80000-13:2008}. 
 
 Despite this standardization effort, today we live in a somewhat
 confusing world in which so-called ``4GB'' DRAM modules 
@@ -310,22 +491,20 @@ module may have four ($2^{2}$) chips, each storing 1073741824
 ($2^{30}$) bytes each, while the microSD card may two million flash
 pages, each with 4096 bytes of usable storage, but present that
 information as precisely 7,812,500 logical 512-byte blocks.  These
-differences are the result of different operational requirements for
-the two kinds of memory, resulting in different kinds of access
-electronics, different kinds of software, and different economics. 
+differences are the result of different kinds of electronics to access
+these storage devices, different kinds of software that use them, and
+different economics for producing them. 
 
-It is likely that the IEC binary prefixes will show increased use
-with time. Therefore this book uses them to describe block size and
-sector size, since they are typically multiples of 512 ($2^9$), but 
-SI decimal prefixes are used to describe disk sizes, since that is the way
+It is likely that the IEC binary prefixes will be increasingly popular
+over time. This book uses the binary prefixes to describe block size
+and sector size, since they are typically multiples of 512 ($2^9$),
+but SI decimal prefixes to describe disk sizes, since that is the way
 the devices are sold to consumers.
 
-\section{Other References}
-\subsection{Books}\label{section:books}
-The following books are referenced in this book:
-
-\printbibliography[heading=bibempty,type=book]
+\section{Other Resources}
+\subsection{Books}
 
 
-\cite{carrier-file-systems}
 \subsection{Articles}
+
+%%  LocalWords:  Alasdair PDFs repeatability

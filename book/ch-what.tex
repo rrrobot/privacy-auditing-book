@@ -10,24 +10,26 @@ information is present but don't think that it's relevant, and people
 who are in a position to know that the leakage is relevant don't have
 the technical ability to determine that it's present.
 
-The only way to overcome the need to have specialized tools is to
-learn how to write your own. As a result, this book spends a lot of
-time showing data buffers and explaining how to understand what the
-information means. 
+One way to overcome the need to have specialized tools is to
+understand how to use general tools for a specific purpose. As a
+result, this book spends a lot of time showing data buffers and
+explaining how to understand what the information means.
 
 This chapter starts with the creation of a Portable Document Format
-(PDF) file that contains hidden information (\secref{sec:make-pdf}). Using this file, we'll
-explore two popular ways of looking at data it contains---by looking
-at \emph{hex dumps}  (\secref{sec:hex-dumps}) and by extracting
-printable strings (\secref{sec:strings}).
+(PDF) file that contains hidden information
+(\secref{sec:make-pdf}). Using this file, we'll explore two popular
+ways of looking at data it contains---by looking at \emph{hex dumps}
+(\secref{sec:hex-dumps}) and by extracting printable strings
+(\secref{sec:strings}).
 
-In order to understand what the hex dump and extracted strings actually mean, it's important
-to first understand how numbers (\secref{sec:numbers}) and letters
-(\secref{sec:letters}) are actually stored inside a computer's memory.
-Much of this chapter is similar to what might be covered at the start
-of a course on computer architecture. But whereas an architecture
-course is primarily concerned with computation and data in motion,
-this chapter is concerned with understanding data at rest. 
+In order to understand what the hex dump and extracted strings
+actually mean, it's important to first understand how numbers
+(\secref{sec:numbers}) and letters (\secref{sec:letters}) are actually
+stored inside a computer's memory.  Much of this chapter is similar to
+what might be covered at the start of a course on computer
+architecture. But whereas an architecture course is primarily
+concerned with computation and data in motion, this chapter is
+concerned with understanding data at rest.
 
 \section{Make a leaky PDF!}\label{sec:make-pdf}
 
