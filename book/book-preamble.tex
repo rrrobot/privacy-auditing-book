@@ -87,6 +87,7 @@
 \newcommand{\chapref}[1]{Chapter~\ref{#1}\xspace}
 \newcommand{\chapvref}[1]{Chapter~\vref{#1}\xspace}
 \newcommand{\figref}[1]{Figure~\ref{#1}\xspace}
+\newcommand{\lstref}[1]{Listing~\ref{#1}\xspace}
 \newcommand{\secref}[1]{Section~\ref{#1}\xspace}
 \newcommand{\secvref}[1]{Section~\vref{#1}\xspace}
 \newcommand{\figvref}[1]{Figure~\vref{#1}\xspace}
@@ -112,6 +113,16 @@
   \caption{#3\label{#2}}
   \end{figure}
 }
+
+% \bifigure{image1}{image2}{caption1}
+\newcommand{\bifigure}[3]{
+  \begin{figure}
+  \includegraphics[width=.47\linewidth]{#1} \hfill \includegraphics[width=.47\linewidth]{#2} \\
+  \caption{#3\label{#2}}
+  \end{figure}
+}
+
+
 
 % \twofigures{width1}{image1}{caption1}
 %            {width2}{image2}{caption2}

@@ -3,15 +3,22 @@
 \epigraph{Three can keep a secret, if two of them are dead.}{Benjamin
   Franklin}
 
-This book is about finding secrets that were present in computer
-systems, sent over the Internet or a wireless network, or
-inadvertently left in a digital document. Specifically, this book is about
-finding secrets that are \emph{hidden}, \emph{invisible}, or simply
-easy to \emph{overlook}. Secrets that shouldn't be present, but
-are. Secrets that are present in computer systems, sent over
-information networks, or stored on digital systems.
+This book is about finding and exposing data that are \emph{hidden}, \emph{invisible}, or simply
+easy to \emph{overlook} in digital systems. Such data, when present
+without our knowledge, can damage privacy, cause pain, ruin
+reputations, cause financial lose, or even harm national security. The
+purpose of this book is to teach you methods for finding and exposing
+these data leaks so that you can prevent them from happening in the
+future.
 
-Sometimes it seems that computers sometimes have a hard time keeping secrets.  Consider these two cases:
+Secrets that are present in many computer systems. They stored in
+documents, embedded in operating systems, and even sent over
+information networks. It's not the presence of the secrets that
+damages privacy---it's the release of documents or data that are
+thought to be clean, but actually contain hidden information that
+should have been kept private. 
+
+Consider these two cases:
 
 \begin{itemize}
 \item In April 2011, the UK Parliament posted an Adobe Acrobat Portable
@@ -52,11 +59,11 @@ thereafter\cite{apple-tracking-statement}.
   cleared. As a result, the database could easily be used to create a
   map of every place that the iPhone had been. (C) 2011 John
   Niedermeyer. {\small (Licensed under Creative Commons
-  Attribution-NonCommercial-ShareAlike 2.0 Generic)}}.\label{heatmap}
+  Attribution-NonCommercial-ShareAlike 2.0 Generic)}}\label{heatmap}
 % http://www.flickr.com/photos/nedward/5637893141
 \end{figure}
 
-Over the years a wide variety of programs running on many different
+Over the years a wide variety of software running on many different
 kinds of computers have been responsible for significant privacy and
 security violations. The violations are typically
 \emph{unintentional}---the people who wrote these programs didn't
@@ -68,6 +75,37 @@ information is being compromised. And because the private information
 leaked is typically embedded in a form that is invisible or easily
 ignored, the flaws can persist for weeks, months, or even years before
 they are discovered and fixed.
+
+Inadvertent privacy leaks aren't limited to government agencies and
+major computer manufacturers: many damaging privacy leaks happen
+person-to-person because modern computer systems are so
+complex. Consider the digital photograph shown in \figref{nsf_hq}. The
+original photo was 3264x2448 pixels and clearly showed a readily
+identifiable 12-story office building. The cropped version is 1248x699
+and does not contain much identifying information. But the cropped
+version still contains the metadata from the original; this metadata
+describes the time that the photograph was taken, the fact that it was
+taken with an iPhone 4S, and the GPS location of the
+photographer to within a few feet. (\figref{nsf_metadata}). 
+
+It turns out that there are several different ways to crop JPEG
+photographs on the Macintosh computer that was used to make
+\figref{ch-1/nsf_hq}. One of the programs is Apple's iPhoto, which has
+check boxes for including ``Title and keywords'' and ``Location
+information'' on its export dialog box. 
+
+\sgraphic{ch-1/nsf_hq}{This photograph of a tree and a few cars contains
+  and embedded title and GPS location information.}
+
+\begin{figure}
+\bifigure{ch-1/nsf_hq_exif}{ch-1/nsf_hq_gps}{Metadata from \figref{ch-1/nsf_hq}, as displayed by the Apple
+  Macintosh Preview applicaiton.}
+\end{figure}
+
+\bifigure{ch-1/export}{ch-1/export1}{Apple's iPhoto (left) allows the user to select whether or not
+  titles and location metadata will be included in exported
+  photographs; Apple's Preview tool (right) copies metadata without
+  warning the user.}
 
 \section{Technical Privacy Auditing}
 
@@ -96,17 +134,19 @@ information.
 
 The basic premise of this book is that many such privacy leaks can be
 discovered through straightforward visual inspection---provided that
-you know where to look. Our goal is to teach you flexible, general
-purpose approaches for finding that data---and provide you with enough
-background so that you will understand what you are looking at. This
+you know where to look---and they can frequently be avoided with
+relatively simple software modifications. Our goal is to teach you flexible, general
+purpose approaches for finding that data and clearly documenting the
+problem for others. This
 will put you in the position to discover new privacy and security
-leaks in the future.
+leaks in the future and for getting them fixed.
 
 Privacy leaks such as the hidden information in PDFs and Apple's
 unintentional location database are insidious because they are
 invisible. They can be present for years in a piece of software that's
 used by millions of people. They can be exploited against the interest
-of their users. And they are frequently present because nobody looked deeply at the data. 
+of their users. And they are frequently present because nobody looked
+deeply at the data or publicized their findings. 
 
 \section{Digital Forensics Tools}
 
@@ -503,8 +543,12 @@ the devices are sold to consumers.
 
 \section{Other Resources}
 \subsection{Books}
-
-
 \subsection{Articles}
+
+\section{Exercises}
+* Open the JPEG and determine the address of where the photographer
+was standing. Show your work.
+
+
 
 %%  LocalWords:  Alasdair PDFs repeatability

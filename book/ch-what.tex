@@ -1,26 +1,21 @@
 \chapter{What Data Look Like}
 
-Sometimes you can see data leakage by simply analyzing a file with an
-ordinary utility, as we did in the last chapter when we discovered an
-easy way to read geolocation data hidden in a JPEG. Other times
-the leakage may be less obvious---indeed, the reason the leakage may be present
-is that there are no readily available tools to view the
-information. As a result, the software developers know that the
-information is present but don't think that it's relevant, and people
-who are in a position to know that the leakage is relevant don't have
-the technical ability to determine that it's present.
+Sometimes you can spot data leakage by simply opening a file with an
+ordinary utility, as we did in the last chapter when we used Apple's
+Preview application to read geolocation data hidden inside a JPEG. 
 
-One way to overcome the need to have specialized tools is to
-understand how to use general tools for a specific purpose. As a
-result, this book spends a lot of time showing data buffers and
-explaining how to understand what the information means.
+Other times the leakage may be less obvious.  The software developers
+know that the information is present but don't think that it's
+relevant, and people who are in a position to know that the leakage is
+relevant don't have the technical ability to determine that it's
+present.
 
 This chapter starts with the creation of a Portable Document Format
 (PDF) file that contains hidden information
 (\secref{sec:make-pdf}). Using this file, we'll explore two popular
 ways of looking at data it contains---by looking at \emph{hex dumps}
 (\secref{sec:hex-dumps}) and by extracting printable strings
-(\secref{sec:strings}).
+(\secref{sec:strings}). 
 
 In order to understand what the hex dump and extracted strings
 actually mean, it's important to first understand how numbers
@@ -31,10 +26,44 @@ architecture. But whereas an architecture course is primarily
 concerned with computation and data in motion, this chapter is
 concerned with understanding data at rest.
 
-\section{Make a leaky PDF!}\label{sec:make-pdf}
+\section{A Leaky File with ``Hidden'' text}\label{sec:make-pdf}
+
+\figref{ch-what/hidden_1} shows the creation of a simple file that
+contains hidden data with Apple's TextEdit application. To make the
+file we open TextEdit, type the text, select the word ``Hidden'' and
+change the background (highlight) color of the text from ``none'' to
+``black.'' We save two copies of the file. The first is a so-called
+Rich Text Format (RTF) file called |hidden.rtf|. The contents are then
+exported Adobe Portable Document Format (PDF) file and saved as |hidden.pdf|.
 
 
+\bifigure{ch-what/hidden_1}{ch-what/hidden_2}{Constructing a PDF with
+  hidden text by selecting the text in a word processor (left) and
+  then setting the highlight color to black (right).}
 
+The file |hidden.rtf| is seven lines long and has just 297 bytes; the contents appear in
+\lstref{hidden.rtf}. The file |hidden.pdf|, in contrast, is 8304 bytes
+long. If the file's contents were printed here they would fill
+more than four pages, but the contents would appear as a confusing
+jumble of letters, numbers, and obscure symbols---what's sometimes
+referred to as \emph{garbage}, and more properly termed \emph{binary
+  data} to distinguish it from the printable text that makes up
+|hidden.rtf|. Attempt to view the file |hidden.pdf| with the Unix
+program \emph{less}  and you'll be warned:
+
+\begin{code}
+$ (@ more hidden.pdf @)
+"hidden.pdf" may be a binary file. See it anyway?
+\end{code}
+
+Type ``y'' and you'll see results similar to
+\figref{ch-what/hidden-more}. The rest of this chapter explains what
+this display means.
+
+\sgraphic{ch-what/hidden-more}{The file |hidden.pdf| viewed with the
+  program \emph{less}.}
+
+\lstinputlisting[caption=hidden.rtf,label=hidden.rtf]{ch-what/hidden.rtf}
 
 \section{Bits, Bytes, and Memory}\label{sec:numbers}
 The \emph{bit} is the fundamental unit of storage on digital computers. Bits
