@@ -1,13 +1,32 @@
 \chapter{Operational Concerns}
-\section{Where do names come from?}
- - PII in distribution software
 
-   - @real.com
+This chapter discusses problems that can arise when performing
+technical privacy auditing that don't obviously have to do with the
+theory or practice, but which are real problems nevertheless.
 
- - "Trolltech" - where are the names from?
-\section{Owner data}
-\section{Correspondent data}
-\section{Triage}
-\section{Correlation and Re-Identification}
-\subsection{Unique IDs in cameras}
-\subsection{Writing Styles}
+\section{Apparent PII in Distribution Software}
+Software distributions frequently contain information that appears to
+be personally identifiable information. 
+
+- Email addresses in Linux software distributions
+
+- ``TrollTech'' in QT source.
+
+- email address in real.com software
+
+\section{Finding Security Flaws}
+
+Frequently when performing a privacy audit you can find a security
+flaw. 
+
+- Responsible disclosure.
+
+\section{Re-identification with Correlation}
+
+Frequently it is possible to use external databases to re-identify
+a data set that appears to lack personally identifiable information.
+
+- Unique IDs in cameras
+
+- Writing styles
+

@@ -97,10 +97,8 @@ information'' on its export dialog box.
 \sgraphic{ch-1/nsf_hq}{This photograph of a tree and a few cars contains
   and embedded title and GPS location information.}
 
-\begin{figure}
 \bifigure{ch-1/nsf_hq_exif}{ch-1/nsf_hq_gps}{Metadata from \figref{ch-1/nsf_hq}, as displayed by the Apple
-  Macintosh Preview applicaiton.}
-\end{figure}
+  Macintosh Preview application.}
 
 \bifigure{ch-1/export}{ch-1/export1}{Apple's iPhoto (left) allows the user to select whether or not
   titles and location metadata will be included in exported
@@ -440,7 +438,7 @@ languages; hexadecimal numbers may be prefixed with |0x| or |\x| or
 have a |h| suffix. Unfortunately there are
 exceptions that must be inferred from context. For example, hex dumps
 and cryptographic hashes are always presented courier as unadorned hexadecimal
-digits. Examples are shown in \tabref{nomen}.
+digits. Examples are shown in \tabref{nomenclature}.
 
 \begin{table}
 \begin{tabular}{cllrl}
@@ -461,16 +459,16 @@ Base & Nomenclature & Example & Equivalent      & Usage \\
 \hline
 \hline
 \end{tabular}
-\caption{Examples of numbers in various bases used in this book.}
+\caption{Examples of numbers in various bases used in this book.}\label{nomenclature}
 \end{table}
 
 \subsection{Units}
 
-Natural phenomena discussed in this book are described in Metric
-units. Manufactured objects are described in either Metric units or
-United States customary units, depending on the system of measurements
-that was used to design and produce the object, with approximate
-metric units indicated as appropriate. Thus, this book
+Measurements for Natural phenomena discussed in this book are provided
+in SI Units (the ``Metric System.'')
+Manufactured objects are described in either SI units or
+United States customary units (followed by SI approximations), depending on the system of measurements
+that was used to design and produce the object. Thus, this book
 discusses 5.25-inch (133mm) floppy disks.
 
 \subsection{SI and IEC Multipliers}\label{sec:si-and-iec}
@@ -482,29 +480,29 @@ files, storage systems, and memory banks: SI (the International System
 of Units) decimal prefixes and IEC (International Electrotechnical
 Commission) binary prefixes. This situation is confusing because until
 recently the SI prefix names \emph{kilo}, \emph{mega} and \emph{giga} were commonly used
-for both decimal and binary notation, the correct multiplier being
-inferred from usage. Today there is an effort underway to clarify
+for both decimal and binary notation, the specific multiplier presumably
+inferred from context. Today there is an effort underway to clarify
 usage. 
 
-SI decimal prefixes are commonly used to represent metric
-quantities. For example, the SI prefix \emph{giga} multiplies the value that follows by
-$10^9$; thus a gigabyte (GB) is
-$10^9=1,000,000,000$ bytes. The ``B'' multiplier is short for
-``billion,'' which is a US billion. 
+SI decimal prefixes are commonly used to represent SI
+quantities. For example, the SI prefix \emph{kilo} multiplies the value that follows by
+$10^3$; thus a kilogram (Kg) is
+$10^3=1,000$ grams and a kilobyte (KB) is
+$10^3=1,000$ bytes. 
 
-The IEC prefix \emph{gibi} multiples the value following by $2^{30}$. A \emph{gibibyte}
-(GiB) is thus $2^{30}=1,073,741,824$ bytes. This has been proper usage
+The IEC prefix \emph{kibi} multiples the value following by $2^{10}$. A \emph{kibibyte}
+(KiB) is thus $2^{10}=1,024$ bytes. This has been proper usage
 since 1999 when the IEC adopted standard 60027-2 for binary prefixes.
 
 The confusion dates back to the early days of computing, when the ``K''
 and ``M'' prefixes were commonly used to mean 1,024 and 1,048,576
 when describing memory systems but 1,000 and 1,000,000 when
-describing mass storage systems. The difference in terminology resulted
-from the way that these systems are addressed. Memory is  addressed
+describing mass storage systems. The difference stems
+from the fact that memory locations are  addressed
 with a series of binary address lines, while electro-mechanical drums and
 disks are addressed by specifying a head, a track, and then counting
 sector numbers: such numbers only map to even powers-of-two when the
-number of heads, tracks and sectors are also even powers-of-two, and
+number of heads, tracks and sectors are also powers-of-two, and
 this is rarely the case due to manufacturing concerns.
 
 For much of computing history the correct sense of Ks and Ms could be
@@ -540,6 +538,33 @@ over time. This book uses the binary prefixes to describe block size
 and sector size, since they are typically multiples of 512 ($2^9$),
 but SI decimal prefixes to describe disk sizes, since that is the way
 the devices are sold to consumers.
+
+\newcommand{\WZ}{{\color{white}0}}
+
+\begin{table}
+\begin{tabular}{||llr|llr|rl|}
+\multicolumn{3}{c}{SI Prefix} & \multicolumn{3}{c}{IEC Prefix} \\ 
+\hline
+kilo  & K & $10^{3\WZ} = 1000^1 $ & kibi & Ki & $2^{10} = 1024^1 $& 2\% & Greek root {thousand} \\
+\hline
+mega  & M & $10^{6\WZ} = 1000^2 $ & mibi & Mi & $2^{20} = 1024^2 $& 5\% & Greek root \emph{megas}, {great}\\
+\hline
+giga  & G & $10^{9\WZ} = 1000^3 $ & gibi & Gi & $2^{30} = 1024^3 $& 7\% & Greek root for {giant}\\
+\hline
+tera  & T & $10^{12} = 1000^4$ & tebi & Ti & $2^{40} = 1024^4 $& 10\% & Greek root for {monster}\\
+\hline
+peta  & P & $10^{15} = 1000^5$ & pebi & Pi & $2^{50} = 1024^5 $& 13\% & Greek root for \emph{penta}, {five}\\
+\hline
+exa   & E & $10^{18} = 1000^6$ & exbi & Ei & $2^{60} = 1024^6 $& 15\% & Greek root for \emph{hexa}, {six}\\
+\hline
+zetta & Z & $10^{21} = 1000^7$ & zebi & Zi & $2^{70} = 1024^7 $& 18\% & Mangled Latin root for \emph{septum}, {seven}\\
+\hline
+yotta & Y & $10^{24} = 1000^8$ & yobi & Yi & $2^{80} = 1024^8 $& 21\% & Mangled Greek root for \emph{octo}, {eight}\\
+\hline
+\hline
+\end{tabular}
+\caption{Differences between SI and IEC prefixes.}
+\end{table}
 
 \section{Other Resources}
 \subsection{Books}

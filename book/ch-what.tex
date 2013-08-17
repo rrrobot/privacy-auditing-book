@@ -41,27 +41,27 @@ exported Adobe Portable Document Format (PDF) file and saved as |hidden.pdf|.
   hidden text by selecting the text in a word processor (left) and
   then setting the highlight color to black (right).}
 
-The file |hidden.rtf| is seven lines long and has just 297 bytes; the contents appear in
-\lstref{hidden.rtf}. The file |hidden.pdf|, in contrast, is 8304 bytes
-long. If the file's contents were printed here they would fill
-more than four pages, but the contents would appear as a confusing
-jumble of letters, numbers, and obscure symbols---what's sometimes
-referred to as \emph{garbage}, and more properly termed \emph{binary
-  data} to distinguish it from the printable text that makes up
-|hidden.rtf|. Attempt to view the file |hidden.pdf| with the Unix
-program \emph{less}  and you'll be warned:
+The file |hidden.rtf| is seven lines long and has just 297 bytes; the
+contents appear in \lstref{hidden.rtf}. The file |hidden.pdf|, in
+contrast, is 8304 bytes long. If the file's contents were printed here
+they would fill more than four pages, but the contents would appear as
+a confusing jumble of letters, numbers, and obscure symbols---what's
+sometimes referred to as \emph{garbage}, and more properly termed
+\emph{binary data} to distinguish it from the printable text that
+makes up |hidden.rtf|. Attempt to view the file |hidden.pdf| with the
+Unix program \emph{less} and you'll be warned:
 
 \begin{code}
 $ (@ more hidden.pdf @)
 "hidden.pdf" may be a binary file. See it anyway?
 \end{code}
+%$
 
 Type ``y'' and you'll see results similar to
 \figref{ch-what/hidden-more}. The rest of this chapter explains what
 this display means.
 
-\sgraphic{ch-what/hidden-more}{The file |hidden.pdf| viewed with the
-  program \emph{less}.}
+\sgraphic{ch-what/hidden-more}{The file {\tt hidden.pdf} viewed with the program \emph{less}.}
 
 \lstinputlisting[caption=hidden.rtf,label=hidden.rtf]{ch-what/hidden.rtf}
 
