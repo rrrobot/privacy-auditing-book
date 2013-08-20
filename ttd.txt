@@ -2,3 +2,34 @@
 % http://tex.stackexchange.com/questions/114721/emphasizing-some-parts-of-string-in-lstlisting
 
 - iPhone location problem
+
+
+Properly redacted: http://www.dodig.mil/SPO/Reports/SPO-2011-005.pdf
+
+
+================
+Add to book:
+
+deidentification
+
+hexdumps in python
+
+codeblocks
+
+named entity extraction
+
+text extraction
+
+PDF
+
+hashing
+
+attacks
+
+md5 is a one-way process
+
+http://graphicssoft.about.com/b/2003/07/26/techtvs-cat-schwartz-exposed-is-photoshop-to-blame.htm
+
+exif geotag information can be used to determine who a person was and to re-identify the photographer
+
+Feature creap as a counter to privacy. Exploiting the information that's already there.
