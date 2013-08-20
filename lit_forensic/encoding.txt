@@ -1,0 +1,36 @@
+
+
+
+XYZ@company.com
+
+
+0000000: 5859 5a40 636f 6d70 616e 792e 636f 6d0a  XYZ@company.com.
+
+
+
+XYZ@company.com         WFlaQGNvbXBhbnkuY29tCg
+
+
+
+>>> import zlib
+>>> c = zlib.compress("XYZ@company.com")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'str' does not support the buffer interface
+>>> c = zlib.compress(b"XYZ@company.com")
+>>> c
+b'x\x9c\x8b\x88\x8crH\xce\xcf-H\xcc\xab\xd4\x03\xd2\x00,W\x05\xb0'
+>>> len(c)
+21
+>>> len("XYZ@company.com")
+15
+>>> d = zlib.compress(b"ABC@company.com, DEF@company.com, XYZ@company.com")
+>>> d
+b'x\x9cstrvH\xce\xcf-H\xcc\xab\xd4\x03\xd2:\n.\xaen\xa8\x02\x11\x91Q\xc8\x02\x00\xa1\xa5\x11%'
+>>> len(d)
+33
+>>> 
+
+
+>>> [ord(ch) for ch in "XYZ@company.com"]
+[88, 89, 90, 64, 99, 111, 109, 112, 97, 110, 121, 46, 99, 111, 109]

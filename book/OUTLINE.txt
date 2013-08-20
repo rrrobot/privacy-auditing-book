@@ -1,0 +1,37 @@
+Part 6 - Visualziing what you Find
+- Trendalyzer, graphminder foundation
+- Hans rosling tedtalk
+- Timelines - when was the system used?
+- Plotting Geolocation information
+
+
+
+Appendices
+
+Appendix A - Encoding text with ASCII and Unicode 
+
+Appendix B - Encoding binary data 
+ - base64
+ - base85
+ - uuencode
+ - binhex
+ - Compression
+ - Encryption
+
+Appendix C - Working with large amounts of data
+ - What's large?
+ - 4GiB limitations (FAT32, ZIP vs. ZIP64)
+
+Appendix D - Additional Materials
+* Famous information leaks
+  - PDF files
+  - Microsoft Word
+  - Microsoft Registration server
+  - Information revealed in photos
+  - REsolution/cropping
+  - NSA Guide
+
+
+
+
+

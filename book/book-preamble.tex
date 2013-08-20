@@ -1,0 +1,146 @@
+% Something that needs to be done
+
+\newcommand{\tk}[1]{\large\textbf{\emph{#1}}}
+
+
+\newcommand{\slgbookauthor}{Simson L.\ Garfinkel}
+\newcommand{\slgbooktitle}{Technical Privacy Auditing with Computer Forensics Tools} 
+\newcommand{\slgbookcopyright}{Public Domain}
+\newcommand{\slgbookpublisher}{DRAFT}
+\newcommand{\slgbookurl}{www.digitalcorpora.org}
+\newcommand{\slgbookfrontmatter}{This is a work of the US
+  Government. In accordance with 17 USC 105, copyright protection is
+  not available for any work of the US Government.
+  \\
+  This text is distributed in the hope that it will be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.}
+\newcommand{\slgbookdate}{Working Draft, May 2013}
+
+
+
+% Make spacing look better
+\renewcommand{\topfraction}{0.99}
+\renewcommand{\floatpagefraction}{0.99}
+
+
+% http://tex.stackexchange.com/questions/27663/using-bold-italic-text-inside-listings
+% \usepackage{lmodern}
+\usepackage[scaled=0.90]{couriers}
+
+\setlength{\abovecaptionskip}{18pt}
+\setlength{\belowcaptionskip}{18pt}
+
+
+% http://tex.stackexchange.com/questions/17009/how-to-change-code-example-font-in-listings
+\usepackage{listings}           % source code listings
+\usepackage{xcolor}             % better colors, needed for soul
+\usepackage{soul}               % better highlighting
+\usepackage{epigraph}
+%\usepackage{bibentry}
+\newcommand{\bibentry}[1]{}
+\newcommand{\furl}[1]{\footnote{\url{#1}}}
+
+% http://tex.stackexchange.com/questions/32457/make-all-figures-and-tables-framed-by-default
+% \usepackage[framestyle=fbox,framefit=yes,heightadjust=all,framearound=all]{floatrow} 
+
+% http://stackoverflow.com/questions/2270082/latex-how-do-i-change-the-font-size-of-a-table-column
+% \usepackage{array}
+
+%%
+%% BEGIN Code environment that allows (@ and @) for escaping
+%%
+  \lstnewenvironment{code}[1][]
+    {\lstset{language=[LaTeX]TeX}\lstset{escapeinside={(@}{@)},
+     breaklines=false,
+     numbers=none,
+         framesep=5pt,
+         basicstyle=\normalsize\ttfamily,
+         showstringspaces=false,
+         keywordstyle=\itshape\color{blue},
+         stringstyle=\color{maroon},
+      commentstyle=\color{black},
+      rulecolor=\color{black},
+      xleftmargin=0pt,
+      xrightmargin=0pt,
+      aboveskip=\medskipamount,
+      belowskip=\medskipamount,
+             backgroundcolor=\color{white}, #1
+  }}
+  {}
+%%
+%% END
+%%
+
+\usepackage{xspace}             % optional spaces
+\usepackage{tabularx}           % the ``X'' for tables
+\usepackage{pifont}             % symbols
+\usepackage{color}              % some people like commenting in color
+\usepackage{multirow}
+\usepackage{varioref}
+\usepackage{fancyvrb}
+  \DefineShortVerb{\|}            % makes |foo| a verbatim command
+
+
+% Useful cross-reference commands
+\newcommand{\Sref}[1]{\S\ref{#1}}
+\newcommand{\chapref}[1]{Chapter~\ref{#1}\xspace}
+\newcommand{\chapvref}[1]{Chapter~\vref{#1}\xspace}
+\newcommand{\figref}[1]{Figure~\ref{#1}\xspace}
+\newcommand{\lstref}[1]{Listing~\ref{#1}\xspace}
+\newcommand{\secref}[1]{Section~\ref{#1}\xspace}
+\newcommand{\secvref}[1]{Section~\vref{#1}\xspace}
+\newcommand{\figvref}[1]{Figure~\vref{#1}\xspace}
+\newcommand{\tabref}[1]{Table~\ref{#1}\xspace}
+\newcommand{\tabvref}[1]{Table~\vref{#1}\xspace}
+\newcommand{\appref}[1]{Appendix~\ref{#1}\xspace}
+\newcommand{\appvref}[1]{Appendix~\vref{#1}\xspace}
+
+% Useful symbols and abbreviations
+%\newcommand{\checkmark}{\Pisymbol{pzd}{52}}
+\newcommand{\naive}{na\"{\i}ve\xspace}
+\newcommand{\etc}{\emph{etc.}\xspace}
+\newcommand{\eg}{\emph{e.g.\ }}
+\newcommand{\etal}{\emph{et al.\ }}
+
+% \sgraphic[optional width=8in]{filename}{caption}
+% Then use \figref{filename} to get a reference to the figure
+\newcommand{\sgraphic}[3][width=\linewidth]{
+  \begin{figure}
+  \begin{center}
+  \fbox{\includegraphics[#1]{#2}}
+  \end{center}
+  \caption{#3\label{#2}}
+  \end{figure}
+}
+
+% \bifigure{image1}{image2}{caption1}
+\newcommand{\bifigure}[3]{
+  \begin{figure}
+  \includegraphics[width=.47\linewidth]{#1} \hfill \includegraphics[width=.47\linewidth]{#2} \\
+  \caption{#3\label{#2}}
+  \end{figure}
+}
+
+
+
+% \twofigures{width1}{image1}{caption1}
+%            {width2}{image2}{caption2}
+\newcommand{\twofigures}[6]{
+  \begin{figure}
+    \begin{tabularx}{\textwidth}{p{#1}Xp{#4}}
+  \includegraphics[width=#1]{#2} &&
+  \includegraphics[width=#4]{#5} \\
+  \caption{#3\label{#2}} &&
+  \caption{#6\label{#5}} \\
+\end{tabularx}
+\end{figure}
+}
+
+
+
+%%
+%% Bibliographical Information
+%%
+
+
