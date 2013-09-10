@@ -29,7 +29,7 @@ concerned with understanding data at rest.
 
 \section{Creating a File with ``Hidden'' text}\label{sec:make-pdf}
 
-\figref{ch-what/hidden_1} shows how to create a simple file that
+\figref{ch-what/textedit_hidden_1} shows how to create a simple file that
 contains hidden data using Apple's TextEdit application.\footnote{The
   same set of steps will work with Libre Office or Microsoft Word. We
   use TextEdit here because the resulting RTF and PDF files are the
@@ -37,7 +37,7 @@ contains hidden data using Apple's TextEdit application.\footnote{The
  Start by
 opening the TextEdit application, type the text, select the word ``Hidden'' and
 change the background (highlight) color of the text from ``none'' to
-``black.'' (The text background control is the box that looks like this:\includegraphics[height=1.5ex]{ch-what/highlight_control}).
+``black.'' (The text background control is the box that looks like this:\includegraphics[height=1.5ex]{ch-what/textedit_highlight_control}).
 
 Save two copies of the file, one in the Rich Text Format (RTF) in file
 a called |hidden.rtf|, the second as an Adobe Portable Document Format
@@ -46,7 +46,7 @@ the same approach with other word processors, but the resulting PDF
 file is typically more complicated) 
 
 
-\bifigure{ch-what/hidden_1}{ch-what/hidden_2}{Constructing a PDF with
+\bifigure{ch-what/textedit_hidden_1}{ch-what/textedit_hidden_2}{Constructing a PDF with
   hidden text by selecting the text in a word processor (left) and
   then setting the highlight color to black (right).}
 
@@ -59,9 +59,9 @@ sometimes referred to as \emph{garbage}, and more properly termed
 \emph{binary data} to distinguish it from the printable text that
 makes up |hidden.rtf|. 
 
-\sgraphic{ch-what/hidden-more}{The file {\tt hidden.pdf} viewed with the program \emph{less}.}
+\sgraphic{ch-what/textedit_hidden-more}{The file {\tt hidden.pdf} viewed with the program \emph{less}.}
 
-\lstinputlisting[caption=hidden.rtf,label=hidden.rtf]{ch-what/hidden.rtf}
+\lstinputlisting[caption=hidden.rtf,label=hidden.rtf]{ch-what/textedit_hidden.rtf}
 
 \subsection{Viewing a text file}
 \subsection{Viewing a binary file}
@@ -76,7 +76,7 @@ $ (@ more hidden.pdf @)
 %$
 
 Type ``y'' and you'll see results similar to
-\figref{ch-what/hidden-more}. The rest of this chapter explains what
+\figref{ch-what/textedit_hidden-more}. The rest of this chapter explains what
 this display means.
 
 \section{Bits, Bytes, and Memory}\label{sec:numbers}
