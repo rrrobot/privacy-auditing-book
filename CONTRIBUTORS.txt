@@ -1,1 +1,3 @@
-Simson L. Garfinkel <simsong@acm.org>; 
+Simson L. Garfinkel <simsong@acm.org>
+Golden Richard <golden@cs.uno.edu>
+Kevin D. Fairbanks <fairbank@usna.edu>

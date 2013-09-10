@@ -1,18 +1,9 @@
 \emph{The Times}  made the
 same mistake when it published the scan of what the newspaper claimed
-to be an internal US intelligence report on the paper's
-website in 2000~\cite{nyt-unediting-2003}. \emph{The Washington Post}
-  made a similar mistake in 2002 when it posted the demands of the DC Sniper\cite{internet-forensics}.
-
-Adobe introduced the PDF format in 1993. Since then, PDF has become an
-international standard for distributing born-digital documents, scans
-of paper documents, and even electronic forms~\cite{ISO32000-1:2008}. Ironically, PDF has
-gained significant popularity precisely because it can be used to 
-distribute documents without the  risks associated with the
-Microsoft Office file format, which can contain
-privacy-leaking metadata. But as these examples show, PDF is also a complex file
-format that can  contain information that is invisible but
-nevertheless easily extracted.
+to be an internal US intelligence report on the paper's website in
+2000~\cite{nyt-unediting-2003}. \emph{The Washington Post} made a
+similar mistake in 2002 when it posted the demands of the DC
+Sniper\cite{internet-forensics}.
 
 This article shows
 why PDF files have privacy risks that continue to befuddle their
@@ -27,51 +18,6 @@ demand respect. Security and Privacy professionals need to
 understand why such leaks keep happening and how to stop them.
 
 \section{Privacy Leaks in PDF}
-
-Adobe created PDF in the 1990s as a format that would allow computer
-users to view and print electronic documents. PDF was designed as a
-single electronic container that could be distributed, viewed, and
-printed on practically any modern computer system without the need to
-install  software or fonts other than a general purpose PDF
-reader. Adobe released programs for making and reading PDFs,
-originally called Acrobat Distiller and Acrobat Reader, but it also
-published the format specification and licensed the patents required
-to implement it. Today there are numerous programs that can create,
-display and even edit PDF files, and the format has been adopted as an
-international standard (ISO 32000-1:2008).
-
-Before PDF, electronic documents were typically distributed either as text
-files, such as the Internet RFCs, or as PostScript
-files. \emph{PostScript} is a programming language that Adobe Systems
-created in the 1980s. The key idea 
-was that the PostScript language was interpreted by the printer, rather than 
-the computer, allowing relatively small amounts of data to be sent to
-the printer, which would then render the page at the highest resolution
-the device supported. 
-
-PostScript's initial use was inside the Apple LaserWriter, the first
-mass-market laser printer. There were inkjet printers, plotters, and
-large-scale laser printers before the LaserWriter, but each 
-had their own  language. With PostScript, application
-programs didn't have to separately understand how to generate print
-codes for each device. Instead, an
-application program could simply generate PostScript and know that the
-resulting page would be correctly printed. PostScript's most powerful features turned out to be
-the ability to distribute high-quality line art as encapsulated
-PostScript files that could embedded in other documents, scaled,
-transformed, and then printed---all with little work on the part of
-the application program. This, combined with the language's support
-for high quality typography, made PostScript one of the key enabling
-technologies of the 1980's boom in desktop publishing.
-
-PostScript's power made the language
-less than ideal as a universal document format. First, PostScript
- is somewhat verbose, so PostScript files could get quite
-large. Second, the PostScript execution context is not reset
-after each page, so document pages can not be displayed out of
-order: showing the contents of page 100 required first processing pages 1 through 99. PostScript also
-lacks support for many features demanded of an electronic document format,
-such as data encryption, digital rights management, and electronic forms.
 
 PDF is based on PostScript, but instead of being designed as a general
 purpose programming language that produce printed pages, PDF is a
