@@ -484,16 +484,6 @@ for both decimal and binary notation, the specific multiplier presumably
 inferred from context. Today there is an effort underway to clarify
 usage. 
 
-SI decimal prefixes are commonly used to represent SI
-quantities. For example, the SI prefix \emph{kilo} multiplies the value that follows by
-$10^3$; thus a kilogram (Kg) is
-$10^3=1,000$ grams and a kilobyte (KB) is
-$10^3=1,000$ bytes. 
-
-The IEC prefix \emph{kibi} multiples the value following by $2^{10}$. A \emph{kibibyte}
-(KiB) is thus $2^{10}=1,024$ bytes. This has been proper usage
-since 1999 when the IEC adopted standard 60027-2 for binary prefixes.
-
 The confusion dates back to the early days of computing, when the ``K''
 and ``M'' prefixes were commonly used to mean 1,024 and 1,048,576
 when describing memory systems but 1,000 and 1,000,000 when
@@ -507,18 +497,35 @@ this is rarely the case due to manufacturing concerns.
 
 For much of computing history the correct sense of Ks and Ms could be
 inferred from context and, in any event, the difference between 1000
-and 1024 wasn't all that significant.
+and 1024 wasn't all that significant. Those in the industry knew that
+a megabyte of RAM was really $1024\times1024=1048576$ bytes.
 
 The difference in interpretation became an issue in the 1990s as the
-number of people using computers mushroomed and as the commonly used
-prefixes went from Ks to Ms and then Gs, resulting in a larger
+number of people using computers mushroomed fierce pressure to cut
+costs hit the storage industry. A storage vendor could truthfully
+advertise and sell a ``600 MB''
+hard drive that stored 600,000,000 bytes in
+precisely 1,171,875 512-byte sectors. There was simply no incentive
+for storage vendors to sell such a hard drive that stored
+$600\times1024\times1024=629,145,600$ bytes and required 1,228,800
+sectors to do so.
+
+A second reason for the standardization effort was the increasing
+ridiculousness stemming from computer scientists using
+a non-standard system of measurement. Really, why should the K prefix
+mean 1024 when describing bytes but 1000 when describing grams?
+
+A third reason for the standardization was the industry's move to
+increasingly larger storage systems, resulting in successively larger
 divergence between the power-of-two measurement and the corresponding
-power-of-ten measurement. The IEC prefixes were proposed in
-1996\cite{iec:1996},
-published as an international standard in 1999, and adopted by the
-International Standards organization. In 2006 addition of prefixes were
-adopted for
-exbi (Ei=$2^{60}$), zebi (Zi=$2^{70}$) and yobi (Yi=$2^{80}$)\cite{iec:80000-13:2008}. 
+power-of-ten measurement. This third reason is almost certainly the
+reason that binary-based prefixes were proposed in the 1990s---that's
+when the need for the prefixes started to become noticable.
+
+The IEC binary prefixes were proposed in 1996\cite{iec:1996}, and
+adopted as an international standard in 1999.  In 2006 additional
+prefixes were adopted for exbi (Ei=$2^{60}$), zebi (Zi=$2^{70}$) and
+yobi (Yi=$2^{80}$)\cite{iec:80000-13:2008}.
 
 Despite this standardization effort, today we live in a somewhat
 confusing world in which so-called ``4GB'' DRAM modules 
@@ -538,6 +545,20 @@ over time. This book uses the binary prefixes to describe block size
 and sector size, since they are typically multiples of 512 ($2^9$),
 but SI decimal prefixes to describe disk sizes, since that is the way
 the devices are sold to consumers.
+
+SI decimal prefixes are commonly used to represent SI
+quantities. For example, the SI prefix \emph{kilo} multiplies the value that follows by
+$10^3$; thus a kilogram (Kg) is
+$10^3=1,000$ grams and a kilobyte (KB) is
+$10^3=1,000$ bytes. The IEC prefix \emph{kibi} multiples the value following by $2^{10}$. A \emph{kibibyte}
+(KiB) is thus $2^{10}=1,024$ bytes. Those two values are similar but
+different (see \tabref{si-iec-differences}
+
+This has been proper usage
+since 1999 when the IEC adopted standard 60027-2 for binary prefixes.
+
+
+% http://www.codinghorror.com/blog/2007/09/gigabyte-decimal-vs-binary.html
 
 \newcommand{\WZ}{{\color{white}0}}
 
@@ -563,7 +584,7 @@ yotta & Y & $10^{24} = 1000^8$ & yobi & Yi & $2^{80} = 1024^8 $& 21\% & Mangled 
 \hline
 \hline
 \end{tabular}
-\caption{Differences between SI and IEC prefixes.}
+\caption{Differences between SI and IEC prefixes.}\label{si-iec-differences}
 \end{table}
 
 \section{Other Resources}
