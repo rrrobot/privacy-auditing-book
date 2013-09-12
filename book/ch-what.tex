@@ -10,45 +10,63 @@ relevant, and people who are in a position to know that the leakage is
 relevant don't have the technical ability to determine that it's
 present.
 
-This chapter starts with the creation of a Portable Document Format
-(PDF) file that contains hidden information
-(\secref{sec:make-pdf}). Using this file, we'll explore two popular
-ways of looking at data it contains---by looking at \emph{hex dumps}
-(\secref{sec:hex-dumps}) and by extracting printable strings
+This chapter starts with instructions for creating a file that has hidden information
+(\secref{sec:make-pdf}). We'll save the file in two ways, as a Rich
+Text file (RTF) and as a Portable Document Format (PDF) file. Then
+we'll look at the data the file contains using a variety of
+techniques, including the raw bytes, a a \emph{hex dump}
+(\secref{sec:hex-dumps}), and by extracting the printable strings
 (\secref{sec:strings}). 
 
 In order to understand what the hex dump and extracted strings
-actually mean, it's important to first understand how numbers
-(\secref{sec:numbers}) and letters (\secref{sec:letters}) are actually
-stored inside a computer's memory.  Much of this chapter is similar to
+actually mean, we'll need to see how information such as 
+(\secref{sec:numbers}) and letters (\secref{sec:letters}) are 
+stored inside a computer's memory or in a file.  Much of this chapter is similar to
 what might be covered at the start of a course on computer
 architecture. But whereas an architecture course is primarily
 concerned with computation and data in motion, this chapter is
 concerned with understanding data at rest.
 
-\section{A Leaky File with ``Hidden'' text}\label{sec:make-pdf}
+\section{Creating a File with ``Hidden'' text}\label{sec:make-pdf}
 
-\figref{ch-what/hidden_1} shows the creation of a simple file that
-contains hidden data with Apple's TextEdit application. To make the
-file we open TextEdit, type the text, select the word ``Hidden'' and
+\figref{ch-what/textedit_hidden_1} shows how to create a simple file that
+contains hidden data using Apple's TextEdit application.\footnote{The
+  same set of steps will work with Libre Office or Microsoft Word. We
+  use TextEdit here because the resulting RTF and PDF files are the
+  simplest.}
+ Start by
+opening the TextEdit application, type the text, select the word ``Hidden'' and
 change the background (highlight) color of the text from ``none'' to
-``black.'' We save two copies of the file. The first is a so-called
-Rich Text Format (RTF) file called |hidden.rtf|. The contents are then
-exported Adobe Portable Document Format (PDF) file and saved as |hidden.pdf|.
+``black.'' (The text background control is the box that looks like this:\includegraphics[height=1.5ex]{ch-what/textedit_highlight_control}).
+
+Save two copies of the file, one in the Rich Text Format (RTF) in file
+a called |hidden.rtf|, the second as an Adobe Portable Document Format
+(PDF) file in a file named |hidden.pdf|. (You can use
+the same approach with other word processors, but the resulting PDF
+file is typically more complicated) 
 
 
-\bifigure{ch-what/hidden_1}{ch-what/hidden_2}{Constructing a PDF with
+\bifigure{ch-what/textedit_hidden_1}{ch-what/textedit_hidden_2}{Constructing a PDF with
   hidden text by selecting the text in a word processor (left) and
   then setting the highlight color to black (right).}
 
-The file |hidden.rtf| is seven lines long and has just 297 bytes; the
-contents appear in \lstref{hidden.rtf}. The file |hidden.pdf|, in
+The file |hidden.rtf| is seven lines long and has just 297 bytes; that
+file's contents appear in \lstref{hidden.rtf}. The file |hidden.pdf|, in
 contrast, is 8304 bytes long. If the file's contents were printed here
-they would fill more than four pages, but the contents would appear as
-a confusing jumble of letters, numbers, and obscure symbols---what's
+they would look like a confusing jumble of letters, numbers, and
+obscure symbols that would fill four pages. Such jumbled output is 
 sometimes referred to as \emph{garbage}, and more properly termed
 \emph{binary data} to distinguish it from the printable text that
-makes up |hidden.rtf|. Attempt to view the file |hidden.pdf| with the
+makes up |hidden.rtf|. 
+
+\sgraphic{ch-what/textedit_hidden-more}{The file {\tt hidden.pdf} viewed with the program \emph{less} running inside the Macintosh Terminal program.}
+
+\lstinputlisting[caption=hidden.rtf,label=hidden.rtf]{ch-what/textedit_hidden.rtf}
+
+\subsection{Viewing a text file}
+\subsection{Viewing a binary file}
+
+Attempt to view the file |hidden.pdf| with the
 Unix program \emph{less} and you'll be warned:
 
 \begin{code}
@@ -58,19 +76,15 @@ $ (@ more hidden.pdf @)
 %$
 
 Type ``y'' and you'll see results similar to
-\figref{ch-what/hidden-more}. The rest of this chapter explains what
+\figref{ch-what/textedit_hidden-more}. The rest of this chapter explains what
 this display means.
-
-\sgraphic{ch-what/hidden-more}{The file {\tt hidden.pdf} viewed with the program \emph{less}.}
-
-\lstinputlisting[caption=hidden.rtf,label=hidden.rtf]{ch-what/hidden.rtf}
 
 \section{Bits, Bytes, and Memory}\label{sec:numbers}
 The \emph{bit} is the fundamental unit of storage on digital computers. Bits
 have two states. Typically we call these |0| and |1|, but they can be any
 two values (e.g. true/false, yes/no or up/down). This book 
-uses the values |0| and |1| for bits.\marginpar{The word \emph{bit} is
-  a contraction of the words \emph{binary digit}.}
+uses the values |0| and |1| for bits.
+% \marginpar{The word \emph{bit} is a contraction of the words \emph{binary digit}.}
 
 An ordered group of 4 bits is called a \emph{nibble}. Each bit can be
 a |0| or a |1|, creating 16 possible different values. Note
@@ -85,12 +99,11 @@ always suffix binary numbers with a ``b''. Hexadecimal values have a
 ``h'' suffix. Some programming languages prefix hexadecimal strings
 with a |\x| or |0x|. 
 
-\marginpar{There are 10 kinds of people in the world. Those who know
-  binary, and those who don't.}
+% \marginpar{There are 10 kinds of people in the world. Those who know binary, and those who don't.}
 
 
 \begin{figure}
-\begin{tabular}{>{\tt}c>{\tt}cc>{\tt}cc}
+\begin{tabular}{>{\tt}c>{\tt}cc>{\tt}cl}
 \textrm{binary} & \textrm{octal} & decimal & \textrm{hexadecimal} & english \\
 \hline
 0000b & 000 & 0 & 0h & zero \\
@@ -111,7 +124,9 @@ with a |\x| or |0x|.
 1111b & 017 & 15& Fh & fifteen \\
 \hline
 \end{tabular}
-\caption{A nibble is a set of 4 bits; it has 16 possible values.}\label{nibble}
+\caption{A nibble is an ordered collection of 4 bits. Each bit can be
+  a 0 or 1, so a nibble has $2^4=16$ possible values. This table shows
+  the values of a nibble represented in binary, octal, decimal hexadecimal and English.}\label{nibble}
 \end{figure}
 
 Modern computers operate on 8 bits at a time, a unit called a
