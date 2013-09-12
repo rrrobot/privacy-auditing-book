@@ -1,68 +1,42 @@
 %PDF-1.7
-%‚„œ”
-1 0 obj 
-<<
-/Pages 2 0 R
-/Type /Catalog
->>
-endobj 
+1 0 obj
+<< /Pages 2 0 R /Type /Catalog >>
+endobj
 2 0 obj 
-<<
-/MediaBox [0 0 612 792]
-/Kids [3 0 R]
-/Type /Pages
-/Count 1
->>
+<< /MediaBox [0 0 612 792] /Kids [3 0 R] /Type /Pages /Count 1 >>
 endobj 
 3 0 obj 
-<<
-/Parent 2 0 R
-/Resources 
-<<
-/Font 
-<<
-/F1 4 0 R
->>
->>
-/MediaBox [0 0 612 792]
-/Type /Page
-/Contents 5 0 R
+<< /Parent 2 0 R /Resources << /Font << /F1 4 0 R >> >>
+   /MediaBox [0 0 612 792] /Type /Page /Contents 5 0 R 
 >>
 endobj 
 4 0 obj 
-<<
-/BaseFont /Times-Roman
-/Subtype /Type1
-/Type /Font
->>
+<< /BaseFont /Times-Roman /Subtype /Type1 /Type /Font >>
 endobj 
 5 0 obj 
-<<
-/Length 99
->>
+<< /Length 99 >>
 stream
-10 w 72 72 m 540 72 l 540 720 l 72 720 l 72 72 l h S
-BT
-200 600 TD
+10 w 72 72 m 540 72 l 540 720 l
+72 720 l 72 72 l h S
+BT 200 600 TD
 /F1 48 Tf
 (Hello, world!) Tj
-ET
-
+ET 
 endstream 
-endobj xref
+endobj 
+xref
 0 6
 0000000000 65535 f 
-0000000015 00000 n 
-0000000066 00000 n 
-0000000149 00000 n 
-0000000279 00000 n 
-0000000353 00000 n 
+0000000010 00000 n 
+0000000059 00000 n 
+0000000142 00000 n 
+0000000274 00000 n 
+0000000348 00000 n 
 trailer
-
 <<
 /Root 1 0 R
 /Size 6
 >>
 startxref
-504
+500
 %%EOF

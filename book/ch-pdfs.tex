@@ -33,27 +33,54 @@ the device supported. But it also meant that the computer would be
 freed from having to have drives for every different kind of printer
 that might ever be on the market.
 
-Listing~\ref{hello.ps} shows a simple PostScript program that draws a
+Listing~\ref{hello.ps} below shows a simple PostScript program that draws a
 black box and the words ``Hello World!''  The output of the program
 (shrunk significantly) is shown at quarter size appears in
-\figref{hello-ps-figure}. Even without reading a PostScript manual you
+\figref{hello-ps-figure}. 
+
+\lstinputlisting[caption=A simple PostScript program]{ch-pdf/hello-ps.ps}\label{hello-ps-listing}
+
+Even without reading a PostScript manual you
 can draw some conclusions about the programming language simply by 
 inspecting the listing and the resulting output:
 
 \begin{itemize}
 \item PostScript files begin with the magic number \verb|%!|.
 \item Strings are enclosed in parentheses. 
-\item Font names are preceded with slashes. 
+\item Font names are preceded with slashes. (In fact, any literal name
+  can be put on the stack by preceding it with a slash.)
 \item Line drawing is performed with human-readable commands like
   ``moveto'' and ``drawto''. 
 \item Arguments for commands come before the commands themselves,
   implying that PostScript is a stack-oriented language.
+\item Because sometimes there are line breaks between commands and
+  other times there are not, you can reasonably infer that whitespace
+  is ignored in this file format.
 \end{itemize}
 
-If you are interested, you can confirm most of these conclusions and
-learn more about the language by reviewing an online PostScript tutorial.
+You can confirm these conclusions and learn more about PostScript by
+reviewing any one of the numerous online PostScript
+tutorial.\footnote{A particularly good online guide is \emph{A First
+    Guide to PostScript} by PJ
+  Weingartner. \url{http://www.tailrecursive.org/postscript/index.html}}
+You can also use a text editor (\S\ref{sec:text-editors}) to enter
+these characters into a file called \emph{hello.ps} and try opening
+the file with a PostScript viewer (\S\ref{sec:postscript-viewer}).
 
-\lstinputlisting[caption=A simple PostScript program]{ch-pdf/hello-ps.ps}\label{hello-ps-listing}
+PostScript's initial use was inside the Apple LaserWriter, the first
+mass-market laser printer. There were inkjet printers, plotters, and
+large-scale laser printers before the LaserWriter, but each had their
+own language. With PostScript, application programs didn't have to
+separately understand how to generate print codes for each
+device. Instead, an application program could simply generate
+PostScript and know that the resulting page would be correctly
+printed. PostScript's most powerful features turned out to be the
+ability to distribute high-quality line art as encapsulated PostScript
+files that could embedded in other documents, scaled, transformed, and
+then printed---all with little work on the part of the application
+program. This, combined with the language's support for high quality
+typography, made PostScript one of the key enabling technologies of
+the 1980's boom in desktop publishing.
 
 \begin{figure}
 \includegraphics[scale=.25]{ch-pdf/hello-ps.pdf}
@@ -61,8 +88,76 @@ learn more about the language by reviewing an online PostScript tutorial.
   the original size.}\label{hello-ps-figure}
 \end{figure}
 
+\begin{figure}
+\includegraphics[scale=.25]{ch-pdf/hello-ps.pdf}
+\caption{The output of Listing~\ref{hello-ps-listing}, shrunk to 25\% of
+  the original size.}\label{hello-ps-figure}
+\end{figure}
 
 \subsection{The PDF Specification}
+
+PostScript's power made the language less than ideal as a universal
+document format. First, the PostScript is somewhat verbose, so
+PostScript files could get quite large. Second, the PostScript
+execution context is not reset after each page, with the result that
+PostScript viewers could not display pages out-of-order: in order to
+show the contents of page 100, the viewer would first need to process
+pages 1 through 99. Third, PostScript lacked support for many features
+demanded in a modern electronic document format, such as data
+encryption, digital rights management, and electronic forms.
+
+The Portable Document Format (PDF) was introduced in 1993 to overcome
+these problems with PostScript. Since then, PDF has become an
+international standard for distributing born-digital documents, scans
+of paper documents, and even electronic forms~ 
+PDF was designed as, and as
+such it includes direct support for typography, line art and digital
+photographs, as well as for document elements such as pagination,
+bookmarks and metadata. 
+
+PDF is based on PostScript, but instead of being designed as a general
+purpose programming language that produce printed pages, PDF is a
+specialized file format. Like PostScript, PDF has
+commands for drawing lines, embedding fonts and displaying text. But PDF also has direct support for
+document structure; a variety of image and video compression
+algorithms; electronic forms; digital rights management; and
+cryptography. PDF supports embedded JavaScript for form validation
+and other kinds of automation. Any page in a PDF document can be
+rendered without reference to any other. 
+
+Listing~\ref{hello-pdf-listing} presents a recast of
+Listing~\ref{hello-ps-listing} as a PDF file. Below we summarize some
+of the key differences:
+
+\begin{itemize}
+\item PDF files consist of a series of numbered objects. 
+\item The \verb|moveto| command has been renamed \verb|m|, the
+  \verb|lineto| command has been renamed \verb|l|, and so on.
+\item At the end of the file a structure (called the cross-reference
+  table) which has decimal offsets of the starting point of each object.
+\item Finally, there is a trailer that provides information about the
+  cross-reference table and the number of the first object required to
+  render the document. 
+\end{itemize}
+
+Notice that the use of 10-digit decimal numbers means that PDF files
+cannot be larger than 9,999,999,999 bytes in size. (Reportedly\footnote{\url{http://forums.adobe.com/thread/1041350}}, there
+are additional limits in 32-bit PDF rendering applications.)
+
+
+
+
+
+PDF gained significant popularity in part because it could be used to 
+distribute documents without the  risks of embedded viruses and
+privacy-leaking metadata, and because PDF files could not be readily
+modified after they were produced and distributed. But as PDF's popularity grew, additional
+features were added to both the standard and Adobe's PDF Acrobat
+reader. Today PDF can hold arbitrary files as attachments, PDF can
+contain JavaScript programs, and PDF can hold significant amounts of
+metadata. PDF files can also be edited with a wide variety of
+programs, including the open source InkScape program.
+
 
 If you want to understand the internal PDF specification, you will have a much
 easier time reading one of the earlier manuals than the later ones:
@@ -76,85 +171,6 @@ PDF 1.7 (part 1) & 2008 & 756\\
 \end{tabular}
 
 
-
-
-Unfortunately, PostScript's power made the language
-less than ideal as a universal document format. First, the PostScript
-is somewhat verbose, so PostScript files could get quite
-large. Second, the PostScript execution context is not reset
-after each page, so document pages can not be displayed out of
-order: showing the contents of page 100 required first processing pages 1 through 99. PostScript also
-lacks support for many features demanded in a modern electronic document format,
-such as data encryption, digital rights management, and electronic forms.
-
-
-
-
-
-PostScript's initial use was inside the Apple LaserWriter, the first
-mass-market laser printer. There were inkjet printers, plotters, and
-large-scale laser printers before the LaserWriter, but each 
-had their own  language. With PostScript, application
-programs didn't have to separately understand how to generate print
-codes for each device. Instead, an
-application program could simply generate PostScript and know that the
-resulting page would be correctly printed. PostScript's most powerful features turned out to be
-the ability to distribute high-quality line art as encapsulated
-PostScript files that could embedded in other documents, scaled,
-transformed, and then printed---all with little work on the part of
-the application program. This, combined with the language's support
-for high quality typography, made PostScript one of the key enabling
-technologies of the 1980's boom in desktop publishing.
-
-
-PDF was as an electronic page description language
-
-Adobe introduced the PDF format in 1993. Since then, PDF has become an
-international standard for distributing born-digital documents, scans
-of paper documents, and even electronic forms~ 
-PDF was designed as , and as
-such it includes direct support for typography, line art and digital
-photographs, as well as for document elements such as pagination,
-bookmarks and metadata. 
-
-PDF gained significant popularity in part because it could be used to 
-distribute documents without the  risks of embedded viruses and
-privacy-leaking metadata, and because PDF files could not be readily
-modified after they were produced and distributed. But as PDF's popularity grew, additional
-features were added to both the standard and Adobe's PDF Acrobat
-reader. Today PDF can hold arbitrary files as attachments, PDF can
-contain JavaScript programs, and PDF can hold significant amounts of
-metadata. PDF files can also be edited with a wide variety of
-programs, including the open source InkScape program.
-
-
-
-
-In April 2011, the UK Parliament posted an
-Adobe Acrobat Portable Document Format (PDF) file on its public website detailing key vulnerabilities of
-UK nuclear subs. The electronic document had been cleared by the
-British Ministry of Defense, where an official had been charged with
-removing the sensitive portions, but the redactions were made incorrectly: the sensitive text had
-simply been obscured with a black box, and could be
-recovered by  copying the text out of the PDF file and pasting
-it into a word processor. The
-result was a document that appeared to  be properly redacted, but
-which still contained state secrets.  A follow-up investigation by
-\emph{The Daily Telegraph} found similar  PDF files on other UK government websites
-found four other documents where sensitive
-information was improperly ``redacted''\cite{telegraph-april2011-secrets}.
-
-Leaks of sensitive information  in PDF files are frequently
-newsworthy, but they are hardly new. In October 2003, the US Justice
-Department posted a report on its website about the Department's
-internal efforts at increasing racial diversity---but every conclusion and
-recommendation was blacked out. The
-redaction was imperfect: journalist
-Russ Kick discovered that the black boxes
-could be easily removed~\cite{nyt-diversity-critical}. 
-
-``PDF'' is the Portable Document Format, developed by Adobe in the
-1990s as a universal file format for describing printed documents. 
 
 \section{Improperly redacted data}
 \section{High-resolution JPEGs}
