@@ -19,16 +19,6 @@ understand why such leaks keep happening and how to stop them.
 
 \section{Privacy Leaks in PDF}
 
-PDF is based on PostScript, but instead of being designed as a general
-purpose programming language that produce printed pages, PDF is a
-specialized file format. Like PostScript, PDF has
-commands for drawing lines, embedding fonts and displaying text. But PDF also has direct support for
-document structure; a variety of image and video compression
-algorithms; electronic forms; digital rights management; and
-cryptography. PDF supports embedded JavaScript for form validation
-and other kinds of automation. Any page in a PDF document can be
-rendered without reference to any other. 
-
 This rich support requires a complex reader that can interpret the
 format, and such readers inevitably have flaws. Many of these flaws
 have been exploited by attackers using cleverly constructed
