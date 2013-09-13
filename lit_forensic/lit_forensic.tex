@@ -10,12 +10,13 @@
 \newcommand{\citeN}[1]{\cite{#1}}
 
 \begin{document}
-\title{A Survey of Digital Forensics Research}
+\title{A Survey of Digital Forensic File Recovery and File Type
+  Identification Techniques}
 \author{Simson L.\ Garfinkel}
 \maketitle
 \pagenumbering{arabic}
 
-\input{introduction}      1
+\input{introduction}     
 
 \chapter{Handling Digital Evidence}
 The fundamental nature of digital information makes the practice of
@@ -79,13 +80,13 @@ if the copy is accurate or if the copy has been modified after it was
 originally made.
 
 \emph{Digital evidence containers} allow for digital evidence to be
-copied into an archive that is \emph{compressed} (to allow for easier data
-handling), \emph{integrity checked}  (so that the examiner can verify
-the original data), \emph{annotated} with metadata such as the time
-that the evidence was copied, the name of the investigator who created
-the archive, the location where the copy was made, and other similar
-information. Unlike ZIP or gzip files, these containers must also
-allow for \emph{random access} their contents, as it would not be
+copied into an archive that is \emph{compressed} (to allow for easier
+data handling), \emph{integrity checked} (so that the examiner can
+verify the original data), \emph{annotated} with metadata such as the
+time that the evidence was copied, the name of the investigator who
+created the archive, the location where the copy was made, and other
+similar information. Unlike ZIP or gzip files, these containers must
+also allow for \emph{random access} their contents, as it would not be
 efficient to decompress a multi-gigabyte data stream for the purpose
 of accessing just a few sectors.
 
@@ -96,10 +97,9 @@ decryption key; metadata specifically devoted to
 evidence through an organization or a forensic pipeline can be
 electronically recorded; and \emph{external references}, so that the
 evidence container can point to information present on other storage
-systems. 
+systems.
 
 \section{File System Analysis and File Extraction}
-
 
 \subsection{Files and File Systems}
 The word \emph{file} is commonly used to describe a sequence of data
@@ -110,14 +110,13 @@ changed. Files can have names and other associated \emph{metadata}
 such as timestamps, an owner, and a group. Files have traditionally
 been grouped together in
 \emph{directories}\wikipedia{http://en.wikipedia.org/wiki/File_directory}. also
-called \emph{folders}. 
+called \emph{folders}.
 
 The phrase \emph{File
   System}\wikipedia{http://en.wikipedia.org/wiki/Computer_file} is
-used to describe the part of the computer's operating
-system that manages a storage system. However, the term is also used
-to describe the very sectors on a mass storage device that contain the
-files.
+used to describe the part of the computer's operating system that
+manages a storage system. However, the term is also used to describe
+the very sectors on a mass storage device that contain the files.
 
 It is important to realize that files are an \emph{abstraction} that
 was created for the purpose of managing data. There is nothing
@@ -169,7 +168,7 @@ modern computer systems:
   analysis and intrusion response.
 \end{description}
 
-As this chapter is written, specific file systems of interest include:
+As this survey is written, specific file systems of interest include:
 \begin{description}
 \item[FAT12, FAT16 and FAT32] file systems developed by Microsoft for use with
   DOS. FAT refers to the File Allocation Table, an array of integers
@@ -704,9 +703,9 @@ the header can be ignored.
 
 \end{enumerate}
 
-These approaches are wrong because they impact carver
-performance both negatively (by decreasing the recall rate) and
-unnecessarily (because there are alternatives that do not impact
+These approaches are wrong because they both impact carver
+performance \emph{negatively} (by decreasing the recall rate) and
+\emph{unnecessarily} (because there are alternatives that do not impact
 recall rate).
 
 In the first case, even though file systems like NTFS start
@@ -759,14 +758,15 @@ file marker). This algorithm works by finding all strings contained
 within the disk image with a set of headers and footers and submitting
 them to the validator. 
 
-\item[Header/Maximum Size Carving] This approach submits strings to the validator that begin with each
-discernible header and continue to the end of the disk image. A
-binary search is then performed on the strings that validate to find
-the longest string sequence that still validates. A method for carving
-files out of raw data using a distinct header (start of file marker)
-and a maximum (file) size. This approach works because many file
-formats (e.g. JPEG, MP3) do not care if additional data is appended to
-the end of a valid file.
+\item[Header/Maximum Size Carving] This approach submits strings to
+  the validator that begin with each discernible header and continue
+  to the end of the disk image. A binary search is then performed on
+  the strings that validate to find the longest string sequence that
+  still validates. A method for carving files out of raw data using a
+  distinct header (start of file marker) and a maximum (file)
+  size. This approach works because many file formats (e.g. JPEG, MP3)
+  do not care if additional data is appended to the end of a valid
+  file.
 
 \item[Header/Embedded Length Carving] Some file formats (MSOLE, ZIP) have distinctive headers that indicate
 the start of the file, but have no such distinctive flag for the

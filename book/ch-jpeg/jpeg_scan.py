@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # http://stackoverflow.com/questions/1557071/the-size-of-a-jpegjfif-image/1602428#1602428
 # http://gvsoft.homedns.org/exif/exif-explanation.html
+
 RST = ['\xff\xd0','\xff\xd1','\xff\xd2','\xff\xd3','\xff\xd4',
        '\xff\xd5','\xff\xd6','\xff\xd7','\xff\xd8']
 def validate_jpeg(fn):
