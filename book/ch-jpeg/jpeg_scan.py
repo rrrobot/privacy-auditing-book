@@ -1,67 +1,74 @@
 #!/usr/bin/env python3
-# http://stackoverflow.com/questions/1557071/the-size-of-a-jpegjfif-image/1602428#1602428
-# http://gvsoft.homedns.org/exif/exif-explanation.html
 
-RST = ['\xff\xd0','\xff\xd1','\xff\xd2','\xff\xd3','\xff\xd4',
-       '\xff\xd5','\xff\xd6','\xff\xd7','\xff\xd8']
+import mmap,struct
 def validate_jpeg(fn):
-    import struct
-    data = open(fn,"rb").read()
-    cc = 0
-    # print(fn)
-    while True:
-        if cc+2 > len(data):
-            print("{}   RAN OFF END ".format(fn));
+    print(fn)
+    f = open(fn,"rb")
+    #data = mmap.mmap(f.fileno(),0,mmap.MAP_SHARED,mmap.PROT_READ)
+    data = f.read()
+    pos = 0
+    while pos+2 <= len(data):
+        print("  {:6}: {:02X} {:02X}".format(pos,data[pos],data[pos+1]))
+        if data[pos] != 0xFF:
+            print("{} No Marker FF @ loc {}  ({} found)".format(fn,pos,data[pos]))
             return
+        marker = data[pos+1]
 
-        # print("  Found marker {} {} at {}".format(hex(data[cc]),hex(data[cc+1]),cc))
-        # assert(data[cc]==255)
-
-        if data[cc:cc+2]==b'\xff\xd8':     # SOI
-            cc += 2
+        # Decode the fixed-size markers
+        if marker==0xD8:  # SOI
+            pos += 2;
             continue
-        if data[cc:cc+2]==b'\xff\x01':     # TEM
-            cc += 2
+
+        if (marker >= 0xD0 and marker <= 0xD8): # RSTn
+            pos += 2;
             continue
         
-        if (data[cc:cc+2] in RST):
-            cc += 2
-            continue
-        
-        if data[cc:cc+2]==b'\xff\xd9':     # EOI
-            return                         # validated!
+        if marker==0xD9: # EOI
+            extra = len(data)-(pos+2)
+            if extra: print("  EXTRA BYTES: {}".format(extra))
+            return       # validated!
 
-        if data[cc:cc+2]==b'\xff\xda':  # SOS
-            # Found a start of stream. Scan for the EOI
-            
-            # experiment: any repeated characters?
-            for i in range(cc,len(data)-4):
-                if data[i]==data[i+1]==data[i+2]==data[i+3]:
-                    print("{} len={} repeated data at {}: {}".format(fn,len(data),i,data[i]))
-            
-            eoi_loc = data.find(b'\xff\xd9',cc)
-            if eoi_loc and eoi_loc+2 == len(data):
-                return                  # validates
-            if eoi_loc==-1:             # incomplete
-                print("{} INCOMPLETE".format(fn))
-                return
-            print("{}  eoi_loc={}  len={}  EXTRA BYTES: {}".format(fn,eoi_loc,len(data),len(data)-eoi_loc))
+        # Decode the SOS segment
+        if marker==0xDA: # Found SOS; scan for the EOI
+            eoi_loc = data.find(b'\xFF\xD9',pos)
+            if eoi_loc>0:
+                pos = eoi_loc;
+                continue 
+            print("  NO EOI")
             return
 
-        l = struct.unpack('>H',data[cc+2:cc+4])[0]
-        # print("      Found variable length len={}".format(l))
-        cc += 2 + l
+        # Get the length, add it, then loop
+        try:
+            segment_len = struct.unpack('>H',data[pos+2:pos+4])[0]
+            if marker==0xFE:
+                print(" COMMENT: {}".format(data[pos+4:pos+2+segment_len]))
+            # Additional decoding could go here
+            pos += 2 + segment_len
+        except struct.error:
+            break               # end of file?
+    print("  {:6}: EOF".format(pos)) # end of file
 
 
 if __name__=="__main__":
-    import argparse,os
+    import argparse,os,mmap
 
     parser = argparse.ArgumentParser(description="Search and process JPEGs in local file system")
-    parser.add_argument("path",help="Path to search",type=str)
-    
+    parser.add_argument("path",nargs="+",help="Path to search")
     args = parser.parse_args()
 
-    for (dirpath, dirnames, filenames) in os.walk(args.path):
-        for name in filter(lambda chk:chk.lower().endswith(".jpg") or chk.lower().endswith(".jpeg"),filenames):
-            fn = os.path.join(dirpath,name)
+    def is_jpeg_fn(fn):
+        return os.path.splitext(fn)[1].lower() in ['.jpg','.jpeg']
+
+    file_count = 0
+    byte_count = 0
+    for fn in args.path:
+        if os.path.isdir(fn):
+            for (dirpath, dirnames, filenames) in os.walk(fn):
+                for name in filter(is_jpeg_fn,filenames):
+                    file_count += 1
+                    byte_count += os.path.getsize(os.path.join(dirpath,name))
+                    validate_jpeg(os.path.join(dirpath,name))
+            print("files: {:,} bytes: {:,}  average size: {:,}".format(file_count,byte_count,byte_count/file_count))
+        else:
             validate_jpeg(fn)
+
