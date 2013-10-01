@@ -10,13 +10,744 @@
 \newcommand{\citeN}[1]{\cite{#1}}
 
 \begin{document}
-\title{A Survey of Digital Forensic File Recovery and File Type
-  Identification Techniques}
+\title{A Survey of Digital Forensic File Recovery and File Type Identification Techniques}
 \author{Simson L.\ Garfinkel}
 \maketitle
 \pagenumbering{arabic}
 
-\input{introduction}     
+Over the past decade \emph{digital forensics} (DF) has grown from a trade
+practiced by technicians working for law enforcement
+organizations and into scientific discipline. Today DF  researchers are
+making slow but steady progress on scientifically challenging
+problems; DF research is presented at conferences
+and published in peer-reviewed journals; and there is a growing
+collection of both tools and reference data sets designed to promote
+DF education and help validate new research techniques. Because of
+both the scale and the diversity of their domain, DF researchers and
+practitioners are necessarily at the forefront of some of the most
+challenging problems in computer science today, including ``big data''
+analysis, natural language processing, visualizations, and
+cybersecurity. 
+
+Broadly construed, DF applies the process and goals of \emph{forensic
+  science} to the study of all things digital---and specifically to
+digitized information that might be found on computers, cell phones,
+storage devices and  computer networks during the course of a
+criminal investigation. Compared with traditional ``blood and
+bullets'' forensics, DF poses significant challenges for three primary
+reasons: information on a computer system can be changed without 
+trace; the scale of data that must be analyzed; and the variety of
+data types that an investigator can encounter. Just as a traditional forensic investigator must be
+prepared to analyze any kind of smear or fragment, no matter the
+source, a DF investigator must be able to make sense of any data that
+might be found on any digital device anywhere on the planet. In
+practice, this is a very difficult proposition.
+
+Much of what we now call DF got its start in the 1980s
+as computer systems were increasingly involved in criminal acts.
+From its inception, DF served two different
+purposes. First, in many cases computers contained evidence of a
+crime. In these cases the crime took place in the physical world
+and the computer was all but incidental---except for the fact that
+computerization made the evidence harder for
+investigators to analyze than paper records. 
+
+The second class of cases are those in
+which the crime was inherently one involving computer systems, such as
+computer hacking. In these cases, investigators are hampered
+by the technical sophistication of the systems and the massive amount
+of evidence to analyze.
+
+DF is powerful because computer systems are windows into the
+past. Many digital systems retain vast quantities of
+information---either intentionally, in the form of log files and
+archives, or inadvertently, as a result of software that does not
+cleanly erase memory and files after it runs. As a result, it
+is frequently possible for investigators to recover old email
+messages, chat logs,   Google search terms and other kinds of data
+that were created
+weeks, months, or even years in the past. Such contemporaneous records
+can reveal an individual's state-of-mind or intent \emph{at the time
+  the crime was being committed}.
+
+But whereas pre-computer evidence such as handwritten letters and
+photographs could be photographically reproduced and given to attorneys, judges and juries, computerized evidence
+requires special handling and analysis. In part this is because
+electronic data are easily changed, damaged or erased if
+handled improperly---for example, simply turning on a consumer GPS
+may cause the device to erase critical evidence. Additionally,  computers
+frequently harbor hidden evidence that may only be evident when
+specialized tools are used---for example, a digital camera may appear to have
+30 photos, but examination by an expert may reveal that another 300
+deleted photos can be recovered.
+
+As the preceding paragraphs make clear, today the field of digital
+forensics is largely \emph{tool-based} and
+\emph{investigator-centric}. 
+That is, the requirements of DF are driven 
+by what investigators need to perform digital
+investigations\citep{walls-levine-effective-digital-forensics}. Convictions
+are frequently the
+measure of success. In many cases there is a considerable gap between
+what is theoretically possible and what is necessary. That is, even
+though there may be an intellectual desire to analyze and explain every last byte
+on a piece of subject media\cite{garfinkel:every-last-byte}, there is
+rarely a reason to do so.
+
+\section{Digital Forensics}
+
+% http://www.tex.ac.uk/cgi-bin/texfaq2html?label=complist
+\subsection{Collection and Preservation} 
+Before data can be analyzed, they
+  are taken from the field (the ``scene of the crime''),
+  stabilized and preserved to create a lasting record. 
+
+When recorded on a hard drive or camera card, these bytes are groups in
+  blocks called \emph{sectors} that are typically 512 or 4096 bytes in
+  length. A sector is the smallest block of data that a drive can read
+  or write. An email message might require 10 or 20 sectors to
+  store; a movie might require hundreds of thousands. Depending on the
+  arrangement of other files on the device, the sectors can be stored
+  as a single sequential stream or they can be fragmented into many
+  different locations. Other sectors contain information that the
+  computer uses to find the stored information: such bookkeeping
+  information is called ``file system metadata.''
+
+  Each sector on the disk has a unique identifying number, called
+  the sector's \emph{logical block address} (LBA). An Android phone
+  advertised as having ``8GB'' of storage has eight billion bytes or roughly 15
+  million sectors.  To preserve the data on a computer or phone, each of these sectors
+  must be individually copied out of the phone or off the hard drive and
+  stored on another computer in a single file called a \emph{disk image}
+  or \emph{physical image}. This file, which contains every single byte
+  stored on the target device, naturally includes every
+  visible file on the media. But the physical image also records
+  invisible files as well as portions of files that have been deleted
+  but not yet overwritten by the operating system. 
+
+  For typical desktop or laptop computers, collection and preservation
+  is performed with a program called a \emph{disk imager}, of which there
+  are many. Disk imager  are tested by the Computer Forensic
+  Tool Testing Program (CFTTP) at the National Institute of Standards and
+  Technology (NIST) Information Technology Lab (ITL) to make sure that
+  they accurately copy all of the data off the subject
+  device. Although it might seem straightforward, the task is
+  complicated by the possible presence of bad sectors and ``hidden''
+  storage, the need for the program to detect and accurately report
+  the drive being unplugged, and other issues that may seem
+  inconsequential but which can be very significant when a disk image
+  is being used as the basis of a criminal prosecution. 
+
+\textbf{TK: Add about testing and error rate}
+
+  In the case of network forensics, it is the actual data
+  sent over the network connection that are preserved. This means that network forensics
+  equivalent to a wiretap---and in fact network forensics equipment is
+  increasingly used for wiretaps by law enforcement. 
+
+%  Today's computer networks carry information in blocks
+%  called \emph{packets} which are typically between 50 and 1500 bytes
+%  in length. Network collection is performed with tools called
+%  \emph{packet sniffers} or \emph{network forensic analysis tools}
+%  (NFATs)\cite{613756}. These tools intercept the packets that are
+%  sent down a wire (or through the air) and copy them into a file
+%  called a ``packet trace'' or a ``PCAP'' (packet capture) file.  
+
+  Increasingly the random access memory (RAM) associated with computer
+  systems is also being subjected to forensic investigation. RAM is
+  difficult to work with, as it changes very quickly and is lost when
+  a computer is turned off. RAM must also be captured with a special
+  program (a ``memory imager'') and is stored in its own special kind
+  of file called a ``memory dump.'' Although memory can be extracted from all
+  kinds of computer systems, including desktops, laptops, cell phones,
+  as well as network communications equipment such as wireless
+  routers, each of these systems uses different kinds of internal
+  structures, so software designed to analyze one may not analyze another.
+
+
+\subsection{Examination and Extraction} Working with the preserved data, an
+  examiner will explore for any information that might be
+  relevant to the investigation at hand. 
+
+  When performing disk forensics, files that can be seen from within
+  the computer's own operating system are called ``allocated files''
+  because the storage associated with the files is allocated to that
+  purpose. On many system it is also possible to recover files that have
+  been deleted but whose previously allocated sectors have not yet
+  been overwritten or otherwise used for another purpose. These
+  sectors are said to contain \emph{deleted files}, \emph{residual data}, or
+  \emph{digital trace evidence}.
+
+Most examinations are performed
+  with tools that can extract user files from the disk image, search for files that contain a specific word or phrase
+  in a variety of human languages, and even detect the presence of
+  encrypted data. One common technique is to arrange all of the
+  information chronologically and create a timeline that shows when
+  each file on the disk was modified or last accessed.
+
+ Another 
+  technique is to review every directory and file and look for
+  things that seem out-of-the-ordinary. 
+
+Relevant data are then
+  extracted from the preserved system so that they are easier to
+  analyze---for example, an individual file may be sent to a linguist
+  for translation. In the military this process of examination and extraction
+  is frequently called \emph{exploitation}.
+
+  There are many tools for performing examination. The Sleuth Kit\cite{sleuthkit} is
+  an open source tool that can decode Windows, Macintosh, Linux, XBox,
+  and Android
+  file systems, recovering both allocated and deleted
+  files;   Volatility\cite{volatility} can analyzing memory dumps from a
+  variety of different systems.
+
+\subsection{Analysis} Once potentially relevant information is
+  extracted, an analyst will construct one or more hypotheses that
+  uses the digital evidence to explain possible past activities. A
+  hypothesis may draw from multiple digital devices---an email message
+  sent from a desktop computer to a cell phone, for example---or the
+  hypothesis may incorporate events in the physical world, like a
+  power failure or theft. During this phase a good analyst will also
+  try to construct alternative hypotheses that are consistent with the
+  evidence but which point to different conclusions. In Europe it is
+  popular for examiners to perform an Bayesian analysis and estimate
+  the probability of each hypothesis based on the available data.
+
+  Many examination tools can perform some kind of analysis, but there
+  are also commercial tools that specialize at this task. Examples
+  include Analyst Notebook\cite{analysts_notebook} and
+  Palantir\cite{palantir}, as well as general purpose tools such as
+  Microsoft Excel.
+
+\subsection{Reporting and Testimony} Finally, the analyst will
+  produce a written report or give testimony in a courtroom. Remember,
+  judges and juries can't examine digital evidence for
+  themselves---even if they had the training and the technical skills
+  to do so, performing their own analysis would be inappropriate:
+  their role in the legal process is to evaluate the law, the evidence
+  and make a legal determination, not to perform technical
+  analysis. Reports and testimony must be
+  \emph{complete}---they must describe the tools and procedures
+  that were followed, clearly document what was found, and then
+  separately provide the technical interpretation of the
+  evidence. (For this very reason, Rule 704 of the US Federal Rules of
+  Evidence, allow a DF expert to
+  express an opinion on ``an ultimate issue to be decided by the trier
+  of fact'' in most circumstances.)
+
+\section{The Science of Technical Exploitation}
+
+In the early 1990s there were no DF tools as we know them
+today. Instead practitioners had to repurpose tools that had been
+developed for other purposes. For example, backup software was
+used for collection and preservation, while data recovery tools were used
+for examining subject media. Although these approaches worked, they lacked control,
+repeatability, and a known error rates---that is, examiners had no way
+of knowing the accuracy of their results. 
+
+In 1993 the US Supreme Court held in the case of Daubert v. Merrell
+Pharmaceutical 
+that any scientific testimony presented in court must be based on a theory
+that is testable; that has been scrutinized and found favorable by the
+scientific community; that has a known or potential error rate; and
+that is generally accepted\cite{daubert}. This case didn't directly
+kick off the demand for DF tools, but it did give DF practitioners
+grounds for arguing that validated tools were needed not just as a matter
+of good science and procedure, but as a matter of law. 
+
+Since then there has been a steady development of techniques and the
+incorporation of those techniques in a variety of tools. This section
+presents several techniques for what has come to be called
+\emph{technical exploitation}. The first two techniques---hashing and
+file extraction---now dominate all DF processing. The next three
+techniques---reconstruction of compressed data, memory parsing, and
+fraud detection in multimedia---represent the next generation of DF
+research that is leveraging new algorithms and signal processing
+approaches to help address challenges facing DF practitioners today.
+
+\subsection{Hashing}
+
+Probably the single most transformative technical innovation in
+DF has been the introduction of hash functions, first as a means for assuring the integrity of forensic data,
+and later as a way to recognize specific files.
+
+In computer science a \emph{hash function} is any function that maps a
+sequence of zero or more characters (called a \emph{string}) to an
+binary number of a specific fixed size---that is, a fixed number of
+bits. A 16-bit hash
+function can produce $2^{16}$ different hash values, while a
+32-bit hash function can produce $2^{32}$ possible hash
+values. Hash functions are designed so that changing a single
+character in the input results in a completely different number. While
+the pigeonhole principle guarantees that many different strings will
+have the same hash value---called a \emph{hash
+  collision}---the more bits in the hash has, the smaller the chance
+of a collision.
+
+Hashing was invented by H.\ P.\ Luhn in a 1953 IBM technical memo for
+automated text processing. (Interesting fact: The name \emph{hash}
+comes from the way hash functions are typically implemented as a
+two-step process that first chops and then mixes the data, much in the
+way that one might make hash in the kitchen.)
+
+In 1979 Merkle proposed that hashes could be constructed as one-way
+functions and used as the basis of digital signatures for certifying
+documents\citep{merkle:79}.
+
+One of the first and continuing uses of hashing in DF was to establish
+\emph{chain-of-custody} for forensic data. Instead of hashing a
+document or a file, the hash function is applied to the entire disk
+image---that is, \emph{all} of the bytes extracted from a hard
+drive. Many law enforcement organizations will create two disk images
+of a drive and then computer the hash of each image.  If the values
+match, then the copies are assumed to each be a true copy of the data
+that were on the drive. The hash value is then included in the
+official report. With the hash recorded, the image file can be copied
+to a server at the police department, to an investigator's
+workstation, or even given to a forensic expert working for the other
+side. Any investigator with the data can calculate the hash and see if
+it matches the original reported value. If the hashes match, the
+investigator can be sure that not a single bit in the disk image has
+been changed since the original image was recorded. Hashing is so
+important that many DF tools can automatically validate an evidence
+file by recomputing the hash and comparing it with a stored value.
+
+A second use for hashing is to identify specific
+files. This approach takes advantage of the property that it is
+extraordinarily unlikely for two files to have the same
+hash value. File hashes can thus be used to identify files in much the
+same way that a person can be identified by their fingerprints. 
+
+Today forensic practitioners distribute databases containing the file
+hashes as a standard part of forensic processing. The best known of these data
+sets is the National Software Reference Library Reference Data Set,
+distributed by the National Institute of Standards and
+Technology\cite{nist-nsrl-rds-march2012}. These data sets can be used
+to identify \emph{known goods}, such as programs distributed as part
+of operating systems, or \emph{known bads} such as computer viruses,
+stolen documents and child of pornography. Recent work is now
+applying cryptographic hashing to blocks of data smaller than
+files\cite{garfinkel:sector-id}, taking advantage of the fact that
+even relatively short 512-byte and 4096-byte segments taken from
+files can be highly identifying. 
+
+File and sector identification with hashing means that a hard drive
+containing millions of files can be automatically searched against a
+database containing the hashes of hundreds of millions of file hashes
+in a relatively short amount of time---perhaps just a few hours. Importantly, the search can be done without any human
+intervention.
+
+\subsection{Files Recovery and File carving}
+
+Many forensic investigations start with the examiner looking for
+files belonging to the computer's previous user. But what is a file?
+
+On modern digital systems, a \emph{file} is a sequence of
+\emph{bytes}. Files therefore
+have \emph{contents} and a \emph{length}, but they do not necessarily have other
+information that computer users typically associate with files, such
+as a \emph{file name} or a \emph{modification date}. These attributes
+are called \emph{metadata} (literally ``data about data'')
+and are stored by the computer's \emph{file system}, but are not
+strictly part of the file. (Some operating systems even allow a single
+file to have multiple names or timestamps, further complicating the
+issue.)
+
+\emph{Allocated files} are files that can be viewed
+through the file system and whose contents will not under normal
+circumstances be inadvertently overwritten by the operating
+system. The word ``allocated'' refers to the \emph{disk sectors} in
+which the file's content is stored. The sectors are allocated in the
+sense that they are dedicated to the file and cannot be assigned to
+other files and overwritten. Allocated files are present in either the
+file system's \emph{root directory} or a \emph{sub directory}. These
+are the files that a user typically sees with the Windows Explorer or
+the Apple Finder. Many DF tools allow the examiner to see allocated
+files present in a disk image without having to use the computer's
+native operating system. This makes it possible to maintain forensic
+integrity of the evidence.
+
+One of the major technical DF innovations of the
+past 15 years has been approaches for
+recovering a file after it is deleted. These are not simply files that are in
+a ``trash can'' or ``recycle bin''---these are the files after the
+trash has been emptied. So-called \emph{deleted files} can be
+recovered because many operating systems don't actually overwrite the
+sectors of files when the user deletes them. Instead, the file names
+are hidden and the storage associated with the files is
+\emph{deallocated}. Similar techniques can also be used to
+recover deleted email messages in Microsoft Outlook ``\texttt{.pst}'' files.
+
+Sometimes a file's content remains on the computer's hard
+drive, in memory, or on external media but the metadata that could be
+used to recover the deleted file is overwritten or otherwise lost. Recovering
+these kinds of data requires a technique called \emph{file carving}.
+
+File carving appears to have been invented by independent security researcher
+Dan Farmer and was incorporated into the first open source digital
+forensics tool called The Coroner's Toolkit written and released by Farmer and IBM
+researcher Wietse Venema in 1999. Two years later 
+the United
+States Air Force Office of Special Investigations released a file carver called Foremost, developed by Kris Kendall and
+Jesse Kornblum. Today one of the most powerful file carvers is 
+a tool called PhotoRec, developed by Christophe Grenier, a computer
+security specialist in France. A common use
+of these tools is to recover images from digital camera memory cards
+that have been accidentally formatted.
+
+File carvers take advantage of the fact that the internal structure of
+many file types contain
+characteristic sequences of bytes at the beginning and
+end  of each file. Such sequences are called \emph{file headers} and
+\emph{footers}. For example, JPEG files generated by
+most digital cameras typically begin with the hexadecimal sequence \texttt{FF D8 FF E0} and end
+\texttt{FF D9}  (numbers that can be determined by examining a large
+number of JPEGs or by reading the JPEG standard). The file carver simply scans the disk image for JPEG
+headers and footers. When a header and matching footer are found, the
+two sequences of bytes, and all of the data between them, are saved in
+a new file on the analyst's workstation.
+
+Today more than a dozen file carvers have been developed that can
+run on Windows, Macintosh and Linux computers. Modern carvers can
+validate the data that they are carving (for example, to make sure
+that the bytes between the JPEG header and footer can be actually
+displayed as a digital photograph), and can even reassemble files that are fragmented
+into multiple pieces\citep{pal-sht}. Fragment recovery carving is
+computationally challenging because the number of ways that fragments
+can be combined: the result is a combinatorial explosion as the size of
+the media increases. Missing fragments further complicates the problem.
+
+File carving is an incredibly powerful technique. It can recover files
+from any kind of computer system---even those that were unknown when
+the carver was created---and it works even when a portion of media is
+damaged and unreadable. But file carving typically cannot recover the
+\emph{name} of a file, and it frequently finds information that is
+unrelated to the case at hand.
+
+
+\subsection{Reconstruction of compressed data}
+
+Closely related to file carving is the problem of reconstructing
+compressed data. \emph{Compression} is a technique that is widely used
+on computer systems to squeeze data so that it takes less space than
+it otherwise would. Compression exploits redundancy; for example,
+asked to compress the character sequence ``humble humbleness,'' a computer might
+replace the characters the second set of the six characters ``humble''
+with a pointer to the first occurrence. Compressed English text typically
+takes a sixth its original size.
+
+Text must be compressed with \emph{lossless} algorithms that
+faithfully restore the original text when the compressed data is
+decompressed. Photographs and Video is
+typically compressed with \emph{lossy} systems that exploit
+deficiencies in the human perceptual system when they decompress. For
+example, a few dozen pixels of slightly different colors might
+be replaced by a single rectangle of uniform hue. The resulting
+savings can be immense. Without compression an hour of
+full-screen video might require 99 gigabytes\footnote{30 screens of
+  640x480 video per second with 3 bytes per pixel}, but with
+compression the same video might require only 500 megabytes---roughly
+$\frac{1}{200}^\textrm{th}$ the original size. 
+
+The primary challenge posed by compression is recovering data when the
+compressed file is corrupted or partially missing. Just five years ago
+such corruption frequently made it impossible to recover anything of
+use. But lately there has been dramatic advances in this area. In 2009
+Professors Husrev Sencar from TOBB University of Economics and
+Technology and Nasir Memon from NYU Poly developed an approach that
+can be used to show a fragment of a JPEG digital photograph even if
+the beginning and end of the file is missing\cite{jpeg-recovery}. And
+in 2011 Ralf Brown from CMU developed an approach for recovering data
+from fragments of files compressed with the ZIP or DEFLATE
+algorithm\cite{dfrws2011:RalfBrown}. The algorithm is particularly
+impressive because critical information needed for reassembly is
+missing. Brown's approach creates a model of the many different ways
+that a document might decompressed based on the underlying
+mathematics, then chooses between the different possible documents
+based on a second model of the human language in which the document is
+written (Figures \ref{brown-1} through \ref{brown-4}).
+
+\begin{figure}
+\begin{tabular}{p{3.2in}|p{3.2in}}
+\hline
+\includegraphics[width=3in]{art/brown-1} &  \includegraphics[width=3in]{art/brown-2} \\
+\caption{Reconstructed text, without language model}\label{brown-1}
+& \caption{Best possible reconstructed text, with language model}\label{brown-2}\\
+\hline
+\includegraphics[width=3in]{art/brown-3} & \includegraphics[width=3in]{art/brown-4}\\
+\caption{Best possible reconstructed text, with language model. Green
+  letters indicate high-probability matches, red letters indicate
+  low-probability matches.}\label{brown-3}
+&
+\caption{Original text, from HTML version of Cory Doctorow novel
+  ``Little Brother'', compressed using Info-Zip version 3.0, first
+  1024 bytes of archive removed}\label{brown-4}
+\\
+\hline
+\end{tabular}
+\end{figure}
+
+
+\subsection{Memory Parsing}
+
+The memory of a desktop, laptop or cell phone is a mosaic of 4096-byte
+blocks that variously 
+contain running program code,  fragments of programs
+that recently ran and have exited, portions of the computer's
+operating system, fragments of what was sent and received over the
+network, fragments of windows displayed on the computer's screen, the
+computer's copy-and-paste buffer, and other kinds of information. Memory
+changes rapidly---typical memory systems support several billion
+changes per second---so it is nearly impossible to make a copy that is
+internally consistent without halting the machine. An added complication is that the very
+specific manner that programs store information in memory is rarely
+documented and changes between one version of a program and
+another. As a result, each version may need to be painstakingly reverse-engineered by
+computer forensics researchers. Thus, memory analysis is time consuming, very
+difficult, and necessarily incomplete.
+
+Despite these challenges, recent years has seen the development of
+forensically sound techniques for acquiring and analyzing the contents
+of a running computer system. Today there are both open source and
+proprietary memory analysis tools. These tools can take a memory dump
+and report the system time when the memory was captured, display a
+list of running processes, open files, and even display the contents
+of the computer's clipboard and screen. Today memory analysis tools
+are widely used for reverse-engineering computer viruses, worms and
+other kinds of \emph{malware}, as well as for understanding an
+attacker's actions in computer intrusion cases. Memory analysis can be combined
+with carving to recover digital photographs and video.
+
+\subsection{Fraud Detection in Multimedia}
+
+Even when photos and video can be recovered from a subject's computer
+or cell phone, another question to consider is whether or not the
+imagery is real. Photographs were doctored long before the advent of
+PhotoShop. For example, after he was purged by Stalin, Abel
+Yenukidze was carefully removed from official photographs through a
+series of skillful manipulations of light and negatives in a Kremlin darkroom\citet{stalins-darkroom}. Today
+computer animation takes such manipulation to a completely new level,
+with computers now able to synthesize scenes that are 
+indistinguishable from recorded reality (\figref{ultra-realistic}). 
+
+\begin{figure}
+\includegraphics[width=4in]{art/a1336.jpg}
+\caption{Ultra realistic vector gradient mesh using Adobe Illustrator by Pisan Kaewma, Thailand}\label{ultra-realistic}
+% http://10steps.sg/inspirations/artworks/photo-realistic-vectors/
+% http://www.ebypaidrick.com/Gallery.html
+% http://www.illustratorworld.com/artwork/1336/
+% http://rcpopart.com/labels/hyper-realist%20sculptor.html
+% http://www.real-trace.com/index.html
+\end{figure}
+
+Recent developments in image processing have made it
+possible to find some kinds of artifacts that indicate tampering or wholesale synthesis. For example,
+the JPEG compression algorithm produces a mathematical signature when an
+image is decompressed, cropped, and then re-compressed. Specular 
+reflection, highlights and shadows can be closely examined to reveal
+that different objects in a single ``photograph'' actually were
+assembled from objects that were in 
+slightly different physical environments. In one particular dramatic
+demonstration, Dr.\ Hany Farid of Dartmouth University showed that a single ``group picture''
+had been created by pasting in the people from different photos
+because the reflection of the room lights on each person's eyeballs
+were inconsistent with were they were standing in the frame. The technology is now
+being commercialized\citep{farid07}.
+
+
+\subsection{Automated Reasoning}
+
+The leading edge of DF research are systems that
+attempt to assist or even automate an analysts' reasoning---systems
+that can automatically find evidence that is out of the ordinary,
+strange, or inconsistent. Such details can indicate that there is a
+deeper, hidden story. Inconsistencies can also indicate that evidence has been
+tampered or entirely falsified. 
+
+Ultimately, such automated reasoning systems are likely the only way
+that today's analysts will be able to address the vast data
+quantities and increasing diversity that they are likely to encounter
+in the coming years. There has been some work in this area in
+terms of systems that can find timestamp inconsistencies (a file
+can't be deleted before it is created), but such rules are invariably
+complicated by the messiness of the real world (for example, daylight
+savings time). 
+
+\section{The Digital Forensics Challenge}
+
+For all of its power, DF practitioners face stark
+challenges in practicing their discipline---challenges likely to
+increase in the coming years. Those challenges are size,
+time, diversity, cloud computing, encryption and language.
+
+\begin{compactdesc}
+
+\item[Size:] The past three decades have seen a steady increase in the
+  amount of storage available to consumers and a steady decline in its
+  cost. In 1993 I purchased my first 1 gigabyte external hard drive
+  for a thousand dollars; today a 1 terabyte external hard drive can
+  be purchased for under a hundred---a thousand times more
+  storage for a tenth the price. Not surprisingly, the amount of data
+  acquired by law enforcement organizations in their cases is
+  increasing every year.
+
+  Alarmingly, other aspects of computing have not scaled as quickly as
+  storage. Today's terabyte drives are only 10 to 100 times faster
+  than the gigabyte drives of yesteryear, which means that it takes anywhere
+  from 10 to 100 times longer to copy  data from the larger
+  drives. Likewise, today's computers are only on average 100 fold
+  faster than the high-end workstations of the early 1990s, which
+  means that there is less computing power available to process each
+  byte per unit time. The continuation of these trends means that new techniques are
+  required to deal with the data onslaught, as existing techniques
+  simply cannot keep up with the increased storage available to consumers.
+
+% My 33Mhz NeXTstation had 10 SPECmarks
+% http://www.kevra.org/TheBestOfNext/NeXTProducts/NeXTHardware/NeXTStnColor/files/page620_2.pdf
+% Intel Core i7 is 965 SPECmarks
+% http://openlab.web.cern.ch/sites/openlab.web.cern.ch/files/technical_documents/CERN_openlab_report-Eval-of-energy-consumption-and-perf-of-Intel's-Nehalem-achitecture.pdf
+
+\item[Time:] Even as the amount of storage received by law enforcement
+  organizations increases, the time available to analyze that storage
+  is steadily decreasing. In part this is because the number of cases
+  in which digital evidence is collected is increasing far faster than
+  the number of forensic investigators available to do the
+  examinations. But another cause is the increasing realization that
+  DF can be used to \emph{solve crimes}---that is, as
+  part of the investigation process---whereas in the
+  past DF was mainly a tool for \emph{assisting in convictions}. The
+  shortened time horizons puts increased demands on tools,
+  investigators, and systems.
+
+\item[Diversity:] Forensic investigators must be able to process any
+  information found on any computer system currently in use. After
+  all, if there were a particular kind of system that could not be
+  analyzed, criminals would be sure to use it. Thus, DF tools and
+  invesitgators must be able to accommodate all kinds of computers,
+  operating systems, application programs and the like. The diversity
+  is particularly problematic in the case of cell phones, where there
+  are literally dozens of different kinds of cables and tens of
+  thousands of apps in widespread use that might require analysis.
+
+\item[Cloud Computing:] Further complicating the investigator's job is
+  the emergence of cloud computing and other technologies for storing
+  data in the Internet rather than on desktops, laptops, and mobile
+  devices. As a result of the cloud, there is no way to assure that a
+  seized cell phone actually holds the suspect's data---the phone
+  might simply be a tool for accessing a remote server. A law
+  enforcement professional who is authorized to search a device may
+  not have legal authority to use information on that device to access
+  remotely stored data. Worse still, the data might be deleted in the
+  meantime by one of the suspect's collaborators.
+
+\item[Encryption:] The increased use of encryption means that
+  investigators might not be able to decipher information once they
+  have it in their possession. 
+
+\item[Language:] Finally, in today's global environment forensics
+  examiners are increasingly encountering evidence written in human
+  languages that the examiner does not understand. And while tools
+  like Systrans and Google Language Tools can perform some automated
+  language translation, such systems are rarely sufficient for
+  real-world forensic media.
+
+\end{compactdesc}
+
+These challenges impact the entire forensic processing model. Here are
+two  examples:
+
+\begin{compactitem}
+\item Ten years ago it was relatively easy to collect and preserve a
+computerized evidence: standard procedure was for law enforcement to
+turn off a suspect's computer and take it back to the police station
+where it might be put in an evidence locker. But modern computer systems
+frequently employ encryption: turning them off may cause a key to be
+erased, eliminating the possibility of decrypting the data without the
+suspect's cooperation. For these systems it is now common practice to
+copy out the computer's memory if possible---except that it is not
+always possible because of diversity. 
+
+\item Cell phones may be equipped with ``self destruct'' applications
+  that wipe their data if they receive a particular text, so it is now
+  standard practice to store phones in a shielded metal box called a
+  Faraday cage that blocks radio waves. But many cell phones forget
+  their storage if left off for too long, so the Faraday cages must be
+  equipped with power strips and cell phone chargers.  Because many
+  low-end cell phones have proprietary plugs, police must seize chargers as well.
+\end{compactitem}
+
+
+\subsection{The Research Agenda}
+
+  Addressing these increases has only been possible through the
+  collective research of government agencies, academics, and
+  independent practitioners. These research efforts largely fall into
+  three areas:
+
+\begin{description}
+\item[Reverse Engineering] has traditionally been the most basic form
+  of DF research. Developers generally do not provide the public
+  with details of how their systems work. This is obviously true of
+  malware developers, but it is also true of legitimate companies that
+  develop hardware and software, and even many open source
+  systems. As a result, forensic practitioners must expend
+  considerable effort reverse engineering systems to  understand how
+  they work.  Today's techniques to extract allocated files from disk
+  images were largely developed through reverse engineering.
+
+\item[System Analysis] is the second leg of forensic research. System
+  analysis is the systematic exploration of digital systems to
+  understand the information that they contain and how it can be
+  exploited for forensic analysis. Although similar to reverse
+  engineering, system analysis is fundamentally different, in that the
+  information the system analyst seeks may be unknown to the
+  developers themselves. Although this may seem strange, remember that
+  computers are vastly complicated systems: just as programmers
+  frequently put bugs in their programs without realizing it, programs
+  invariably have other behaviors that aren't bugs but are equally
+  unforeseen by the original programmers. Many system users and quite
+  a few developers assumed that it was not possible to recover deleted
+  files until data recovery experts developed tools that proved otherwise.
+
+ As long as there is data data that exists but which cannot be viewed
+ through the operating system, there is need for tools that can
+ display it. There is simply no commercial reason for software vendors
+ to create tools which make this information visible---in many cases
+ they are not even aware that the data is present. For example,
+ previous versions of Microsoft Word left text in a
+ document file even after it was deleted because the software didn't
+ explicitly wipe the memory and corresponding disk sectors that
+ corresponded to each deletion. This deleted-but-recoverable text
+ occasionally resulted in some embarrassing revelations---so much, in
+ fact, that many Microsoft products now explicitly have commands for
+ to ``remove hidden data.'' Computer forensics tools can be
+ used to both demonstrate the problem and verify whether or not
+ Microsoft's solution actually works.
+
+\item[Advances in fundamental science and engineering] are also needed
+  for advances in DF. In particular, today's DF researchers are at the
+  forefront of many other hot fields in computer science, including
+  cloud computing, big data, visualization, and natural language
+  processing. File carving and the recovery of data from corrupted
+  compressed files are both examples of this kind of work: much of
+  this work was thought to be computationally prohibitive until new
+  mathematical algorithms were developed that proved
+  otherwise. Another example is software that automatically translates
+  posts on Facebook and Twitter from the subject's native tongue into
+  a human language that the examiner can understand.
+\end{description}
+
+
+\subsection{Human Capital}
+
+\textbf{Insert training prior art.}
+
+
+
+% LocalWords:  probative centric transformative Merkle combinatorial modularize
+% LocalWords:  Ponzi Specular DF Madoff pre GPS Cyber imager
+
 
 \chapter{Handling Digital Evidence}
 The fundamental nature of digital information makes the practice of
@@ -729,12 +1460,6 @@ tool failed to find a huge, high-resolution on a subject disk simply
 because the examiner did not believe that there were any large JPEGs
 to be found!
 
-\sgraphic{art/carving_jpeg}{The internal structure of a JPEG file
-  contains a header that starts with the bytes \texttt{FF D8 FF E0} or
-  \texttt{FF D8 FF E1} followed by an optional Icons and EXIF section,
-  followed by a color table, the huffman encoded image data, and
-  finally a footer that ends with the bytes \texttt{FF D9}.}
-
 
 Despite this analysis, these are in fact the data reduction strategies
 implemented by both Foremost and Scalpel. That is, they allow the user
@@ -1140,7 +1865,21 @@ that had been used to create the challenge.
 
 
 \setcounter{chapter}{5}\input{unicode}        % October 27
-\input{similarity}% November 2
+\chapter{Hashing, Fuzzy Hashing, and Similarity Digests}
+
+\section{Similarity Metrics}
+\subsection{Binary Similarity}
+\cite{dfrws2011:VassilRoussev}
+\subsection{Text Similarity}
+\cite{dfrws2011:ClayShieldsAndOphirFriederAndMarkMaloof}
+
+
+1. “Security aspects of piecewise hashing in computer forensics,”
+H. Baier and F. Breitinger, 6th International Conference on IT
+Security Incident Management \& IT Forensics, May 2011. 
+\verb+https://www.fbi.h-da.de/fileadmin/gruppen/FG-IT-Sicherheit/Publikationen/2011/2011_05_Baier_IMF2011.pdf+
+
+
 \section{Document Metadata}
 \input{metadata} % November 9
 \chapter{Residual Data and Bulk Data Analysis}
@@ -1160,7 +1899,20 @@ that had been used to create the challenge.
 \input{memory_analysis} % November 23
 \section{Memory Analysis}
 \cite{dfrws2011:JamesOkolicaAndGilbertPeterson}
-\input{time_analysis} 
+\chapter{Time Analysis}
+
+There are at least two
+fundamentally different issues regarding the accuracy and precision of
+time measurements in digital forensics. The first pertains to the accuracy of
+the time stamps on the subject media; the second pertains to the
+accuracy of the examiner's time reference. Accurately knowing either
+of these measurements requires some way of tracing time measurements
+back to a time standard or Root Time Authority (RTA)\cite{dfrws2002:MichaelDuren}.
+
+\cite{dfrws2011:AndrewMarringtonAndIbrahimBaggiliAndGeorgeMohayAndAndrewClark}
+
+% December 14
+
 \section{Large Scale Forensics}
 % DFXML
 
