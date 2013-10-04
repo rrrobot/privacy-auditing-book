@@ -10,11 +10,14 @@ Applications of file carving and more details about the various file carving tec
 
 \section{Applications of Carving}
 
-For investigation, to support criminal and civil litigation, but also potentially very invasive of privacy, because supports "deep" recovery of data that users have no idea still exists
+Carving is typically used to recover objects or object fragments (most commonly, files or file fragments) that have been deleted.  Carving might be carried out to support a digital forensics investigation, in the context of criminal or civil litigation, during incident response, or to recover data that's been inadvertently lost, e.g., as a result of  corrupted media or user error.  For the purposes of privacy auditing, carving can be used in precisely the same manner it would be used in a digital forensics investigation of broad scope--namely, to determine what sensitive data can be recovered from target media.  For example, most modern operating systems delete files by simply modify filesystem metadata to make the files "disappear", without actually scrubbing the data blocks previously allocated to the file.  These data blocks "float" in the unallocated regions of storage media, inaccessible to users, until they are allocated to new files and overwritten.  There are numerous situations where this shallow file deletion process exposes sensitive user data to recovery.  For example, when users clear web browser caches, empty the recycle bin on Microsoft Windows systems, clear system logs, or delete files from the command line, typical users lose \emph{control} over potentially sensitive data, but the data is often easily recovered with carving techniques.  
+
+MENTION SWAP SPACE JAIL, OTHER THINGS THAT MAKE DATA PERSIST, BUT ALSO JUST MENTION THAT IT PERSISTS ANYWAY   
+
+Given that carving can recover data that is otherwise completely inaccessible to non-technical users, it is imperative that privacy advocates understand the capabilities and limitations of this forensic technique.  
 
 \begin{Verbatim}
-NEED TO INTEGRATE LANGUAGE ON PRIVACY AUDITING--OBVIOUS, 
-BECAUSE CARVING RECOVERS DELETED DATA AT THE "DEEPEST" LEVEL
+
 
 NEED SOME DIAGRAMS THROUGHOUT TO ILLUSTRATE--e.g., I have some 
 diagrams that can be adapted which show what happens when a thumb drive is
