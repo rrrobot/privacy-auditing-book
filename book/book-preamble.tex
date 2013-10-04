@@ -3,7 +3,7 @@
 \newcommand{\tk}[1]{\large\textbf{\emph{#1}}}
 
 
-\newcommand{\slgbookauthor}{Simson L.\ Garfinkel}
+\newcommand{\slgbookauthor}{Simson L.\ Garfinkel\\Kevin D. Fairbanks\\Golden Richard}
 \newcommand{\slgbooktitle}{Technical Privacy Auditing with Computer Forensics Tools} 
 \newcommand{\slgbookcopyright}{Public Domain}
 \newcommand{\slgbookpublisher}{DRAFT}
@@ -45,7 +45,7 @@
 % \usepackage[framestyle=fbox,framefit=yes,heightadjust=all,framearound=all]{floatrow} 
 
 % http://stackoverflow.com/questions/2270082/latex-how-do-i-change-the-font-size-of-a-table-column
-% \usepackage{array}
+\usepackage{array}
 
 %%
 %% BEGIN Code environment that allows (@ and @) for escaping
@@ -118,7 +118,7 @@
 \newcommand{\bifigure}[3]{
   \begin{figure}
   \includegraphics[width=.47\linewidth]{#1} \hfill \includegraphics[width=.47\linewidth]{#2} \\
-  \caption{#3\label{#2}}
+  \caption{#3\label{#1}}
   \end{figure}
 }
 

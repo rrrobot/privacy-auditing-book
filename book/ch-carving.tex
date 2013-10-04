@@ -29,7 +29,8 @@ repeatedly formatted, and what's still recoverable via file carving.
 Header/footer based carving tools use a database of carving rules, with each rule defining how objects of a particular type should be identified in a data stream.  The goal is to identify the starting and ending locations of files in the disk images using these rules and to copy sequences of bytes between the header and footer into regular files for examination.  A rule typically defines a header and optionally, a footer, each of which is a binary string expected to be discovered near the beginning/end of objects of the corresponding type.  For example, for JPEG file types, the appropriate header is 0xFFD8FFE00010 and the footer is 0xFFD9.  The rule also commonly provides other guidance to the carving tool, including the minimum and maximum sizes of matching objects that should be carved, whether alphabetic components of the header and footer are case sensitive, and whether carving operations for an object should cease if the header of a matching object is encountered (this identifies objects stored "back to back" on the storage media).  Other guidance to the carving tool might include whether to choose the footer closest to a discovered header or farthest away from the header, and whether the footer should actually be included in the recovered object.  To illustrate some of these issues, consider the following carving rules from a configuration file for Scalpel, a popular header/footer--based file carver:
 
 {
-\medium
+% SLG commented out \medium, as it caused a problem
+% \medium
 \begin{Verbatim}
   # image files: GIF, JPG, PNG
   gif  y   100:500000   \x47\x49\x46\x38\x39\x61 \x00\x00\x3b
@@ -73,7 +74,7 @@ and are often useful in investigative scenarios)
 
 \section{Carving Fragmented Files}
 
-Dealing with fragmented objects is the most difficult problem in carving.  In legacy filesystems such as FAT, which does not incorporate strategies to reduce file fragmentation, many small files are likely to be stored contiguously, because files are created on cluster boundaries and cluster sizes under FAT tend to be rather large.  Larger files on FAT filesystems, however, are commonly fragmented\cite{Simson-DFRWS-2007-relevant-here?}.  While modern filesystems such as NTFS, ext2/3/4 and HFS+ do take steps to ensure that fragmentation of files is reduced, fragmentation does still occur.  Furthermore, performance for SSDs does not benefit from legacy anti--fragmentation mechanisms, and some of these mechanisms may actually reduce SSD lifespan.  As a result, some anti--fragmentation strategies are suppressed when SSDs are in use.  
+Dealing with fragmented objects is the most difficult problem in carving.  In legacy filesystems such as FAT, which does not incorporate strategies to reduce file fragmentation, many small files are likely to be stored contiguously, because files are created on cluster boundaries and cluster sizes under FAT tend to be rather large.  Larger files on FAT filesystems, however, are commonly fragmented\cite{dfrws2007:SimsonLGarfinkel}.  While modern filesystems such as NTFS, ext2/3/4 and HFS+ do take steps to ensure that fragmentation of files is reduced, fragmentation does still occur.  Furthermore, performance for SSDs does not benefit from legacy anti--fragmentation mechanisms, and some of these mechanisms may actually reduce SSD lifespan.  As a result, some anti--fragmentation strategies are suppressed when SSDs are in use.  
 
 \begin{Verbatim}
 Do we want to get into the anti-fragmentation stuff in e.g., ext2/3/4 and 

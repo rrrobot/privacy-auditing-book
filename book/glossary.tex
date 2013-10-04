@@ -1,0 +1,117 @@
+\section{Terminology}
+\begin{description}
+\item[Allocated (files and sectors)] Allocated files are files that can be viewed through
+  the operating system; allocated blocks are blocks that have been
+  allocated to a specific file and will not be re-used by the
+  operating system unless the contents are first relocated
+  elsewhere. cf with \emph{deleted files}.
+\item[Bit] A binary digit (0 or 1). The word ``bit'' was coined by
+  John W.\ Turkey (1915-2000) while working at Bell Labs and first appeared in
+  print in Claude Shannon's seminal 1948 article on information
+  theory, \emph{A Mathematical Theory of Communication}. (Turkey also
+  coined the word \emph{software}.) Abbreviated with a lower-case
+  letter \emph{b}.
+\item[Byte] An ordered set of bits used to represent the minimum
+  amount of data that can be read or written to a computer memory at a
+  time. Modern computers use 8-bit bytes, allowing for 256
+  ($2^8$)possible values (typically 0 through 255 if the byte is
+  interpreted as an unsigned number, or -128 through 127 if the byte
+  is interpreted as a signed value.) Abbreviated with an upper-case
+  letter \emph{B}.
+\item[Compression] A mathematical process for reducing the size of a
+  file or other digital object. Compression can be \emph{lossless} or
+  \emph{lossy}. In Lossless compression the original file can be recovered by
+  \emph{decompressing}, while with lossy compression information is
+  lost and the exact original cannot be recovered. (However, lossless
+  compression may have such high fidelity that a human being is unable
+  to distinguish between the original and the decompressed objects.
+\item[Deleted files] Files whose contents can be recovered but the
+  sectors of which are not allocated.
+\item[Digital Forensics] ``A branch of forensic science encompassing the
+  recovery of and investigation of material
+  found in digital devices, often in relation to computer crime.''\cite{reith:examination}
+\item[Digital Trace Evidence] Another name for \emph{residual data}.
+\item[Disk Image] A byte-for-byte copy of all the data on hard drive,
+  camera card, or other kind of sector-oriented mass storage
+  device. Disk images can contain additional metadata such as an
+  embedded cryptographic hash of the original media, the date that the
+  image was made, the examiner who made the image, as well as notes.
+\item[Disk Imager] A program for making disk images.
+\item[Media Exploitation] The extraction, translation and
+  analysis of digital documents and media to generate
+  useful and timely information.
+\item[File] An ordered collection of 0 or more bytes. Files have a
+  length; they may optionally metadata such one or more file names,
+  modification dates, owners, and other information.
+\item[File Header] One or more fixed bytes at the beginning of a
+  file. For example, ZIP files begin with the file header ``PK'' (hex
+  \texttt{50 4B}), while JPEG files begin with the field header
+  \texttt{FF D8 FF E0}.
+\item[File Footer] One or more fixed bytes at the end of a file. JPEG
+  files end with the file footer \texttt{FF D9}.
+\item[File System] Part of a computer's operating system which
+  controls the storage of files on a mass storage system such as a
+  hard drive or camera card.
+\item[Forensic Science]
+\item[Hash Value] Always say \emph{hash value}, never \emph{hash
+  code}, since the word \emph{code} might refer to either the hash
+  value or the program that computes the value.
+\item[Investigator-Centric] Digital Forensics is said to be
+  ``investigator-centric,'' meaning that most of the advances in the
+  field have been to serve specific needs of investigators, rather
+  than based on what is scientifically or technically possible.
+\item[Logical Block Address (LBA)] \emph{Sectors} of a mass storage
+  device are arranged in numbered sectors, starting with LBA 0. Early
+  PC systems used hard drives that supported a 22-bit LBA and 512-byte sectors, allowing for a
+  total of $2^{22}\times 2^{9}=2^{31}=2\textrm{TB}$ of storage. The
+  current Advanced Technology Attachment standard, ATA-6, supports
+  48-bit LBA addresses and a 4096-bit sector size, for a maximum disk
+  with $2^{48}\times 2^{12}=2^{60}\approx 1,152,921\textrm{TB} \approx 1
+  \textrm{EB (exabyte)}$ of storage.
+\item[Malware] Software that embodies evil intent, such as to damage
+  computer systems or steal private information. Computer Viruses,
+  worms, and Trojan horses are examples of malware. 
+\item[Metadata] Data about other data. The created, modified and
+  access timestamps associated with a file on a camera card are
+  examples of metadata.
+\item[MD5] Message Digest \#5, a cryptographic hash algorithm
+  developed by MIT professor Ron Rivest in 1991. Although MD5 is
+  widely used in computer forensics, MD5 has known flaws and should
+  not be used in applications that depend upon collision resistance.
+% \item[Network forensic analysis tool (NFAT)] A system that can record
+%   packets as they move over a network and perform detailed
+%  after-the-fact analysis.
+% \item[normalization]
+% \item[Packet] A set of bytes that are sent over a network. Most
+%   Internet packets range in size from 40--1500 bytes.
+% \item[PCAP File] A packet capture file, which is typically a set of
+%   packets that were recorded using a packet sniffer.
+% \item[Packet sniffer] A program or device that can record packets are
+%   they move over a network.
+% \item[Packet Traces]
+% \item[Provenance]
+\item[Residual Data] data that is left behind on a computer after an
+  operation is completed but is no longer in active use. For example,
+  most computer systems erase the file name when a file is deleted,
+  but do not overwrite the actual file contents. These contents remain
+  on the drive as residual data, recoverable with computer forensic tools.
+\item[Sector] The minimum amount of data that can be read or written
+  to a mass storage device. Modern hard drives use sectors of 4096
+  bytes; drives with 512-byte sectors have been common since the mid
+  1970s and are still widely used today.
+\item[Subject Computer and Data] The computer system and data that are
+  being analyzed as part of a digital investigation. This may be data
+  extracted from a computer belonging to a suspect in a crime, but it
+  may also be data from the computer of a victim. Subject data may
+  even be data generated during the course of a DF tool.
+\item[Subject] is a common shorthand for the owner or primary use of a computer
+  system from which subject data was obtained. 
+\item[Tool-Based] Digital Forensics is said to be ``tool-based,''
+  meaning that most investigators in their investigations to the
+  capabilities provided by today's tools---investigators generally do
+  not devise their own digital experiments or invent new approaches
+  for working with data to solve specific cases.
+\item[Timestamp]
+\item[Unallocated sectors] Sectors that are not allocated to files or
+  metadata, but are instead available for use by the file system
+\end{description}
