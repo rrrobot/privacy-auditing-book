@@ -3,123 +3,117 @@
 \epigraph{Three can keep a secret, if two of them are dead.}{Benjamin
   Franklin}
 
-This book is about finding and exposing data that are \emph{hidden}, \emph{invisible}, or simply
-easy to \emph{overlook} in digital systems. Such data, when present
-without our knowledge, can damage privacy, cause pain, ruin
-reputations, cause financial loss, or even harm national security. The
-purpose of this book is to teach you methods for finding and exposing
-these data leaks so that you can prevent them from happening in the
-future.
-
-Secrets are present in many computer systems. They are stored in
-documents, embedded in operating systems, and even sent over
-information networks. It's not the presence of the secrets that
-damages privacy---it's the release of documents or data that are
-thought to be clean, but actually contain hidden information that
-should have been kept private. 
+This book is about finding and exposing data that are \emph{hidden},
+\emph{invisible}, or simply \emph{overlooked} in digital systems. When
+such data that are privacy sensitive are discovered, the results
+frequently include pain, ruined
+reputations, financial loss, and even harms to national
+security. 
 
 Consider these two cases:
 
 \begin{itemize}
-\item In April 2011, the UK Parliament posted an Adobe Acrobat Portable
-Document Format (PDF) file on its public website detailing key
-vulnerabilities of UK nuclear subs. The electronic document had been
-cleared by the British Ministry of Defense, where an official had been
-charged with removing the sensitive portions, but the redactions were
-made incorrectly: the sensitive text had simply been obscured with a
-black box, and could be recovered by copying the text out of the PDF
-file and pasting it into a word processor. The result was a document
-that appeared to be properly redacted, but which still contained state
-secrets.  A follow-up investigation by \emph{The Daily Telegraph}
-found similar PDF files in which sensitive information was improperly
-``redacted'' on four other UK government
+\item In April 2011, two software developers discovered that
+Apple's iOS~4 operating system kept a database that tracked the movements of every
+iPhone and iPad user in a database that was never purged. Worse, the database was copied to the users'
+laptop  whenever the phone was backed up using Apple's \emph{iTunes}
+program\cite{apple-tracking}. To demonstrate the privacy leak, the developers created an application
+exported the data and plot it with Google Maps~(\figref{heatmap}). A
+media uproar resulted, forcing 
+Apple to make an unplanned release of its operating system that fixed
+the bug\cite{apple-tracking-statement}. 
+
+\item Also in April 2011, the UK Parliament posted an Adobe Acrobat Portable
+Document Format (PDF) file on its public with sensitive military
+information about UK nuclear subs. Although the file had been
+redacted and cleared by the British Ministry of Defense,  \emph{The
+  Daily Telegraph} discovered that the information had merely been
+covered with black boxes, rather than being 
+actually removed. A follow-up investigation 
+found other PDF files that had improperly redacted on four other UK government
 websites\cite{telegraph-april2011-secrets}.
-
-\item Also in April 2011, two security researchers discovered that
-Apple's iOS~4 operating system was tracking the movements of every
-iPhone and iPad and storing that information in a database on the
-mobile device. This database was copied to the users'
-desktop or laptop computer whenever they backed up their mobile
-device. The researchers, Pete Warden and Alasdair Allan, discovered
-the file by accident---but they understood its
-importance\cite{apple-tracking}. Warden and Allan developed an application that
-took the data and plotted it on a map, with larger dots indicating
-more data points~(\figref{heatmap}). A media uproar resulted, and
-Apple released a new version of iOS that fixed the bug shortly
-thereafter\cite{apple-tracking-statement}. 
-
 \end{itemize}
-
 
 \begin{figure}
 \includegraphics[width=\textwidth]{ch-1/5637893141_ba59f2d989_o.png}
-\caption{In April 2011 two researchers discovered that Apple's iOS 4
+\caption{In April 2011, Pete Warden and Alasdair Allan discovered
+that Apple's iOS~4
   operating system recorded the location of nearby Wi-Fi access points
   to aid in geolocation. Due to a bug the database was never
-  cleared. As a result, the database could easily be used to create a
-  map of every place that the iPhone had been. (C) 2011 John
-  Niedermeyer. {\small (Licensed under Creative Commons
-  Attribution-NonCommercial-ShareAlike 2.0 Generic)}}\label{heatmap}
+  cleaned. As a result, the database could easily be used to create a
+  map of every place that the iPhone had been. \rights{\copyright 2011 John
+  Niedermeyer. Licensed under Creative Commons
+  Attribution-NonCommercial-ShareAlike 2.0 Generic.}}\label{heatmap}
 % http://www.flickr.com/photos/nedward/5637893141
 \end{figure}
 
-Over the years a wide variety of software running on many different
-kinds of computers have been responsible for significant privacy and
-security violations. The violations are typically
-\emph{unintentional}---the people who wrote these programs didn't
-create them with the goal of violating privacy. Instead, the programs
-have had bugs or usability flaws that caused private information to be
-inadvertently retained or distributed. The software problems are
-typically so subtle that most users don't realize that their private
-information is being compromised. And because the private information
-leaked is typically embedded in a form that is invisible or easily
-ignored, the flaws can persist for weeks, months, or even years before
-they are discovered and fixed.
-
-Inadvertent privacy leaks aren't limited to government agencies and
-major computer manufacturers: many damaging privacy leaks happen
-person-to-person because modern computer systems are so
-complex. Consider the digital photograph shown in \figref{nsf_hq}. The
-original photo was 3264x2448 pixels and clearly showed a readily
-identifiable 12-story office building. The cropped version is 1248x699
-and does not contain much identifying information. But the cropped
-version still contains the metadata from the original; this metadata
-describes the time that the photograph was taken, the fact that it was
-taken with an iPhone 4S, and the GPS location of the
-photographer to within a few feet. (\figref{nsf_metadata}). 
-
-It turns out that there are several different ways to crop JPEG
-photographs on the Macintosh computer that was used to make
-\figref{ch-1/nsf_hq}. One of the programs is Apple's iPhoto, which has
-check boxes for including ``Title and keywords'' and ``Location
-information'' on its export dialog box. 
-
-\sgraphic{ch-1/nsf_hq}{This photograph of a tree and a few cars contains
-  and embedded title and GPS location information.}
-
-\bifigure{ch-1/nsf_hq_exif}{ch-1/nsf_hq_gps}{Metadata from \figref{ch-1/nsf_hq}, as displayed by the Apple
-  Macintosh Preview application.}
-
-\bifigure{ch-1/export}{ch-1/export1}{Apple's iPhoto (left) allows the user to select whether or not
-  titles and location metadata will be included in exported
-  photographs; Apple's Preview tool (right) copies metadata without
-  warning the user.}
-
-\section{Technical Privacy Auditing}
-
-This book teaches some of  ways that private information has been
-leaked in modern information systems and shows how you can find 
-those leaks using tools that are freely available. We call this
-process ``technical privacy auditing'' because it uses technical
-tools to find privacy problems in software.
+Hidden data are present in many computer systems. They are stored in
+documents, embedded in operating systems, and even encoded and sent over
+networks. It's not the \emph{presence} of these data that damages
+privacy---it's their inevitable discovery and exploitation.
 
 Most of the technical privacy failures that we know about were not
 discovered by the companies that wrote the software in
 question. Instead, they were discovered by students,
-journalists, and computer enthusiasts---people who looked at the data
+journalists, and computer ``hackers''---people who looked at the data
 and saw something that they thought was worth investigating.
 
-The root cause of many technical privacy violations is the complexity
+This book teaches approaches for systematically finding privacy
+leaks and for documenting what you have found. We call this process
+``technical privacy auditing'' because it uses technical tools to find
+privacy problems. We believe that many such privacy leaks can be
+discovered through straightforward visual inspection and the use of
+simple data mining techniques. Once found, many problems can be
+avoided with relatively simple software modifications.
+
+Technical privacy auditing can be used by software developers, testers
+and customers to evaluate software before it is released or
+deployed. The techniques can also be used to examine data before
+publishing. The techniques could have been used to prevent the data
+leaks by the British MOD or the deployment of privacy-compromising
+software to millions of Apple customers.
+
+\subsection{Privacy-leaking Software Bugs}
+
+All kinds of software leaks personal information. Sometimes it is
+because the software is improperly used, or because it not designed
+to perform a function in a way that preserves privacy. That's what
+happened in the case of the British PDFs. Other times the software has
+a bug that prevents sensitive information from being properly
+removed, as was the case with iOS~4.
+
+Before discovery, these data can be present for a long time without
+causing apparent harm. But that doesn't mean that the flaws aren't
+known, or aren't being actively exploited. For example, in location
+tracking in iOS~4 was widely to digital forensics examiners---the
+information had even appeared in a book. The people who knew and made
+use of the privacy leak didn't publicize it to the general public
+because they didn't want it fixed.  
+
+Over the years a wide variety of software running on many different
+kinds of computers have been found to leak private information.  The
+violations are usually  
+\emph{unintentional}---the programmers who developed the code didn't
+create them with the goal of violating their users'
+privacy. Nevertheless, the software 
+had bugs or usability flaws that caused private information to be
+inadvertently retained or distributed. The software problems are
+typically so subtle that most users don't realize that their private
+information is being compromised. Because the private information
+leaked is typically embedded in a form that is invisible or easily
+ignored, the flaws can persist for weeks, months, or even years before
+they are discovered and fixed.
+
+Software bugs that result in privacy leaks tend to fall into these
+broad categories:
+
+\begin{itemize}
+\item Failure to destroy privacy-sensitive data when they are no longer needed.
+\item Transmission of privacy-sensitive data beyond a protection boundary. 
+\item Improper use of encryption.
+\end{itemize}
+
+The root cause of many of these bugs is the complexity
 of modern information systems. Today's computers are vast, with
 gigabytes of storage, tens of thousands of application programs, and
 real-time connections to data networks that continually download ever 
@@ -130,14 +124,37 @@ microphone. It's very easy for a programmer to overlook some small
 piece of storage that may hold some very sensitive piece of
 information. 
 
-The basic premise of this book is that many such privacy leaks can be
-discovered through straightforward visual inspection---provided that
-you know where to look---and they can frequently be avoided with
-relatively simple software modifications. Our goal is to teach you flexible, general
-purpose approaches for finding that data and clearly documenting the
-problem for others. This
-will put you in the position to discover new privacy and security
-leaks in the future and for getting them fixed.
+\subsection{Privacy-leaking Usability Flaws}
+
+Another source of privacy leaks can be software that *1
+
+Inadvertent privacy leaks aren't limited to government agencies and
+major computer manufacturers: many damaging privacy leaks happen
+person-to-person because modern computer systems are so
+complex. Consider the digital photograph shown in \figref{nsf_hq}. The
+original photo showed a readily
+identifiable 12-story office building. The photo was cropped to an
+eight of its original size, removing much of identifying information. But the cropped
+version still contains metadata from the original that
+describes the time that the photograph was taken, the fact that it was
+taken with an iPhone 4S, and the GPS location of the
+photographer to within a few feet. (\figref{nsf_metadata}). JPEG
+metadata is discussed in \chapref{ch-jpeg}. The program used to crop
+the image didn't the metadata.
+
+\sgraphic{ch-1/nsf_hq}{This photograph of a tree and a few cars contains
+  and embedded title and GPS location information.}
+
+\bifigure{ch-1/nsf_hq_exif}{ch-1/nsf_hq_gps}{Metadata from
+  \figref{ch-1/nsf_hq}, as displayed by Preview.}
+
+
+\section{Technical Privacy Auditing}
+
+of ways that private information has been
+leaked in modern information systems and shows how you can find 
+those leaks using tools that are freely available. 
+
 
 Privacy leaks such as the hidden information in PDFs and Apple's
 unintentional location database are insidious because they are

@@ -14,7 +14,7 @@
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
 
 % Bibliography using biblatex
-\usepackage[style=alphabetic,sorting=nyt,sortcites=true,autopunct=true,babel=hyphen,hyperref=true,abbreviate=false,backref=true]{biblatex}
+\usepackage[backend=bibtex,style=alphabetic,sorting=nyt,sortcites=true,autopunct=true,babel=hyphen,hyperref=true,abbreviate=false,backref=true]{biblatex}
  \addbibresource{../bib/textbook.bib}  % BibTeX bibliography file
  \addbibresource{../bib/forensics.bib} % BibTeX bibliography file
  \addbibresource{../bib/garfinkel.bib} % BibTeX bibliography file
@@ -22,9 +22,9 @@
 \defbibheading{bibempty}{}
 
 % Index
-\usepackage{calc} % For simpler calculation - used for spacing the index letter headings correctly
+\usepackage{calc}    % For simpler calculation - used for spacing the index letter headings correctly
 \usepackage{makeidx} % Required to make an index
-\makeindex % Tells LaTeX to create the files required for indexing
+\makeindex           % Tells LaTeX to create the files required for indexing
 
 %----------------------------------------------------------------------------------------
 
@@ -42,6 +42,7 @@
 \usepackage{eso-pic} % Required for specifying an image background in the title page
 \usepackage{titletoc} % Required for manipulating the table of contents
 \usepackage{fancyhdr} % Required for header and footer configuration
+
   \pagestyle{fancy}
   \renewcommand{\chaptermark}[1]{\markboth{\sffamily\normalsize\bfseries #1}{}} % Chapter text font settings
   \renewcommand{\sectionmark}[1]{\markright{\sffamily\normalsize\thesection\hspace{5pt}#1}{}} % Section text font settings
@@ -62,8 +63,6 @@
   \newpage
   \fi}
   \makeatother
-
-
 
 \input{book-preamble}
 \begin{document}

@@ -1,0 +1,4 @@
+http://www.imagemagick.org/download/python/
+http://www.rmi.net/~lutz/about-pp4e.html
+http://www.libsdl.org/ - SImple Direct Media Layer
+http://stackoverflow.com/questions/3896286/image-library-for-python-3
