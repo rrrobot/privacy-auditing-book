@@ -16,3 +16,100 @@ different kinds of data later in this book.
 \section{Applying the model to network traffic}
 
 
+\section{Other Investigation Models}
+
+\subsection{The Digital Forensics Model}
+
+Even though every case is different, DF practitioners have developed an
+approach to conducting investigations called the 
+\emph{digital forensics model}\cite{pollitt:models}. The 
+elements of the model include:
+
+\begin{description}
+\item[Preparation] Before performing an investigation, those involved
+  must prepare themselves by deciding upon the standards and
+  procedures that will be followed; receiving the necessary training;
+  and obtaining the appropriate equipment and software required for
+  investigations. 
+
+  To use the example of the cell phone from above,
+  preparation may involve obtaining specialized hardware that can extract the
+  memory from a cell phone and practicing one's technique on phones that are not part
+  of the investigation.
+
+\item[Collection and Preservation]
+  Before data can be analyzed, they   must be removed from the
+  device being analyzed and preserved to create a lasting
+  record. Without this step, it may not be possible to repeat an
+  analysis at a later point in time. 
+
+  In our example, this step might involve the actual extraction of data
+  from the cell phone into a single file called a \emph{physical
+    image} that records all of the phone's applications, phone data, user data,
+  and deleted files. Such a physical image might be 64GB in size or
+  even larger.
+
+\item[Examination and Extraction] Working with the preserved data, an
+  examiner will explore for any information that might be
+  relevant to the investigation at hand. Once that information is
+  found, it is extracted and isolated.
+
+  In our example, this step might involve the extraction of each
+  digital photograph from the \emph{physical image} and the storage of
+  each photograph in its own file. The files might be named according
+  to where they were found in the physical image (e.g. 62071808.jpg)
+  rather than with the name that they were given by the phone
+  (e.g. IMG001.JPG). The examiner might also extract \emph{metadata}
+  from each photograph such as the time and GPS coordinates associated
+  with each exposure and the serial number of the camera that took the
+  photograph. This information might be stored in a separate file for
+  each photograph (e.g. 62071808.txt) or might be stored in a single
+  spreadsheet for all of the photographs (e.g. jpeg-metadata.xls).
+
+\item[Analysis] Once the specific data being analyzed has been
+  extracted, the analyst will construct one or more hypotheses that
+  uses the digital evidence to explain possible past activities. A
+  hypothesis may draw from multiple digital devices---an email message
+  sent from a desktop computer to a cell phone, for example---or the
+  hypothesis may incorporate events in the physical world, like a
+  power failure or theft. During this phase a good analyst will also
+  try to construct alternative hypotheses that are consistent with the
+  evidence but which point to different conclusions. 
+
+  In our example, the hypothesis may be that a specific photograph was
+  taken with the phone in question. This may be supported by the
+  photograph having similar metadata to a photograph taken a few
+  minutes earlier or later. An alternative hypothesis may be that the
+  photograph was downloaded to the phone over a network.
+
+\item[Reporting and Testimony] Finally, the analyst will
+  produce a written report or give testimony in a courtroom.
+  Judges and juries can't examine digital evidence for
+  themselves---even if they had the training and the technical skills
+  to do so, performing their own analysis would be inappropriate:
+  their role in the legal process is to evaluate the law, the evidence
+  and make a legal determination, not to perform technical
+  analysis. Reports and testimony must therefore be 
+  \emph{complete}---they must describe the tools and procedures
+  that were followed, clearly document what was found, and then
+  separately provide the technical interpretation of the
+  evidence. 
+
+  In our example, the analyst might prepare a report documenting how
+  the phone's contents were copied, the tools that were used to
+  extract the photographs and their corresponding metadata, and how
+  the evidence is consistent with the analyst's hypothesis. 
+
+\end{description}
+
+The model brings reliability and repeatability to the process, helping
+to assure that different examiners working with the same data will
+arrive at the same conclusion. 
+
+Because they can look into the past and uncover hidden data, DF tools
+are increasingly used beyond the courtroom. Security professionals use
+DF tools to analyze network intrusions---not to convict the attacker,
+but to understand how the attacker gained access to plug the
+hole. Data recovery firms use DF tools to resurrect files from drives
+that have been inadvertently formatted or damaged. 
+
