@@ -12,7 +12,7 @@ security.
 
 \section{Leaks of Personally Identifiable Information}
 
-Consider these two cases:
+Consider these three cases:
 
 \begin{itemize}
 \item Today's smart phones use a combination of signals from Global
@@ -97,7 +97,7 @@ publishing. The techniques could have been used to prevent the data
 leaks by the British MOD or the deployment of privacy-compromising
 software to millions of Apple customers.
 
-\subsection{Privacy-leaking Software Bugs}
+\subsection{Leaky Bugs}
 
 All kinds of software leaks personal information. Sometimes it is
 because the software is improperly used, or because it not designed
@@ -148,7 +148,7 @@ microphone. It's very easy for a programmer to overlook some small
 piece of storage that may hold some very sensitive piece of
 information. 
 
-\subsection{Privacy-leaking Usability Flaws}
+\subsection{Usability Flaws}
 
 Some privacy leaks happen because the user of a program doesn't
 realize what the program is doing. The program behaves properly,
@@ -165,7 +165,7 @@ does not use a translucent color. Instead, the program prints
 highlighted text by first printing the colored box, then the black
 text.
 
-\sgraphic[width=3in]{ch-1/ms-tool}{\caption{Microsoft Word 2010's
+\sgraphic[width=3in]{ch-1/ms-tool}{Microsoft Word 2010's
     highlight tool can be used to highlight 
   text with different background colors. When the background is
   black, the text appears to be redacted, but it is still present.}
@@ -175,17 +175,16 @@ Privacy leaks such as those that befuddled the UK MOD
 from yellow to black. The result is black text printed on a black box.
 When the text is printed, Word still generates instructions to print
 both the box \emph{and} the text when printing to a PDF file
-(Figure~\ref{demo1}), and both can be independently recovered.
+(Figure~\ref{ch-1/fig2}), and both can be independently recovered.
 
 \sgraphic{ch-1/fig2}{The Text Highlight tool places a colored box underneath the
   text. When the box is the same color of the text, the text appears to
-  be absent, but it is still present in the resulting PDF file.}\label{demo1}
-\end{figure}
+  be absent, but it is still present in the resulting PDF file.}
 
 Inadvertent privacy leaks aren't limited to government agencies and
 major computer manufacturers: many damaging privacy leaks happen
 person-to-person because modern computer systems are so
-complex. Consider the digital photograph shown in \figref{nsf_hq}. The
+complex. Consider the digital photograph shown in \figref{ch-1/nsf_hq}. The
 original photo showed a readily
 identifiable 12-story office building. The photo was cropped to an
 eight of its original size, removing much of identifying information. But the cropped
@@ -233,12 +232,37 @@ releases.
 
 \emph{prior work on privacy auditing}
 
+Most privacy auditing involves the systematic examination of policies,
+procedures, and specifications. An accounting firm might review the
+privacy policy associated with a website, then examine the website's
+specifications to see if the site's designers were told to create a
+website that matched the policy. For example, the privacy policy might
+say that the website does not track the geographical location of
+users, but the website's developers might have used a platform that
+does record this information. 
+
 
 \subsection{Technical Privacy Auditing}
 
-Technical privacy auditing is an approach of looking for private
-information through technical means. 
+Technical Privacy Auditing (TPA) is a new approach of looking for private
+information through technical means.  In TPA we are typically looking
+for information whose presence is unknown or undocumented. Such
+privacy leaks cannot be readily found by examining policies or
+documentation. Instead it is necessary to search for them.
 
+We have created the TPA Methodology to help users find leaks. The TPA
+Methodology consists of several steps:
+
+\begin{enumerate}
+\item \textbf{TARGET} Determine the systems or data objects to examine.
+\item \textbf{RESEARCH} Find information about the data formats in
+  questions and the tools that are available to analyze them. 
+\item \textbf{COLLECT} Obtain exemplars, ideally from multiple instances.
+\item \textbf{ANALYZE} Extract Features; Look for oddities and outliers
+\item \textbf{EXPERIMENT} Show that you understand what is happening
+\item \textbf{REPLICATE} Ideally on another system
+\item \textbf{REPORT} Share results in a concise \& understandable form
+\end{enumerate}
 
 
 \subsection{Digital Forensics}
