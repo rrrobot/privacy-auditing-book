@@ -83,8 +83,7 @@ this display means.
 The \emph{bit} is the fundamental unit of storage on digital computers. Bits
 have two states. Typically we call these |0| and |1|, but they can be any
 two values (e.g. true/false, yes/no or up/down). This book 
-uses the values |0| and |1| for bits.
-% \marginpar{The word \emph{bit} is a contraction of the words \emph{binary digit}.}
+uses the values |0| and |1| for bits. (The word \emph{bit} is a contraction of the words \emph{binary digit}.)
 
 An ordered group of 4 bits is called a \emph{nibble}. Each bit can be
 a |0| or a |1|, creating 16 possible different values. Note
@@ -170,7 +169,6 @@ left-hand byte  called the \emph{most
 significant byte}; it represents the binary values $2^8$ through
 $2^{15}$. 
 
-
 Because most computer memories are arranged as an array of bytes,
 there are two ways to store these 16-bit values at a particular memory
 location. 
@@ -181,10 +179,43 @@ location.
 Larger numbers Two bytes can be grouped together, allowing values between 0 and
 65,535 to be represented. Four bytes
 
-
 \section{Text, ASCII and Unicode}\label{sec:letters}
 
-In the previous section we looekd 
+Modern computers do not work with bits directly, but use sequences of
+8 bits called bytes. This sequence can represent
+$2\times2\times2\times2\times2\times2\times2\times2=2^8=256$ distinct
+values. The meaning assigned to these values generally depends on the
+context. A few examples are shown in \tabref{tab:8bits}. The ASCII
+codes represent NULL (no data is sent), SOH (Start Of Heading---the
+beginning of a data header), and DEL (delete). NULL is a holdover from
+the days of synchronous terminals, when there needed to be a constant
+flow of data down all links: sending all 0s (NUL) meant that the data
+should be ignored. DEL was chosen as delete when characters were
+punched on paper tape and cards: in the event of an error, the
+operator could backspace the punch and punch holes across the entire
+line, causing the computer to ignore the value. We shall return
+to the question of representation in \chapref{chap:unicode}.
+
+\begin{table}
+\begin{tabular}{cccccccc|c|c|c|c}
+\multicolumn{8}{r}{                       Term:}  & unsigned char & signed char & ASCII \\
+\multicolumn{8}{r}{                       Range:} & 0--255      & -128--127 & NULL--DEL\\
+\cline{9-11}\multicolumn{8}{c}{Bits}                          &        &               &             &          \\
+$2^7$ & $2^6$ & $2^5$ & $2^4$ & $2^3$ & $2^2$ & $2^1$ & $2^0$  &        &               &             &          \\
+  128 &    64 &   32 &    16 &     8 &     4 &     2 &     1  &        &               &             &          \\
+\hline
+    0 &     0 &    0 &     0 &     0 &     0 &     0 &     0 &            0  &            0  &   NULL     \\
+    0 &     0 &    0 &     0 &     0 &     0 &     0 &     1 &            1  &            1  &   SOH      \\
+    0 &     1 &    0 &     0 &     0 &     0 &     0 &     1 &           65  &           65  &   A        \\
+    0 &     1 &    1 &     0 &     0 &     0 &     0 &     1 &           96  &           65  &   a        \\
+    0 &     1 &    1 &     1 &     1 &     1 &     1 &     1 &           127 &          127  &   DEL      \\
+    1 &     0 &    0 &     0 &     0 &     0 &     0 &     0 &           128 &         -128  &   n/a      \\
+    1 &     1 &    1 &     1 &     1 &     1 &     1 &     1 &           255 &           -1  &   n/a      \\
+\end{tabular}
+\caption{Eight bits can represent 256 distinct values.}\label{tab:8bits}
+\end{table}
+
+
 
 \section{Hex Dumps}\label{sec:hex-dumps}
 A common way to visualize binary data is to format it as a series of

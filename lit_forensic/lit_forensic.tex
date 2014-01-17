@@ -767,21 +767,81 @@ blockers, mirror drives, and forensic disk images.
 % Poil - GFDL - 2005
 % http://en.wikipedia.org/wiki/File:Tapeprotection.jpg
 
-\section{Write Blockers}
+\section{Collecting and Preserving Stored Digital Evidence}
 
-A write blocker is a device or program that provides a kind of
-write-protection for a mass storage system by blocking attempts to
-write to the media. Write blocking can be performed in hardware or
-software. 
+In computing the word \emph{store}
+is used both as a verb (the act of storing the information) and a noun
+(the place where the information is stored). Computer systems have two
+kinds of storage systems:
 
-There are many different approaches to implementing a write
-blocker. For example, a write blocker can allow \emph{read} commands
+\begin{description}
+\item[Primary Storage] is storage that can be directly accessed by the
+  computer's central processing unit (CPU). Most computers use
+  \emph{Random Access Memory} (RAM) as their primary storage, although
+  some systems can also use a special kind of flash memory called
+  \emph{NOR Flash}. 
+
+\item[Secondary Storage] is storage that cannot be directly accessed
+  by the CPU. To use secondary storage, information must be copied
+  between secondary storage and primary storage. Typically these copy
+  operations are performed on fixed-sized \emph{blocks} of data.
+\end{description}
+
+Even though this chapter is concerned with data on mass
+storage system, we will see that forensic containers need to be able
+to store a wide variety of other kinds of information, including
+network packets, memory dumps, and even individual files. These
+additional modalities are required for a variety of reasons:
+
+
+\subsection{Write Blockers}
+
+Removable media such as floppy disks, tapes and storage cartridges
+used in the 1990s generally had some kind of \emph{write-protect}
+switch or tab that could be used to prevent inadvertant alternation or
+overwriting of evidence. Hard drives of the time had no such
+facility. To overcome this deficiency the industry invented
+\emph{write-blockers}, a device that can be inserted inline between a
+hard drive and a computer system. A typical write blocker might have a
+male and a female connector; the female connector plugs into
+the hard drive's male connector, while the blocker's male
+connector plugs into a cable that connects to the host computer.
+
+Write blockers allow examination of subject data without fear of
+inadvertently modifying the contents---provided that the write blocker
+works properly. A problem with the concept of write blockers is that
+the only real specification of what these devices should do was their
+name---that is, they should block modification of data on the hard
+drive.  
+
+There are generally two design choices that must be decided when
+creating a write blocker:
+
+* Determining which commands are write commands.
+
+* Determining what to do when write commands are executed.
+
+But there
+are two ways to do this. One is to literally block the commands that
+alter data, a task that requires a clear enumeration of all such
+commands. An alternative (and somewhat safer) strategy is to only pass
+those commands that are known \emph{not} to alter
+data\cite{dfrws2006:JamesLyle}. Both of these approaches
+implicitly assume that the only way data is altered on the drive is
+through the execution of commands, and this is not actually the
+case. For example, the S.M.A.R.T. counters inside modern drives that
+track the number of seconds the drive is powered up will continue to
+advance even when a write-blocker is in place.
+
+
+A write blocker can allow \emph{read} commands
 to pass while immediately returning an error condition when a
 \emph{write} command is attempted. Alternatively the \emph{write}
 commands may be executed on a different piece of media, sometimes
 called a \emph{shadow drive}, giving the operating system the
 appearance of a successful write while leaving the original media
 undamaged.
+
 
 Write blockers can be used to allow an examiner to directly examine
 subject data on the original media. Alternatively, they can be used to allow the subject
@@ -793,11 +853,185 @@ inappropriately mixed between cases. Clearing is especially important
 if the subject drive has errors or if the mirror drive is larger than
 the subject drive.
 
-\section{Disk Imagers}
+
+
+\subsection{Disk Imagers}
+
 The copy from the subject drive to the mirror drive is performed with
 a program called a \emph{disk imager}.
 
-\section{Digital Evidence Containers}
+\section{Image Files}
+
+\citeN{dfrws2002:JamesLyle} introduced the Computer Forensic Tool Testing (CFTT)
+program at the National Institute of Standards and Technology (NIST).
+
+
+
+Instead of making a copy to a mirror disk, it is possible to copy all
+of the accessible blocks on a mass storage system into a single file
+on a computer disk. Such files are called \emph{image files} because
+they represent an image of the information stored on the disk. The
+term ``image'' here should not be confused with the other usage of the
+word ``image'' to describe a photograph.
+
+A raw disk image is a byte-for-byte copy of a mass storage
+system. Such files can be quite large---a 256GB drive will have a raw
+image that is 256GB in size. This can cause problems, as many computer
+systems cannot operate on files that are larger than 2GiB or 4GiB due
+to 32-bit limitations. One way to address the file size limitation is
+by splitting the file into multiple files of equal size---for example,
+a 256GB disk image can be split into 256 files of 1GB each. Such
+collections of files are called \emph{split raw images}; each file is
+typically given a name such as \emph{FILENAME.000}, \emph{FILENAME.001},
+\emph{FILENAME.002} and so on.
+
+A second and more important problem with raw image files is that they
+lack important \emph{metadata} about the process by which they were
+acquired. Metadata is data about data; in the case of files in a file
+system the metadata includes the file's name, timestamps, and other
+kinds of file system information. But in the case of disk images,
+there is a wealth of additional metadata that can be collected, such
+as:
+
+\begin{itemize}
+\item The date and time that the disk was imaged.
+\item The manufacturer, model number, and serial number of the disk
+  that was imaged.
+\item The examiner that did the imaging.
+\item The physical location where the image was made.
+\item Other notes about the imaging process or the physical artifact.
+\end{itemize}
+
+There is also need for integrity controls to assure that the disk was
+properly imaged and that the image itself was not altered or corrupted
+after the file was created. A common integrity control is to compute
+the cryptograhpic hash of the disk image's bitstream, computed by
+feeding all of the bytes in the disk image into a hash function such
+as MD5 or SHA1. Cryptographic hashes have the property that changing a
+single bit causes the resulting hash function to change
+unpredictably. In practice, the examiner computes the hash of the disk
+image and stores this information separately---for example, by writing
+it in a notebook. The disk can then be imaged a second time. If the
+two disk images have the same hash, then the examiner can assume that
+the image itself is a faithful copy of the source disk. Later, the
+examiner can re-calculate the hash of the disk image to show that the
+image has not been modified.
+
+Compression can significantly shrink the size of a disk image
+file. Although it is tempting to such programs such as ZIP and GZIP
+directly on a raw file, the resulting file must be entirely
+decompressed before it can be used. For files larger than a gigabyte
+this quickly proves unworkable. Instead, it is common practice to
+use a file format that breaks the raw disk image into blocks or
+segments and compresses each individually. These segments are then
+stored in the resulting image file, along with some kind of map that
+describes, for each segment, the offset within the original uncompressed file
+and the physical offset of the compressed segment in the compressed file.
+
+[Diagram showing the original file, the compressed file, and the map]
+
+\subsection{Image File Formats}
+Today a wide number of image file formats are in use. Broadly
+speaking, there are formats that were developed for digital forensics
+and those developed for mainstream computing. Within the set of
+formats developed for digital forensics, there are \emph{proprietary formats} that were developed by
+vendors for commercial tools and \emph{open source} formats that were
+largely developed for academic purposes. However the distinction can
+be misleading, as there exists several open source implementations for
+the proprietary formats, making them somewhat open source. 
+
+\subsubsection{Proprietary Forensic Formats}
+
+SafeBack~\cite{safeback}, a DOS-based utility designed to create
+exact copies of entire disks or partitions, offers a
+``self-authenticating'' format for images, whereby SHA256 hashes are
+stored along with data to ensure the latter's integrity.  Although
+few technical details are disclosed publicly, SafeBack's authors
+claim that the software ``safeguards the internally stored SHA256
+values''~\cite{safebacksafeguards}.
+
+
+The most widely disk image format appears to be Guidance Software's EnCase Forensic~\cite{encase} uses
+a proprietary format for images, reportedly based on ASR Data's
+Expert Witness Compression Format~\cite{ew}.  EnCase's Evidence File
+(.E01) format~(Fig.~\ref{fig:encase}) contains a physical bitstream
+of an acquired disk, prefixed with a ``Case Info'' header,
+interlaced with CRCs for every block of 64 sectors~(32 KB), and
+followed by a footer containing an MD5 hash for the entire
+bitstream.  Contained in the header are the date and time of
+acquisition, an examiner's name, notes on the acquisition, and an
+optional password; the header concludes with its own CRC. 
+
+The E01 format allows for the contents of a disk image to be
+compressed. Each image volume contains a so-called ``jump table'' that
+contains the offset of each block in the original uncompressed disk,
+the offset in the disk image of the compressed block, and the size of
+the compressed block. Originally offsets were described with 32-bit
+signed integers, limiting the size of the disk image volume to 2GiB;
+additional volume files with extensions E02, E03, and so on could be
+added to create images of disks that could not fit within a single
+volume. The EnCase imager allows the user to specify a maximum size
+for each of these files: setting the size to 700MB allows each volume
+to be burned to a CD-R. 
+
+AccessData's Forensic Toolkit (FTK)
+supports storage of disk images in EnCase's or SMART's file format,
+as well as in raw format and an older version of Safeback's format
+(Section~\ref{sec:safeback}). 
+
+\subsection{ILook Investigator's IDIF, IRBF, and IEIF Formats}
+ILook Investigator v8~\cite{ILookv8} and its disk-imaging
+counterpart, IXimager, offer three proprietary, authenticated image
+formats: compressed (IDIF), non-compressed (IRBF), and encrypted
+(IEIF). Although few technical details are disclosed publicly,
+IXimager's online documentation~\cite{IXimager} provides some
+insights:  IDIF ``includes protective mechanisms to detect changes
+from the source image entity to the output form'' and supports
+``logging of user actions within the confines of that event;''  IRBF
+is similar to IDIF except that disk images are left uncompressed;
+IEIF, meanwhile, encrypts said images.
+
+For compatibility with ILook Investigator v7 and other forensic
+tools, IXimager allows for the transformation of each of these
+formats into raw format.
+
+\subsection{ProDiscover Family's ProDiscover Image File Format}
+Used by Technology Pathways' ProDiscover Family of security tools
+\cite{prodiscover}, the ProDiscover Image File format
+\cite{prodiscoverformat} consists of five parts: a 16-byte Image
+File Header, which includes a signature and version number for an
+image; a 681-byte Image Data Header, which contains user-provided
+metadata about the image; Image Data, which comprises a single block
+of uncompressed data or an array of blocks of compressed data; an
+Array of Compressed Blocks sizes (if the Image Data is, in fact,
+compressed); and I/O Log Errors describing any problems during the
+image's acquisition.
+
+Though well documented, the format is not extensible.
+
+
+\subsubsection{Open Source Forensic Formats}
+
+Supported by PyFlag\footnote{In addition to its own {\tt sgzip} format,
+PyFlag can also read and write the Expert Witness Compression Format
+\cite{pyflagiosources}.}~\cite{pyflag}, a ``Forensic and Log
+Analysis GUI'' begun as a project in the Australian Department of
+Defence, {\tt sgzip} is a seekable variant of the {\tt gzip} format.  By
+compressing blocks (of 32KB, by default) individually, {\tt sgzip} allows
+for rapid accessing of the disk image by forensic software without the
+need to first decompress the entire image. The format does not associate metadata with images.
+\cite{pyflagdiskforensics,pyflagiosources}
+
+
+
+\citeN{dfrws2005:PhilipTurner} introduced \emph{digital evidence bags}
+as a way of supporting \emph{selective imaging}. Turner's file format
+is similar to EnCase's L01 format in that it supports logical files in
+addition to physical sectors.
+
+
+
+\subsection{Digital Evidence Containers}
 
 Mirror copies can be unwieldy to use, especially when the target
 drives are very large. An added annoyance is that many drives contain
@@ -825,6 +1059,21 @@ evidence through an organization or a forensic pipeline can be
 electronically recorded; and \emph{external references}, so that the
 evidence container can point to information present on other storage
 systems.
+
+\subsection{Other Kinds of Digital Evidence}
+
+* Cell phones
+
+* Memory
+
+* Network Evidence
+
+\begin{itemize}
+\item Data from networks or memory is frequently found on subject hard
+  drives. When it is found, it is useful for the forensic examiner to
+  extract that data and store it in its own container. 
+\end{itemize}
+
 
 \section{File System Analysis and File Extraction}
 

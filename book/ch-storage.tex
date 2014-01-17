@@ -1,0 +1,93 @@
+\chapter{How Data are Stored}
+As indicated above, while the primary storage system of most computers can be accessed a
+byte at a time, secondary storage can only be accessed in
+blocks. Secondary storage, in turn, can be divided into two broad
+categories:
+
+\begin{description}
+\item[Block addressable] storage systems are systems for which any
+  block can be individually read or written. Each block in a block
+  addressable system is assigned a \emph{logical block address}
+  (LBA). 
+\item[Streaming] storage systems are those that allow blocks to be
+  read or written as part of a sequence. Most streaming systems are
+  based on a spool of magnetic or optical tape. New blocks can be
+  written to the tape and the tape supports limited operations---for
+  example, \emph{rewind}, writing a \emph{mark}, \emph{seeking} to a mark,
+   \emph{erasing} and possibly \emph{overwriting}. In general it is
+   not possible with a streaming system to reliably overwrite a single
+   block---attempts to do so may result in other blocks being damaged
+   and rendered unreadable.
+\end{description}
+
+Confusingly, although we have used the term \emph{block} exclusively
+until now, many vendors use the term \emph{sector} to describe blocks
+that are written to spinning discs. (The term is presumably comes from
+the fact that data was originally stored in concentric circles on a spinning platter
+and in bands on a rotating magnetic drum. Thus, each block occupied a
+sector of a circle.) Until the mid 2000s most mass storage systems
+used blocks (sectors) that were 512 bytes in size. Since then vendors
+have moved to systems that use 4096-byte blocks internally, although
+many still give the appearance of using 512-byte sectors to provide
+for software compatibility. 
+
+\subsection{Drives, Hard Drives, Solid State Drives}
+
+\subsection{Write Blockers}
+
+Removable media such as floppy disks, tapes and storage cartridges
+used in the 1990s generally had some kind of \emph{write-protect}
+switch or tab that could be used to prevent inadvertant alternation or
+overwriting of evidence. Hard drives of the time had no such
+facility. To overcome this deficiency the industry invented
+\emph{write-blockers}, a device that can be inserted inline between a
+hard drive and a computer system. A typical write blocker might have a
+male and a female ATA-33 connector; the female connector plugs into
+the hard drive's male ATA-33 connector, while the blocker's male
+connector plugs into a cable that connects to the host computer.
+
+Write blockers allow examination of subject data without fear of
+inadvertently modifying the contents---provided that the write blocker
+works properly. A problem with the concept of write blockers is that
+the only real specification of what these devices should do was their
+name---that is, they should block modification of data on the hard
+drive.  But there
+are two ways to do this. One is to literally block the commands that
+alter data, a task that requires a clear enumeration of all such
+commands. An alternative (and somewhat safer) strategy is to only pass
+those commands that are known \emph{not} to alter
+data\cite{dfrws2006:JamesLyle}. Both of these approaches
+implicitly assume that the only way data is altered on the drive is
+through the execution of commands, and this is not actually the
+case. For example, the S.M.A.R.T. counters inside modern drives that
+track the number of seconds the drive is powered up will continue to
+advance even when a write-blocker is in place.
+
+\subsection{Disk Imaging and Disk Images}
+Two problems that are not solved by write blockers. First, the
+digital evidence still resides on the original media, which is a
+mechanical device and subject to failure. Second, most legal systems
+allow for both parties to have access to evidence. Both of these
+problems can be overcome by making a sector-for-sector copy of the
+disk, a process called \emph{disk imaging}.
+
+The most basic way to image a disk is to copy every sector onto
+another disk of the manufacturer and model number. Such a disk is
+called a \emph{mirror copy} or \emph{mirror volume}. Once the copy is made, the subject disk
+can be kept sealed in an evidence locker and the mirror volume can be
+used for forensic analysis. 
+
+A difficulty in making a mirror copy is that it may not be possible to
+obtain a drive of the exact make and model number. Fortunately, it is
+only necessary for the copy disk to be larger than the original. The
+sectors between the end of the original disk and the copy disk should
+be ignored.
+
+[Figure: original disk, copy, and the section to ignore.]
+
+\subsection{Inaccessible Information}
+
+TK - DCO and HPA
+
+TK - SMART information
+
