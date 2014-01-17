@@ -122,3 +122,150 @@ but to understand how the attacker gained access to plug the
 hole. Data recovery firms use DF tools to resurrect files from drives
 that have been inadvertently formatted or damaged. 
 
+Forensic tools are also used to determine that something did not
+happen. Here they are less powerful, for the well known reason that
+the absence of evidence is not the evidence of absence. 
+For example, in May 2006 a laptop and external hard drive containing
+sensitive personal information of 26.5 million veterans and military
+personnel was stolen from an employee at the Department of Veterans
+Affairs. After the stolen laptop was recovered in June 2006, forensic
+investigators analyzed the media and determined that the sensitive
+files had probably not been accessed\cite{va-laptop-1}. One way to
+make such a determination is by examining the access and modification
+times associated with each file on the computer's hard
+drive. Of course, the same
+forensic techniques that the investigators used could have been
+applied to access the VA laptop without modifying those timestamps,
+the VA investigators really just determined that the files had not
+been asked by convention, non-forensic means.
+
+As the preceding paragraphs make clear, today the field of digital
+forensics is largely \emph{tool-based} and
+\emph{investigator-centric}. 
+That is, the requirements of DF are driven 
+by what investigators need to perform digital
+investigations\citep{walls-levine-effective-digital-forensics}. Convictions
+are frequently the
+measure of success. In many cases there is a considerable gap between
+what is theoretically possible and what is necessary. That is, even
+though there may be an intellectual desire to analyze and explain every last byte
+on a piece of subject media\cite{garfinkel:every-last-byte}, there is
+rarely a reason to do so.
+
+\subsection{Fraud Detection in Multimedia}
+
+Even when photos and video can be recovered from a subject's computer
+or cell phone, another question to consider is whether or not the
+imagery is real. Photographs were doctored long before the advent of
+PhotoShop. For example, after he was purged by Stalin, Abel
+Yenukidze was carefully removed from official photographs through a
+series of skillful manipulations of light and negatives in a Kremlin darkroom\citet{stalins-darkroom}. Today
+computer animation takes such manipulation to a completely new level,
+with computers now able to synthesize scenes that are 
+indistinguishable from recorded reality (\figref{ultra-realistic}). 
+
+\begin{figure}
+\includegraphics[width=4in]{art/a1336.jpg}
+\caption{Ultra realistic vector gradient mesh using Adobe Illustrator by Pisan Kaewma, Thailand}\label{ultra-realistic}
+% http://10steps.sg/inspirations/artworks/photo-realistic-vectors/
+% http://www.ebypaidrick.com/Gallery.html
+% http://www.illustratorworld.com/artwork/1336/
+% http://rcpopart.com/labels/hyper-realist%20sculptor.html
+% http://www.real-trace.com/index.html
+\end{figure}
+
+Recent developments in image processing have made it
+possible to find some kinds of artifacts that indicate tampering or wholesale synthesis. For example,
+the JPEG compression algorithm produces a mathematical signature when an
+image is decompressed, cropped, and then re-compressed. Specular 
+reflection, highlights and shadows can be closely examined to reveal
+that different objects in a single ``photograph'' actually were
+assembled from objects that were in 
+slightly different physical environments. In one particular dramatic
+demonstration, Dr.\ Hany Farid of Dartmouth University showed that a single ``group picture''
+had been created by pasting in the people from different photos
+because the reflection of the room lights on each person's eyeballs
+were inconsistent with were they were standing in the frame. The technology is now
+being commercialized\citep{farid07}.
+
+
+\section{The Digital Forensics Challenge}
+
+For all of its power, DF practitioners face stark
+challenges in practicing their discipline---challenges likely to
+increase in the coming years. Those challenges are size,
+time, diversity, cloud computing, encryption and language.
+
+\begin{description}
+
+\item[Size:] The past three decades have seen a steady increase in the
+  amount of storage available to consumers and a steady decline in its
+  cost. In 1993 I purchased my first 1 gigabyte external hard drive
+  for a thousand dollars; today a 1 terabyte external hard drive can
+  be purchased for under a hundred---a thousand times more
+  storage for a tenth the price. Not surprisingly, the amount of data
+  acquired by law enforcement organizations in their cases is
+  increasing every year.
+
+  Alarmingly, other aspects of computing have not scaled as quickly as
+  storage. Today's terabyte drives are only 10 to 100 times faster
+  than the gigabyte drives of yesteryear, which means that it takes anywhere
+  from 10 to 100 times longer to copy  data from the larger
+  drives. Likewise, today's computers are only on average 100 fold
+  faster than the high-end workstations of the early 1990s, which
+  means that there is less computing power available to process each
+  byte per unit time. The continuation of these trends means that new techniques are
+  required to deal with the data onslaught, as existing techniques
+  simply cannot keep up with the increased storage available to consumers.
+
+% My 33Mhz NeXTstation had 10 SPECmarks
+% http://www.kevra.org/TheBestOfNext/NeXTProducts/NeXTHardware/NeXTStnColor/files/page620_2.pdf
+% Intel Core i7 is 965 SPECmarks
+% http://openlab.web.cern.ch/sites/openlab.web.cern.ch/files/technical_documents/CERN_openlab_report-Eval-of-energy-consumption-and-perf-of-Intel's-Nehalem-achitecture.pdf
+
+\item[Time:] Even as the amount of storage received by law enforcement
+  organizations increases, the time available to analyze that storage
+  is steadily decreasing. In part this is because the number of cases
+  in which digital evidence is collected is increasing far faster than
+  the number of forensic investigators available to do the
+  examinations. But another cause is the increasing realization that
+  DF can be used to \emph{solve crimes}---that is, as
+  part of the investigation process---whereas in the
+  past DF was mainly a tool for \emph{assisting in convictions}. The
+  shortened time horizons puts increased demands on tools,
+  investigators, and systems.
+
+\item[Diversity:] Forensic investigators must be able to process any
+  information found on any computer system currently in use. After
+  all, if there were a particular kind of system that could not be
+  analyzed, criminals would be sure to use it. Thus, DF tools and
+  invesitgators must be able to accommodate all kinds of computers,
+  operating systems, application programs and the like. The diversity
+  is particularly problematic in the case of cell phones, where there
+  are literally dozens of different kinds of cables and tens of
+  thousands of apps in widespread use that might require analysis.
+
+\item[Cloud Computing:] Further complicating the investigator's job is
+  the emergence of cloud computing and other technologies for storing
+  data in the Internet rather than on desktops, laptops, and mobile
+  devices. As a result of the cloud, there is no way to assure that a
+  seized cell phone actually holds the suspect's data---the phone
+  might simply be a tool for accessing a remote server. A law
+  enforcement professional who is authorized to search a device may
+  not have legal authority to use information on that device to access
+  remotely stored data. Worse still, the data might be deleted in the
+  meantime by one of the suspect's collaborators.
+
+\item[Encryption:] The increased use of encryption means that
+  investigators might not be able to decipher information once they
+  have it in their possession. 
+
+\item[Language:] Finally, in today's global environment forensics
+  examiners are increasingly encountering evidence written in human
+  languages that the examiner does not understand. And while tools
+  like Systrans and Google Language Tools can perform some automated
+  language translation, such systems are rarely sufficient for
+  real-world forensic media.
+
+\end{description}
+

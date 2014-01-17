@@ -279,10 +279,127 @@ information.
 
 \section{Magic Numbers}
 
-\section{BASE16, BASE64 and BASE85}
+\section{Encoding Binary Data}
+
+BASE16, BASE64 and BASE85
+
+\subsection{Legacy Encoding Methods}
+uuencode
+
+binhex
+
+
+\section{High Entropy Data}
+\subsection{Compressed Data}
+\subsection{Encrypted Data}
+
+\section{Hashing}
+
+In computer science a \emph{hash function} is any function that maps a
+sequence of zero or more characters (called a \emph{string}) to an
+binary number of a specific fixed size---that is, a fixed number of
+bits. A 16-bit hash function can produce $2^{16}=65,536$ different hash values, while a
+32-bit hash function can produce $2^{32}=4,294,967,296$ possible hash
+values. Hash functions are designed so that changing a single
+character in the input results in a completely different number. While
+the pigeonhole principle guarantees that many different strings will
+have the same hash value---something that's called a \emph{hash
+  collision}---the more bits in the hash has, the smaller the chance
+of a collision.
+
+Hashing was invented by H.\ P.\ Luhn in a 1953 IBM technical memo;
+it's been widely used for computerized text processing since the
+1960s. For example, because every sentence in a document can be
+treated as a string, hashing makes it possible to rapidly see if the
+same paragraph ever repeats in a long document: just computer the hash
+value for each paragraph, put all of the hashes into a list, sort the
+list, and see if any number repeats twice. If there is no repeat, then
+no paragraph is repeated. Of course, if a number \emph{does} repeat,
+then it's necessary to look at the paragraphs that correspond to those
+two numbers to determine if the same paragraph really is repeated
+twice or the duplicate is the result of a hash collision. Using hashes
+in this manner is much faster than working directly with the
+paragraphs because it is much faster for computers to compare numbers
+than sequences of words---even when you take into account the time to
+perform the hashing.
+
+(Interesting fact: The name \emph{hash} comes from the way hash functions are typically
+implemented as a two-step process that first chops and then mixes the
+data, much in the way that one might make hash in the kitchen!)
+
+In 1979 Stanford University PhD student Ralph Merkle invented a way to use
+hashing for computer security\citep{merkle:79}. Merkle's idea was to
+use a hash
+function that produced more than 100 bits of output and that
+additionally had the property of being \emph{one-way}. That is, it was
+a function for which it was relatively easy to compute the hash of a
+string, but it was nearly impossible, given a hash, to find a
+corresponding string. The essence of Merkle's idea was to use a
+document's 100-bit one-way hash as a stand-in for the document itself
+for certain mathematical purposes. For example, instead of digitally
+certifying a 50-page document, the document could be reduced to a
+100-bit hash and the hash could then be certified. Because there are so many different possible hash values
+($2^{100}\approx10^{30}$), Merkle reasoned that it would not be
+possible for an attacker to take the digital signature from one document and use it
+to certify a second document---because to do so would require that
+both documents had the same hash value.
+
+Today digital signatures applied to hashes are
+the basis of many cyber security system. Digital signatures protect
+credit card numbers sent over the Internet, certify the authenticity
+and integrity of code run on iPhones, and validate keys used play
+digital music. The idea of hashing has been applied to other areas as
+well---in particular, forensics.
+
+One of the first and continuing uses of hashing in DF was to establish
+\emph{chain-of-custody} for forensic data. Instead of hashing a
+document or a file, the hash function is applied to the entire disk
+image---that is, \emph{all} of the bytes extracted from a hard
+drive. Many law enforcement organizations will create two
+disk images of a drive and then computer the hash of each image.  If the values match, then the
+copies are assumed to each be a true copy of the data that were on the
+drive. The hash value is then included in the official report. With
+the hash recorded, the image file can be copied to a server at the
+police department, to an investigator's workstation, or even given to
+a forensic expert working for the other side. Any investigator with the
+data can calculate the hash and see if it matches the original
+reported value. If the hashes match, the investigator can be sure that
+not a single bit in the disk image has been changed since the original
+image was recorded. Hashing is so important that many DF tools can
+automatically validate an evidence file by recomputing the hash and
+comparing it with a stored value.
+
+A second use for hashing is to identify specific
+files. This approach takes advantage of the property that it is
+extraordinarily unlikely for two files to have the same
+hash value. File hashes can thus be used to identify files in much the
+same way that a person can be identified by their fingerprints. 
+
+Today forensic practitioners distribute databases containing the file
+hashes as a standard part of forensic processing. The best known of these data
+sets is the National Software Reference Library Reference Data Set,
+distributed by the National Institute of Standards and
+Technology\cite{nist-nsrl-rds-march2012}. These data sets can be used
+to identify \emph{known goods}, such as programs distributed as part
+of operating systems, or \emph{known bads} such as computer viruses,
+stolen documents and child of pornography. Recent work is now
+applying cryptographic hashing to blocks of data smaller than
+files\cite{garfinkel:sector-id}, taking advantage of the fact that
+even relatively short 512-byte and 4096-byte segments taken from
+files can be highly identifying. 
+
+File and sector identification with hashing means that a hard drive
+containing millions of files can be automatically searched against a
+database containing the hashes of hundreds of millions of file hashes
+in a relatively short amount of time---perhaps just a few hours. Importantly, the search can be done without any human
+intervention.
 
 \section{Exercises}
-Look for private information with strings in files
+* Convert numbers to different bases
+
+* Look for private information with strings in files
+
+
 
 
 
