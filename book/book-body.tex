@@ -11,7 +11,11 @@
 \newif\ifpartsix\partsixtrue
 
 % Turn off lots
-% \parttwofalse\partthreefalse\partfourfalse
+%\parttwofalse
+%\partthreefalse
+%\partfourfalse
+%\partfivefalse
+%\partsixfalse
 
 % http://tex.stackexchange.com/questions/17009/how-to-change-code-example-font-in-listings
 \lstset{basicstyle=\small\ttfamily,numbers=left,numberstyle=\tiny}
@@ -25,22 +29,23 @@
 
 
 \ifpartone
-  \bookpart{Privacy Auditing: Task and Tools}
+  \bookpart{Task and Tools}
   \input{ch-1}
+  \input{ch-2}
   \input{ch-what}  % What data looks like
+  \input{ch-storage} % How data are stored
   \input{ch-experiment}
-  \input{ch-operational}
+  \input{ch-legal}
 \fi
 \ifparttwo
   \bookpart{Photos, Documents and Files}
   \input{ch-jpeg}
-  \input{ch-containerfiles}
   \input{ch-pdfs}
-  \input{ch-chunkfiles}
-  \input{ch-dirfiles}
+  \input{ch-officefiles}
+  \input{ch-dbfiles}
 \fi
 \ifpartthree
-  \bookpart{Working with Disks and Disk Images}
+  \bookpart{Working with Storage}
   \input{ch-filesystems}
   \input{ch-fshidden}
   \input{ch-carving}
@@ -54,15 +59,18 @@
 \ifpartfive{
   \bookpart{Advanced Topics}
   \input{ch-encryption}
-  \input{ch-ram}
+  \input{ch-memory}
 \fi
 \ifpartsix{
   \appendix
   \bookpart{Appendices}
-  \input{glossary}
+  \input{ch-glossary}
   \input{ch-tools}
   \input{ch-python}
   \input{ch-dataviz}
+  \input{ch-containerfiles}
   \input{ch-references}
 \fi
 
+
+%%  LocalWords:  ap

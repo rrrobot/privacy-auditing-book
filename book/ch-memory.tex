@@ -1,0 +1,35 @@
+\chapter{Memory Analysis}\label{ch:ram}
+\subsection{Memory Parsing}
+
+The memory of a desktop, laptop or cell phone is a mosaic of 4096-byte
+blocks that variously 
+contain running program code,  fragments of programs
+that recently ran and have exited, portions of the computer's
+operating system, fragments of what was sent and received over the
+network, fragments of windows displayed on the computer's screen, the
+computer's copy-and-paste buffer, and other kinds of information. Memory
+changes rapidly---typical memory systems support several billion
+changes per second---so it is nearly impossible to make a copy that is
+internally consistent without halting the machine. An added complication is that the very
+specific manner that programs store information in memory is rarely
+documented and changes between one version of a program and
+another. As a result, each version may need to be painstakingly reverse-engineered by
+computer forensics researchers. Thus, memory analysis is time consuming, very
+difficult, and necessarily incomplete.
+
+Despite these challenges, recent years has seen the development of
+forensically sound techniques for acquiring and analyzing the contents
+of a running computer system. Today there are both open source and
+proprietary memory analysis tools. These tools can take a memory dump
+and report the system time when the memory was captured, display a
+list of running processes, open files, and even display the contents
+of the computer's clipboard and screen. Today memory analysis tools
+are widely used for reverse-engineering computer viruses, worms and
+other kinds of \emph{malware}, as well as for understanding an
+attacker's actions in computer intrusion cases. Memory analysis can be combined
+with carving to recover digital photographs and video.
+
+
+
+\section{Acquiring RAM}
+\section{Analyzing RAM with volatility}

@@ -1,5 +1,5 @@
 all:
-	echo 'make what?'
+	(cd book;make)
 
 clean:
 	find . -name '*~' -exec rm {} +

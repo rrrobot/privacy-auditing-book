@@ -83,8 +83,7 @@ this display means.
 The \emph{bit} is the fundamental unit of storage on digital computers. Bits
 have two states. Typically we call these |0| and |1|, but they can be any
 two values (e.g. true/false, yes/no or up/down). This book 
-uses the values |0| and |1| for bits.
-% \marginpar{The word \emph{bit} is a contraction of the words \emph{binary digit}.}
+uses the values |0| and |1| for bits. (The word \emph{bit} is a contraction of the words \emph{binary digit}.)
 
 An ordered group of 4 bits is called a \emph{nibble}. Each bit can be
 a |0| or a |1|, creating 16 possible different values. Note
@@ -170,7 +169,6 @@ left-hand byte  called the \emph{most
 significant byte}; it represents the binary values $2^8$ through
 $2^{15}$. 
 
-
 Because most computer memories are arranged as an array of bytes,
 there are two ways to store these 16-bit values at a particular memory
 location. 
@@ -181,10 +179,43 @@ location.
 Larger numbers Two bytes can be grouped together, allowing values between 0 and
 65,535 to be represented. Four bytes
 
-
 \section{Text, ASCII and Unicode}\label{sec:letters}
 
-In the previous section we looekd 
+Modern computers do not work with bits directly, but use sequences of
+8 bits called bytes. This sequence can represent
+$2\times2\times2\times2\times2\times2\times2\times2=2^8=256$ distinct
+values. The meaning assigned to these values generally depends on the
+context. A few examples are shown in \tabref{tab:8bits}. The ASCII
+codes represent NULL (no data is sent), SOH (Start Of Heading---the
+beginning of a data header), and DEL (delete). NULL is a holdover from
+the days of synchronous terminals, when there needed to be a constant
+flow of data down all links: sending all 0s (NUL) meant that the data
+should be ignored. DEL was chosen as delete when characters were
+punched on paper tape and cards: in the event of an error, the
+operator could backspace the punch and punch holes across the entire
+line, causing the computer to ignore the value. We shall return
+to the question of representation in \chapref{chap:unicode}.
+
+\begin{table}
+\begin{tabular}{cccccccc|c|c|c|c}
+\multicolumn{8}{r}{                       Term:}  & unsigned char & signed char & ASCII \\
+\multicolumn{8}{r}{                       Range:} & 0--255      & -128--127 & NULL--DEL\\
+\cline{9-11}\multicolumn{8}{c}{Bits}                          &        &               &             &          \\
+$2^7$ & $2^6$ & $2^5$ & $2^4$ & $2^3$ & $2^2$ & $2^1$ & $2^0$  &        &               &             &          \\
+  128 &    64 &   32 &    16 &     8 &     4 &     2 &     1  &        &               &             &          \\
+\hline
+    0 &     0 &    0 &     0 &     0 &     0 &     0 &     0 &            0  &            0  &   NULL     \\
+    0 &     0 &    0 &     0 &     0 &     0 &     0 &     1 &            1  &            1  &   SOH      \\
+    0 &     1 &    0 &     0 &     0 &     0 &     0 &     1 &           65  &           65  &   A        \\
+    0 &     1 &    1 &     0 &     0 &     0 &     0 &     1 &           96  &           65  &   a        \\
+    0 &     1 &    1 &     1 &     1 &     1 &     1 &     1 &           127 &          127  &   DEL      \\
+    1 &     0 &    0 &     0 &     0 &     0 &     0 &     0 &           128 &         -128  &   n/a      \\
+    1 &     1 &    1 &     1 &     1 &     1 &     1 &     1 &           255 &           -1  &   n/a      \\
+\end{tabular}
+\caption{Eight bits can represent 256 distinct values.}\label{tab:8bits}
+\end{table}
+
+
 
 \section{Hex Dumps}\label{sec:hex-dumps}
 A common way to visualize binary data is to format it as a series of
@@ -248,10 +279,127 @@ information.
 
 \section{Magic Numbers}
 
-\section{BASE16, BASE64 and BASE85}
+\section{Encoding Binary Data}
+
+BASE16, BASE64 and BASE85
+
+\subsection{Legacy Encoding Methods}
+uuencode
+
+binhex
+
+
+\section{High Entropy Data}
+\subsection{Compressed Data}
+\subsection{Encrypted Data}
+
+\section{Hashing}
+
+In computer science a \emph{hash function} is any function that maps a
+sequence of zero or more characters (called a \emph{string}) to an
+binary number of a specific fixed size---that is, a fixed number of
+bits. A 16-bit hash function can produce $2^{16}=65,536$ different hash values, while a
+32-bit hash function can produce $2^{32}=4,294,967,296$ possible hash
+values. Hash functions are designed so that changing a single
+character in the input results in a completely different number. While
+the pigeonhole principle guarantees that many different strings will
+have the same hash value---something that's called a \emph{hash
+  collision}---the more bits in the hash has, the smaller the chance
+of a collision.
+
+Hashing was invented by H.\ P.\ Luhn in a 1953 IBM technical memo;
+it's been widely used for computerized text processing since the
+1960s. For example, because every sentence in a document can be
+treated as a string, hashing makes it possible to rapidly see if the
+same paragraph ever repeats in a long document: just computer the hash
+value for each paragraph, put all of the hashes into a list, sort the
+list, and see if any number repeats twice. If there is no repeat, then
+no paragraph is repeated. Of course, if a number \emph{does} repeat,
+then it's necessary to look at the paragraphs that correspond to those
+two numbers to determine if the same paragraph really is repeated
+twice or the duplicate is the result of a hash collision. Using hashes
+in this manner is much faster than working directly with the
+paragraphs because it is much faster for computers to compare numbers
+than sequences of words---even when you take into account the time to
+perform the hashing.
+
+(Interesting fact: The name \emph{hash} comes from the way hash functions are typically
+implemented as a two-step process that first chops and then mixes the
+data, much in the way that one might make hash in the kitchen!)
+
+In 1979 Stanford University PhD student Ralph Merkle invented a way to use
+hashing for computer security\citep{merkle:79}. Merkle's idea was to
+use a hash
+function that produced more than 100 bits of output and that
+additionally had the property of being \emph{one-way}. That is, it was
+a function for which it was relatively easy to compute the hash of a
+string, but it was nearly impossible, given a hash, to find a
+corresponding string. The essence of Merkle's idea was to use a
+document's 100-bit one-way hash as a stand-in for the document itself
+for certain mathematical purposes. For example, instead of digitally
+certifying a 50-page document, the document could be reduced to a
+100-bit hash and the hash could then be certified. Because there are so many different possible hash values
+($2^{100}\approx10^{30}$), Merkle reasoned that it would not be
+possible for an attacker to take the digital signature from one document and use it
+to certify a second document---because to do so would require that
+both documents had the same hash value.
+
+Today digital signatures applied to hashes are
+the basis of many cyber security system. Digital signatures protect
+credit card numbers sent over the Internet, certify the authenticity
+and integrity of code run on iPhones, and validate keys used play
+digital music. The idea of hashing has been applied to other areas as
+well---in particular, forensics.
+
+One of the first and continuing uses of hashing in DF was to establish
+\emph{chain-of-custody} for forensic data. Instead of hashing a
+document or a file, the hash function is applied to the entire disk
+image---that is, \emph{all} of the bytes extracted from a hard
+drive. Many law enforcement organizations will create two
+disk images of a drive and then computer the hash of each image.  If the values match, then the
+copies are assumed to each be a true copy of the data that were on the
+drive. The hash value is then included in the official report. With
+the hash recorded, the image file can be copied to a server at the
+police department, to an investigator's workstation, or even given to
+a forensic expert working for the other side. Any investigator with the
+data can calculate the hash and see if it matches the original
+reported value. If the hashes match, the investigator can be sure that
+not a single bit in the disk image has been changed since the original
+image was recorded. Hashing is so important that many DF tools can
+automatically validate an evidence file by recomputing the hash and
+comparing it with a stored value.
+
+A second use for hashing is to identify specific
+files. This approach takes advantage of the property that it is
+extraordinarily unlikely for two files to have the same
+hash value. File hashes can thus be used to identify files in much the
+same way that a person can be identified by their fingerprints. 
+
+Today forensic practitioners distribute databases containing the file
+hashes as a standard part of forensic processing. The best known of these data
+sets is the National Software Reference Library Reference Data Set,
+distributed by the National Institute of Standards and
+Technology\cite{nist-nsrl-rds-march2012}. These data sets can be used
+to identify \emph{known goods}, such as programs distributed as part
+of operating systems, or \emph{known bads} such as computer viruses,
+stolen documents and child of pornography. Recent work is now
+applying cryptographic hashing to blocks of data smaller than
+files\cite{garfinkel:sector-id}, taking advantage of the fact that
+even relatively short 512-byte and 4096-byte segments taken from
+files can be highly identifying. 
+
+File and sector identification with hashing means that a hard drive
+containing millions of files can be automatically searched against a
+database containing the hashes of hundreds of millions of file hashes
+in a relatively short amount of time---perhaps just a few hours. Importantly, the search can be done without any human
+intervention.
 
 \section{Exercises}
-Look for private information with strings in files
+* Convert numbers to different bases
+
+* Look for private information with strings in files
+
+
 
 
 

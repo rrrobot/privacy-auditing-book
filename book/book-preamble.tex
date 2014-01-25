@@ -1,8 +1,12 @@
+%
+% This file has various LaTeX commands that we use for the book no
+% matter which style it is being printed with
+%
+
 % Something that needs to be done
-
+\newcommand{\citet}[1]{\cite{#1}}
+\newcommand{\citep}[1]{\cite{#1}}
 \newcommand{\tk}[1]{\large\textbf{\emph{#1}}}
-
-
 \newcommand{\slgbookauthor}{Simson L.\ Garfinkel\\Kevin D. Fairbanks\\Golden Richard}
 \newcommand{\slgbooktitle}{Technical Privacy Auditing with Computer Forensics Tools} 
 \newcommand{\slgbookcopyright}{Public Domain}
@@ -16,7 +20,6 @@
   WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.}
 \newcommand{\slgbookdate}{Working Draft, May 2013}
-
 
 
 % Make spacing look better
@@ -102,6 +105,10 @@
 \newcommand{\etc}{\emph{etc.}\xspace}
 \newcommand{\eg}{\emph{e.g.\ }}
 \newcommand{\etal}{\emph{et al.\ }}
+
+% Rights
+\newcommand{\rights}[1]{\tiny}
+
 
 % \sgraphic[optional width=8in]{filename}{caption}
 % Then use \figref{filename} to get a reference to the figure

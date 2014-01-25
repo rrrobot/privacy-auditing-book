@@ -1,9 +1,11 @@
 #
 # Book without orange. It just wasn't working
 
-CLEANFILES=$(wildcard *.{aux,bbl,blg,idx,ilg,ind,log,out,run.xml,toc}) main.pdf plainbook.pdf book.pdf
+CLEANFILES=main.pdf plainbook.pdf book.pdf *.{aux,bbl,blg,idx,ilg,ind,log,out,run.xml,toc}
+TEXFILES=$(wildcard *.tex)
 
-book.pdf: book.tex ../bib/textbook.bib Makefile $(wildcard *.tex) $(wildcard */*.tex) $(wildcard */*.py)
+book.pdf: book.tex ../bib/textbook.bib Makefile $(TEXFILES) $(wildcard */*.tex) $(wildcard */*.py) book-body.tex
+	/bin/rm -f $(CLEANFILES)
 	pdflatex book
 	makeindex book -s orange/StyleInd.ist
 	bibtex8 book
@@ -25,4 +27,4 @@ plainbook.pdf: plainbook.tex
 	pdflatex plainbook
 
 clean:
-	/bin/rm -f $(CLEANFILES)
+	/bin/rm -f $(CLEANFILES) 
