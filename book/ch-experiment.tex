@@ -1,7 +1,47 @@
-\chapter{Designing a good forensics experiment}
+\chapter{Designing a digital forensics experiment}
 
-This chapter explores what is involved in creating a good computer
-forensics experiment.
+We use experiments to learn something new or to confirm something that
+we've learned before. Experiments typically combine some kind of \emph{test}
+or \emph{intervention} with one or more \emph{measurements} or
+\emph{observations}. 
+
+Experiments are common in digital forensics:
+
+\begin{itemize}
+\item We test digital forensics tools to see what kind of information they can recover.
+\item We test the information that is recovered to see if it
+  accurately reflects the information that was originally present.
+\item We test computer systems to see what kinds of information they have.
+\item We test software that runs on computer systems to see what kinds
+  of information it may create, destroy, or leave behind.
+\end{itemize}
+
+These many uses of experiments can result in epistemological
+confusion. If a tool finds a piece of data on a piece of media, was
+the data present or did the tool manufacturer the data? If a tool
+fails to find data on media, is the data really not present, or does
+the tool have a bug?
+
+One way to resolving the confusion is to use tools that have been
+tested and validated by a third party.\footnote{The \emph{first party}
+  is the tool provider and the \emph{second party} is the tool user,
+  so another organization that is testing the tool is said to be a
+  \emph{third party}.} For example, the Computer Forensics Tool
+Testing Program at the National Institute of
+Standards and Technology tests disk imaging tools to make sure that
+the tools accurately copy data from a hard drive to a disk image
+file. To test the tools, a technician will copy known data onto a hard
+drive and then use the tool under test to copy the data off. The copied data
+should match the original.
+
+Here's where things get complicated. If the data matches, the tool is
+not necessarily flawless. And if the data doesn't match, the tool
+is not necessarily flawed? The two data sets may match by chance even
+if the tool is flawed, and if the data sets may be different for
+reasons that have nothing to do with the tool---for example, the drive
+may have a bad sector. 
+
+This chapter explores what is involved in creating a digital forensics experiment.
 
 \section{Why experiment?}
 
