@@ -1,11 +1,40 @@
-\chapter{Designing a digital forensics experiment}
+\chapter{Designing experiments for privacy auditing}
 
-We use experiments to learn something new or to confirm something that
-we've learned before. Experiments typically combine some kind of \emph{test}
-or \emph{intervention} with one or more \emph{measurements} or
-\emph{observations}. 
+In everyday speech people frequently use the word ``experiment'' to
+mean that they are going to ``try something new.'' For example, a
+person might conduct an ``experiment'' in the kitchen by adding more
+salt and pepper to the fish---more salt might be a good thing, but too
+much salt might make the dish inedible.  Experiments such as these are
+hard to carry out systematically, though, because two many factors are
+changed at once. The flavor of the dish might be subtly influenced by
+the specific fish---where it lived or its age, for example. The flavor
+might also depend on the what the taster ate earlier in the
+day. Experimental results can also be influenced by expectation---if
+we know that we put more salt in the dish, we might expect it to taste
+saltier and judge the dish accordingly. So while experimenting in the
+kitchen by adding a bit more salt to the fish might be informative,
+considerably more effort is required if we want to discover something
+that can be generalized to other circumstances. To do that we need to
+use the scientific method.
 
-Experiments are common in digital forensics:
+Scientific experiments involve more than simply trying something new
+to see what happens. Whereas in the kitchen we might start out with
+the question ``what can I do with the ingredients that I've got?'',
+scientific experiments are designed to learn or confirm a specific
+facts. To do this experiments typically combine some kind of
+\emph{test} or \emph{intervention} with one or more
+\emph{measurements} or \emph{observations}. Experiments should be
+repeated to account for minor variations or errors, and they should be
+described in sufficient detail so that they can be repeated by
+others.
+
+\section{Why we experiment}
+
+Experimentation is one of the core technique that we use in technical privacy
+auditing to understand the retention of personal information in
+digital systems. But experimentation plays many other roles as well:
+
+TK
 
 \begin{itemize}
 \item We test digital forensics tools to see what kind of information they can recover.
@@ -16,17 +45,19 @@ Experiments are common in digital forensics:
   of information it may create, destroy, or leave behind.
 \end{itemize}
 
-These many uses of experiments can result in epistemological
-confusion. If a tool finds a piece of data on a piece of media, was
+As with cooking, digital forensics experiments can result in epistemological
+confusion---we might think that the experiment means one thing when in
+fact it means something else. If a tool finds a piece of data on a piece of media, was
 the data present or did the tool manufacturer the data? If a tool
 fails to find data on media, is the data really not present, or does
 the tool have a bug?
 
-One way to resolving the confusion is to use tools that have been
+There are many ways to reduce the confusion. For example, we can use
+tools that have been
 tested and validated by a third party.\footnote{The \emph{first party}
   is the tool provider and the \emph{second party} is the tool user,
   so another organization that is testing the tool is said to be a
-  \emph{third party}.} For example, the Computer Forensics Tool
+  \emph{third party}.} The Computer Forensics Tool
 Testing Program at the National Institute of
 Standards and Technology tests disk imaging tools to make sure that
 the tools accurately copy data from a hard drive to a disk image
@@ -34,14 +65,33 @@ file. To test the tools, a technician will copy known data onto a hard
 drive and then use the tool under test to copy the data off. The copied data
 should match the original.
 
-Here's where things get complicated. If the data matches, the tool is
+Here's where things get complicated. If the data match, the tool is
 not necessarily flawless. And if the data doesn't match, the tool
 is not necessarily flawed? The two data sets may match by chance even
 if the tool is flawed, and if the data sets may be different for
 reasons that have nothing to do with the tool---for example, the drive
 may have a bad sector. 
 
-This chapter explores what is involved in creating a digital forensics experiment.
+One of the difficult things about digital forensics is that we
+can never really trust our tools and what we think they are telling
+us. We resolve this issue by designing our experiments with internal
+checks and controls. Such measures provide assurance that is mutually reinforcing.
+
+\section{Designing An Experiment}
+
+
+\subsection{Purpose of your experiment}
+
+Many people start designing an experiment by thinking about what they
+are going to do---what materials they are going to work with, what they are going to
+change, and what data they are going to collect. This is almost always
+the wrong way to design an experiment.
+
+\subsection{Experimental Complexity}
+
+\subsection{Controls}
+
+\subsection{Variables}
 
 \section{Why experiment?}
 
