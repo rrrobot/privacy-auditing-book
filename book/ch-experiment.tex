@@ -28,10 +28,181 @@ repeated to account for minor variations or errors, and they should be
 described in sufficient detail so that they can be repeated by
 others.
 
-\section{Why we experiment}
+\section{The Experimental Steps: A Worked Example}
 
 Experimentation is one of the core technique that we use in technical privacy
-auditing to understand the retention of personal information in
+auditing to understand how systems retain or transmit personal
+information. In most cases these experiments will be quite
+straightforward: 
+
+\begin{itemize}
+\item We will use a digital system.
+\item We will analyze the system with digital forensics tools to see
+  what kind of personal information is retained or transmitted.
+\end{itemize}
+
+Things are rarely so simple, of course. Digital computers are
+complex systems. Finding information on a system doesn't mean that we
+put it there---the information might have been there from the
+beginning. Likewise, \emph{not finding} information is no guarantee
+that the information is not present. The information may be present
+but the tool is unable to extract it; the operator may use the tool
+improperly; or the tool may extract the information but in a form that
+the operator does not recognize.
+
+In practice, technical privacy auditing requires more than running a single
+experiment. We'll need multiple experiments aimed at uncovering a wide
+range of digital phenomena. We'll need to test the digital system
+to see how it operates normally. We'll need to test our tools to see
+if they can recover the specific kind information for which we are
+looking.
+
+\subsection{Private Browsing Mode}
+
+To make this example more concrete, let's consider a researcher who
+wants to test the ``private browser mode'' on web browser to see if
+the browser retains information that it should not.
+
+The concept of a privacy mode for web browsing was introduced by the
+Apple's Safari in Mac OS X v10.4 Tiger in 2005. At the time there was
+a growing realization among computer users that web browsers
+retained many kinds of information about websites that were
+visited, and that this information could be damaging to a person's
+privacy in the case of a shared computer. Although web browsers had
+the ability to ``clear history,'' ``clear cookies'' and ``empty the cache,'' these are
+typically drastic actions that remove useful information or important
+as well. What's more, they leave evidence that something has been
+deleted. Apple's ``private browsing'' mode instead let users simply
+tell Safari to stop recording what the user was doing.
+
+The idea of private gained popularity and was implemented in all of
+the major browsers within a few
+years. \citeN{Aggarwal:2010:APB:1929820.1929828} analyzed the private
+browsing models of several popular browsers and found that they all
+implemented the feature differently and retained different kinds of
+information during private browsing. This isn't entirely surprising,
+of course, since there are many ways that a website can leave
+identifying information on a user's computer, there was no generally
+accepted specification as to what private browsing should do, and
+there was no way to consistently test a browser to see if it was in
+compliance with the user's expectations.
+
+As first blush, testing the private browsing mode of a browser seems
+pretty straightforward:
+
+\begin{itemize}
+\item Turn on private browsing.
+\item Browse some websites.
+\item Analyze the browser and see if any evidence of the websites was
+  left behind. 
+\end{itemize}
+
+This simple methodology has an important problem. Without testing and
+experimentation, we have no way of knowing if our tools can find the
+kind of information left behind during the course of normal
+browsing. As a result, if we don't find information, we don't know if
+the emptiness is the result of a properly implemented private browsing
+mode or the result of tool failure.
+
+A second problem with this methodology is that it doesn't give us
+enough information for explaining the information we do find. That is,
+there's no way to know if the information found is the result of our
+browsing activities or something else.
+
+\subsection{Experiment \#1: Understanding Normal Behavior}
+
+Before we can evaluate the private browsing mode, we need to be able
+to characterize the browser's normal behavior. Specifically we need to
+verify that we can reliably information that we place on the computer
+during normal browsing.
+
+We might do so with this sequence of steps:
+
+\begin{itemize}
+\item Be sure that private browsing is turned off.
+\item Browse some websites.
+\item Analyze the browser with the DF tool to see if any evidence that the websites
+  were visited was left behind. 
+\end{itemize}
+
+This is better: if we find evidence with the DF tool we know that it
+can extract the kind of evidence that we are looking for. But there
+is still an important problem: we don't know if the data was placed there
+as a result of our browsing.
+
+\subsubsection{Documenting the Initial State}
+In order to know that our browsing was responsible for the evidence
+that was recovered, we need to verify that the evidence was not
+present \emph{before} we performed our browsing. To do that we need to
+document the system's initial state before our experiment
+begins. Instead of analyzing the system once, we'll analyze it
+twice---before and after the intervention---and compare the
+results. Anything that's changed should be the result of our activity.
+
+We now have this sequence of steps:
+
+
+\begin{itemize}
+\item Be sure that private browsing is turned off.
+\item Using the DF tool, capture the system's state and store it in dataset $D_0$.
+\item Browse some websites.
+\item Capture the system's state a second time and store the results in dataset $D_1$.
+\item Compare the datasets $D_0$ and $D_1$ to determine what's
+  changed. Analyze this changed data to see if they contain any
+  evidence of the browsed websites. 
+\end{itemize}
+
+\subsubsection{Clearing the system}
+
+It is easier to analyze systems that are simple. In this case, we can
+simplify the system by clearing the system before begin our
+experiment. That adds two more steps to our procedure:
+
+\begin{itemize}
+\item Wipe the computer's hard drive.
+\item Install the operating system and a web browser.
+\item Be sure that private browsing is turned off.
+\item Using the DF tool, capture the system's state and store it in dataset $D_0$.
+\item Browse some websites.
+\item Capture the system's state a second time and store the results in dataset $D_1$.
+\item Compare the datasets $D_0$ and $D_1$ to determine what's
+  changed. Analyze this changed data to see if they contain any
+  evidence of the browsed websites. 
+\end{itemize}
+
+
+\subsubsection{Self-Identifying Data}
+
+
+
+
+
+---it requires a series of experiments 
+
+
+
+So in practice we might want a more complex procedure:
+
+\begin{itemize}
+\item We will analyze the system with our tools to find out what
+  information is present. We will call this dataset $D_1$. 
+\item We will use a digital system.
+\item We will analyze the system a second time with our tools,
+  producing dataset $D_2$. 
+\item We will compare $D_2$ with $D_1$ and determine what changed. In
+  particular, we will look to see if privacy-sensitive information was
+  present in $D_2$ that was not present in $D_1$. 
+\end{itemize}
+
+
+
+and
+the tools that we use to analyze them are complex systems. In practice
+we need to understand both systems are
+complex systems. , and digital forensic tools rarely provide the
+exact answers for which their users are looking. kind of information that we're looking for. 
+
+in
 digital systems. But experimentation plays many other roles as well:
 
 TK
