@@ -90,12 +90,12 @@ compliance with the user's expectations.
 As first blush, testing the private browsing mode of a browser seems
 pretty straightforward:
 
-\begin{itemize}
+\begin{enumerate}
 \item Turn on private browsing.
 \item Browse some websites.
 \item Analyze the browser and see if any evidence of the websites was
   left behind. 
-\end{itemize}
+\end{enumerate}
 
 This simple methodology has an important problem. Without testing and
 experimentation, we have no way of knowing if our tools can find the
@@ -113,36 +113,40 @@ browsing activities or something else.
 
 Before we can evaluate the private browsing mode, we need to be able
 to characterize the browser's normal behavior. Specifically we need to
-verify that we can reliably information that we place on the computer
-during normal browsing.
+verify that we can reliably detect information that we place on the computer
+during normal browsing---we need to test our acquisition and analysis
+steps to make sure that they work as expected. We can perform such a test with this sequence of steps:
 
-We might do so with this sequence of steps:
+\newcounter{protocol}\setcounter{protocol}{0}
+\newcommand{\protocol}[#1]{\noindent\textit{Protocol \#\arabic{protocol}: #1\refstepcounter{protocol}}}
 
-\begin{itemize}
+\protocol{Normal Behavior, first try}
+\begin{enumerate}
 \item Be sure that private browsing is turned off.
 \item Browse some websites.
 \item Analyze the browser with the DF tool to see if any evidence that the websites
   were visited was left behind. 
-\end{itemize}
+\end{enumerate}
 
-This is better: if we find evidence with the DF tool we know that it
-can extract the kind of evidence that we are looking for. But there
-is still an important problem: we don't know if the data was placed there
-as a result of our browsing.
+This is better, but there is still an important problem: we don't know
+if the data was placed there as a result of our browsing.
 
 \subsubsection{Documenting the Initial State}
 In order to know that our browsing was responsible for the evidence
 that was recovered, we need to verify that the evidence was not
 present \emph{before} we performed our browsing. To do that we need to
-document the system's initial state before our experiment
-begins. Instead of analyzing the system once, we'll analyze it
+document the system's state before our experiment
+begins, the \emph{initial state}. We will perform this analysis with
+the same DF tool. Instead of analyzing the system once, we'll analyze it
 twice---before and after the intervention---and compare the
 results. Anything that's changed should be the result of our activity.
 
-We now have this sequence of steps:
+This expands our sequence of steps, which is now complex enough that
+we need to introduce some notation:
 
 
-\begin{itemize}
+\protocol{Documenting initial state}
+\begin{enumerate}
 \item Be sure that private browsing is turned off.
 \item Using the DF tool, capture the system's state and store it in dataset $D_0$.
 \item Browse some websites.
@@ -150,31 +154,214 @@ We now have this sequence of steps:
 \item Compare the datasets $D_0$ and $D_1$ to determine what's
   changed. Analyze this changed data to see if they contain any
   evidence of the browsed websites. 
-\end{itemize}
+\end{enumerate}
 
 \subsubsection{Clearing the system}
 
-It is easier to analyze systems that are simple. In this case, we can
-simplify the system by clearing the system before begin our
-experiment. That adds two more steps to our procedure:
+It is easier to analyze systems that are simple. A problem with the
+approach above is that the system is likely to have extraneous data and
+programs that is not relevant to our inquiry. We will respond by
+\emph{clearing}\footnote{``Clearing information is a level of media sanitization that would protect the confidentiality of information against a robust keyboard attack. Simple deletion of items would not suffice for 
+clearing. Clearing must not allow information to be retrieved by data, disk, or file recovery 
+utilities. It must be resistant to keystroke recovery attempts
+executed from standard input devices and from data scavenging tools. For example, overwriting is an acceptable method 
+for clearing media. 
 
-\begin{itemize}
-\item Wipe the computer's hard drive.
-\item Install the operating system and a web browser.
+There are overwriting software or hardware products to overwrite storage space on the 
+media with non-sensitive data. This process may include overwriting not only the logical 
+storage location of a file(s) (e.g., file allocation table) but also may include all addressable 
+locations. The security goal of the overwriting process is to replace written data with 
+random data. Overwriting cannot be used for media that are damaged or not writeable. 
+The media type and size may also influence whether overwriting is a suitable sanitization 
+method. [SP 800-36]. 
+
+Studies have shown that most of today’s media can be effectively cleared by one overwrite.''\cite{nist-800-88}.
+the system before we begin the
+experiment. This adds two more steps to our procedure:
+
+\protocol{Clearing the system}
+\begin{enumerate}
+\item Clear the computer's hard drive.
+\item Install and operating system and a web browser.
 \item Be sure that private browsing is turned off.
 \item Using the DF tool, capture the system's state and store it in dataset $D_0$.
 \item Browse some websites.
 \item Capture the system's state a second time and store the results in dataset $D_1$.
 \item Compare the datasets $D_0$ and $D_1$ to determine what's
-  changed. Analyze this changed data to see if they contain any
+  changed. Analyze the changed data to see if they contain any
   evidence of the browsed websites. 
-\end{itemize}
+\end{enumerate}
 
 
-\subsubsection{Self-Identifying Data}
+\subsubsection{Creating Self-Identifying Data for Recovery}
+At this point we should add some more structure to the task that we
+will be performing with the browser. Instead of browsing ``some
+websites,'' our protocol should precisely specify which websites will
+be browsed and what kinds of data we hope to recover. 
+
+We'll address this issue by visiting specific URLs on specific
+websites that are created explicitly for the purpose of this
+experiment and do not previously exist on the planet. 
+An easy way to do this is to use a combination of letters and
+numbers that do not appear on any computer and cannot be found by
+Internet search engines. We will call this string the experimental
+token. There are many such examples---here we will
+use exp201990176, although you should use your own. Having chosen and
+tested the sequence, you can be pretty sure that the sequence does not
+appear in a subdomain (e.g. \texttt{page201990176.nps.edu}) or a domain
+  within a common top-level domain (e.g. \textt{exp201990176.org}).
+
+In a typical experiment there is frequently the need for multiple
+tokens. For example, we may wish to have one for a domain
+(e.g. \url{http://exp201990176.org}), one for the base of the web
+server's pages
+(e.g. \url{http://exp201990176.org}/page201990176.html), and one for
+the contents of the pages (e.g. ``This is our token:
+  content201990176'').  We call these kinds of tokens
+  ``self-identifying'' because they uniquely identify both the
+  experiment and their data contents. All of these tokens are based on
+  the \emph{key} 201990176. We use the phrase
+  \emph{collateral} to describe this site. It should be hosted on a
+ computer other than the system under study, of course.
+
+After we run our experiments and collect our data, we will search for
+the specific tokens or for the key in the data that we recover. Not
+finding a token is not a guarantee that it is not present---the token
+may have been encoded or encrypted or split into pieces that are
+stored disjointedly. But since it is easier to find residual data if
+you know what you are looking for, self-identifying data can help a
+lot.
+
+\protocol{Background and Self-Identifying Data}\label{protocol:background}
+\begin{enumerate}
+\item Create three tokens and the corresponding Internet collateral.
+\item Clear the test computer's hard drive.
+\item Install and operating system and a web browser.
+\item Be sure that private browsing is turned off.
+\item Using the DF tool, capture the system's state and store it in dataset $D_0$.
+\item Browse the collateral website
+ and the specific pages on it.
+\item Capture the system's state a second time and store the results in dataset $D_1$.
+\item Compare the datasets $D_0$ and $D_1$ to determine what's
+  changed. Analyze the changed data to see if they contain any
+  evidence of the browsed websites. 
+\end{enumerate}
+
+
+Although self-identifying data helps, at some point you also need to
+think about the specific mechanisms that may result in data being
+captured. Browsers retain data differently if the URL is typed
+into the search bar or found by clicking on a link. Here you can use
+self-identifying data again, by creating different tokens for each
+specific kind of transition or activity that you wish to capture. 
+
+Unfortunately, you cannot rely only on self-identifying data: in order
+to create a collateral website that's truly realistic, the website
+needs to replicate all of the functionality on actual
+websites. Replicating this functionality isn't hard for sites like
+Wikipedia.org or Wordpress.org, where the underlying software is open
+source. It's quite difficult for major news sites or search engines,
+many of which rely on JavaScript running inside web browsers to
+construct an experience with information served from many different
+web servers, typically operated by many different organizations.
+
+For these reasons, privacy auditing experiments need to use combine
+self-identifying data with real-world data. However, for our purposes
+here, working with self-identifying data is sufficient.
+
+\subsubsection{Being specific}
+For our final modification involving turning it from a rough sketch of
+the experiment to a step-by-step protocol that we can repeatably
+follow. Protocol~\ref{protocol:backgroudn} leaves a lot of details
+unspecified. That's okay for a planning document, but those details
+must be filled in before the experiment can actually be
+conducted. At some point the experimenter needs to decide which
+program to use and what to type at the keyboard. Before you start, it's always 
+better to make these decisions in advance, to write them down, and to
+show them to someone else for review.
+
+With that in mind, here is a more specific experimental protocol:
+
+\protocol{Final Protocol}
+\item Create the Collateral website
+\begin{enumerate}
+\item This protocol uses the tag key 201990176 and the domain
+  dom201990176.m57.biz, a domain we host commercially.
+\item Create the pages page201990176-1.html, page201990176-2.html and
+  page201990176-3.html with the contents as indicated by table~\ref{tab-contents}.
+\end{enumerate}
+\item Run the experiment
+\begin{enumerate}
+\item Start with a laptop computer with a 60GB hard drive.
+\item Book a copy of Ubuntu Linux with a Live CD.
+\item Open a Terminal. 
+\item Determine the device associated with the internal hard drive
+  (it's probably \verb+/dev/sda+)
+\item Clear the internal hard drive with the \texttt{dd} command:\\
+      \verb+# dd if=/dev/zero of=/dev/sda bs=65536
+\item Close the Terminal
+\item Partition and install Ubuntu Linux to the laptop's internal
+  drive using the Ubuntu installer.
+\item Create the account ``user'' with a password ``password''.
+\item Reboot the laptop.
+\item Log into the ``user'' account.
+\item Open the Terminal
+\item Launch the web browser that Ubuntu installed.
+\item Go to the page \url{http://www.wikipedia.org}.
+\item Close the web browser's window to exit the web browser.
+\item Click on the Terminal window's title bar and type the command:\\
+     \verb|$ tar cfvz /tmp/data0.tar.gz $HOME|
+\item Open the web browser again.
+\item Enter the three URLs from Table~\ref{tab-contents} into the
+  Browser's address bar, waiting for each page to load.
+\item Close the browser.
+\item Click on the Terminal window's title bar and type the command:\\
+     \verb|$ tar cfvz /tmp/data1.tar.gz $HOME|
+\item Copy \verb+/tmp/data0.tar.gz+ and \verb+/tmp/data1.tar.gz+ to
+  another computer for analysis.
+\end{enumerate}
+
+\begin{table}
+\begin{tabular}{lll}
+tag & URL  \\
+    & contents \\
+\hline
+contents201990176-1 & \url{http://dom201990176.m57.biz/page201990176-1.html} \\
+                    & \verb+<html><body>contents201990176-1</html></body>+\\
+\hline
+contents201990176-2 & \url{http://dom201990176.m57.biz/page201990176-2.html} \\
+                    & \verb+<html><body>contents201990176-2</html></body>+\\
+\hline
+contents201990176-3 & \url{http://dom201990176.m57.biz/page201990176-3.html} \\
+                    & \verb+<html><body>contents201990176-3</html></body>+\\
+\hline
+\end{tabular}
+\caption{Contents of the collateral website for the first experiment}\label{tab-contets}
+\end{table}
+
+\subsubsection{Background Behavior}
+
+It may be tempting to simply visit popular news and social media
+websites. The problem here is that there may be background processes
+or programs on the computer that also visit these sites. We certainly
+want to visit these sites, because they may employ specific techniques
+that are not elsewhere, but we need to further extend our experiment
+so that we can distinguish changes that result from our activity from
+those that result from the system's natural activity.
 
 
 
+
+To make our task easier, one kind of data that we'll try to recover
+will be ``self-identifying.'' That is, the data will be labeled so
+that we know that i
+
+There are many ways that websites can leave evidence of their being
+visited in a browser: in the history list, in cookies, the cache,
+bookmark list. 
+and 
+
+We'll stop here, but it should be clear that we can do far more.
 
 
 ---it requires a series of experiments 
@@ -183,7 +370,7 @@ experiment. That adds two more steps to our procedure:
 
 So in practice we might want a more complex procedure:
 
-\begin{itemize}
+\begin{enumerate}
 \item We will analyze the system with our tools to find out what
   information is present. We will call this dataset $D_1$. 
 \item We will use a digital system.
@@ -192,7 +379,7 @@ So in practice we might want a more complex procedure:
 \item We will compare $D_2$ with $D_1$ and determine what changed. In
   particular, we will look to see if privacy-sensitive information was
   present in $D_2$ that was not present in $D_1$. 
-\end{itemize}
+\end{enumerate}
 
 
 
@@ -205,16 +392,16 @@ exact answers for which their users are looking. kind of information that we're 
 in
 digital systems. But experimentation plays many other roles as well:
 
-TK
 
-\begin{itemize}
+
+\begin{enumerate}
 \item We test digital forensics tools to see what kind of information they can recover.
 \item We test the information that is recovered to see if it
   accurately reflects the information that was originally present.
 \item We test computer systems to see what kinds of information they have.
 \item We test software that runs on computer systems to see what kinds
   of information it may create, destroy, or leave behind.
-\end{itemize}
+\end{enumerate}
 
 As with cooking, digital forensics experiments can result in epistemological
 confusion---we might think that the experiment means one thing when in
