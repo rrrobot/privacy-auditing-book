@@ -1,0 +1,24 @@
+digraph G {
+node [shape=record];
+  rankdir = LR;
+  jpeg [shape=record,label="<d8>Start of Image,color='blue'|<e0>APP0|<e1>EXIF|<db>Quantization\nTables|<c0>Start\ Of\ Frame|<c4>Define\nHuffman\nTable(s)|<da>Start\ Of\ Scan|<d9>End\ Of\ Image",height=8];
+  "FF D8" [shape=none];
+  "FF E0" [shape=none];
+  "FF E1" [shape=none];
+  "FF DB" [shape=none];
+  "FF C0" [shape=none];
+  "FF C4" [shape=none];
+  "FF DA" [shape=none];
+  "FF D9" [shape=none];
+
+  jpeg:d8 -> "FF D8";
+  jpeg:e0 -> "FF E0";
+  jpeg:e1 -> "FF E1";
+  jpeg:db -> "FF DB";
+  jpeg:c0 -> "FF C0";
+  jpeg:c4 -> "FF C4";
+  jpeg:da -> "FF DA";
+  jpeg:d9 -> "FF D9";
+
+
+}

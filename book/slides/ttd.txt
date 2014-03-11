@@ -1,0 +1,5 @@
+- show logarathmic 
+- show histogram of garmin speeds
+  - different histogram sizes
+- Show CDF of garmin speeds.
+

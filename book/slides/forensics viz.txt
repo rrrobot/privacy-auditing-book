@@ -1,0 +1,24 @@
+Schneiderman mantra
+
+what do we use viz for 
+	- Seeing new things
+	- Presenting
+
+Output foramts
+	- What shoudl we use?
+	- SVG, PDF
+
+- Interactive vs. non-interactive
+
+displays
+
+platforms
+
+how we make the files
+
+examples from FTK & IEF
+
+10 drives, find me all the evil
+
+drive correlation. (starburst between two of the M57 drives or the NGDC drives.)
+

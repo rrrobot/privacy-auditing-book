@@ -1,0 +1,14 @@
+digraph G {
+    graph [rankdir = LR];
+
+    node[shape=record];
+
+    BW[shape=record,label="{{top|middle|bottom}}"];
+
+    COLOR [shape=plaintext,color=black,label=<
+  <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR ><TD color='black' bgcolor='blue'>top</TD></TR>
+  <TR><TD>middle</TD></TR>
+  <TR><TD>bottom</TD></TR>
+ </TABLE>>];
+}

@@ -1,0 +1,8 @@
+digraph G {
+        C [shape=star,label="Forensics",height=2];
+        Training [shape=box,style=filled,fillcolor=yellow];
+        C -> Training;
+        C -> Tools;
+        C -> Preparation;
+        C -> Convictions [label="Legal Authority"];
+}

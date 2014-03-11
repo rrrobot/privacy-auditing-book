@@ -1,0 +1,59 @@
+
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title>iTunes Music Library Network Graph</title>
+	<meta name="description" content="Experimentation with D3.js force-directed graphs using iTunes library data">
+	<meta name="author" content="Christopher Martin">
+	<meta name="viewport" content="width=device-width">
+
+    <link rel="canonical" href="http://cgmartin.com/itunes-library-network-graph/">
+	<link rel="stylesheet" href="css/style.css">
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.5.3/modernizr.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="http://mbostock.github.com/d3/d3.js"></script>
+
+    <script src="js/music-rgraph.js"></script>
+</head>
+<body>
+    <a href="https://github.com/cgmartin/iTunes-Library-Network-Graph"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
+    <div id="page">
+        <header>
+            <h1>iTunes Music Library Network Graph</h1>
+        </header>
+        <div role="main">
+            <p>Experimentation with D3.js force-directed graphs using iTunes library data.</p>
+
+            <h2>Favorite artists &amp; genres (4/5 stars)</h2>
+
+            <p>Here I've filtered my library down to only the 4 and 5 star songs, grouped by artist and genre. 
+            Artist's songs may span genres (and sub-genres) which makes for a somewhat interesting network graph.</p>
+
+
+            <div class="buttons">
+                <button class="first active" id="songsBtn"># of Songs</button><button 
+                    class="last" id="playsBtn"># of Plays</button>
+            </div>
+
+            <div id="chart"></div>
+
+        </div>
+        <footer role="contentinfo">
+	        <nav role="navigation">
+		        <ul>
+                    <li>By <a href="http://cgmartin.com">CGMartin</a></li>
+			        <li>Using <a href="http://mbostock.github.com/d3/">D3.js</a></li>
+                </ul>
+                <p>Licenced under a <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 License</a>.</p>
+	        </nav>		
+        </footer>	
+    </div>
+</body>
+</html>
