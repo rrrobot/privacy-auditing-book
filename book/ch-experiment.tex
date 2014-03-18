@@ -77,7 +77,7 @@ tell Safari to stop recording what the user was doing.
 
 The idea of private gained popularity and was implemented in all of
 the major browsers within a few
-years. \citeN{Aggarwal:2010:APB:1929820.1929828} analyzed the private
+years. \cite{Aggarwal:2010:APB:1929820.1929828} analyzed the private
 browsing models of several popular browsers and found that they all
 implemented the feature differently and retained different kinds of
 information during private browsing. This isn't entirely surprising,
@@ -118,7 +118,8 @@ during normal browsing---we need to test our acquisition and analysis
 steps to make sure that they work as expected. We can perform such a test with this sequence of steps:
 
 \newcounter{protocol}\setcounter{protocol}{0}
-\newcommand{\protocol}[#1]{\noindent\textit{Protocol \#\arabic{protocol}: #1\refstepcounter{protocol}}}
+\newcommand{\protocol}[1]{\noindent\textit{Protocol \#\arabic{protocol}: #1\refstepcounter{protocol}}}
+
 
 \protocol{Normal Behavior, first try}
 \begin{enumerate}
@@ -161,11 +162,11 @@ we need to introduce some notation:
 It is easier to analyze systems that are simple. A problem with the
 approach above is that the system is likely to have extraneous data and
 programs that is not relevant to our inquiry. We will respond by
-\emph{clearing}\footnote{``Clearing information is a level of media sanitization that would protect the confidentiality of information against a robust keyboard attack. Simple deletion of items would not suffice for 
+\emph{clearing} the media.\footnote{``Clearing information is a level of media sanitization that would protect the confidentiality of information against a robust keyboard attack. Simple deletion of items would not suffice for 
 clearing. Clearing must not allow information to be retrieved by data, disk, or file recovery 
 utilities. It must be resistant to keystroke recovery attempts
 executed from standard input devices and from data scavenging tools. For example, overwriting is an acceptable method 
-for clearing media. 
+for clearing media.} 
 
 There are overwriting software or hardware products to overwrite storage space on the 
 media with non-sensitive data. This process may include overwriting not only the logical 
@@ -175,7 +176,7 @@ random data. Overwriting cannot be used for media that are damaged or not writea
 The media type and size may also influence whether overwriting is a suitable sanitization 
 method. [SP 800-36]. 
 
-Studies have shown that most of today’s media can be effectively cleared by one overwrite.''\cite{nist-800-88}.
+Studies have shown that most of today’s media can be effectively cleared by one overwrite.''\cite{nist800-88}.
 the system before we begin the
 experiment. This adds two more steps to our procedure:
 
@@ -209,7 +210,7 @@ token. There are many such examples---here we will
 use exp201990176, although you should use your own. Having chosen and
 tested the sequence, you can be pretty sure that the sequence does not
 appear in a subdomain (e.g. \texttt{page201990176.nps.edu}) or a domain
-  within a common top-level domain (e.g. \textt{exp201990176.org}).
+  within a common top-level domain (e.g. \texttt{exp201990176.org}).
 
 In a typical experiment there is frequently the need for multiple
 tokens. For example, we may wish to have one for a domain
@@ -283,6 +284,7 @@ show them to someone else for review.
 With that in mind, here is a more specific experimental protocol:
 
 \protocol{Final Protocol}
+\begin{enumerate}
 \item Create the Collateral website
 \begin{enumerate}
 \item This protocol uses the tag key 201990176 and the domain
@@ -298,7 +300,7 @@ With that in mind, here is a more specific experimental protocol:
 \item Determine the device associated with the internal hard drive
   (it's probably \verb+/dev/sda+)
 \item Clear the internal hard drive with the \texttt{dd} command:\\
-      \verb+# dd if=/dev/zero of=/dev/sda bs=65536
+      \verb+# dd if=/dev/zero of=/dev/sda bs=65536+
 \item Close the Terminal
 \item Partition and install Ubuntu Linux to the laptop's internal
   drive using the Ubuntu installer.
@@ -319,6 +321,7 @@ With that in mind, here is a more specific experimental protocol:
      \verb|$ tar cfvz /tmp/data1.tar.gz $HOME|
 \item Copy \verb+/tmp/data0.tar.gz+ and \verb+/tmp/data1.tar.gz+ to
   another computer for analysis.
+\end{enumerate}
 \end{enumerate}
 
 \begin{table}
