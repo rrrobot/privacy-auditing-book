@@ -10,7 +10,7 @@ frequently include pain, ruined
 reputations, financial loss, and even harms to national
 security. 
 
-\section{Leaks of Personally Identifiable Information}
+\section{Leaks of Private Information \DONE}
 
 Consider these three cases:
 
@@ -97,7 +97,7 @@ publishing. The techniques could have been used to prevent the data
 leaks by the British MOD or the deployment of privacy-compromising
 software to millions of Apple customers.
 
-\subsection{Leaky Bugs}
+\subsection{Information-Leaking Bugs \DONE}
 
 All kinds of software leaks personal information. Sometimes it is
 because the software is improperly used, or because it not designed
@@ -128,8 +128,8 @@ leaked is typically embedded in a form that is invisible or easily
 ignored, the flaws can persist for weeks, months, or even years before
 they are discovered and fixed.
 
-Software bugs that result in privacy leaks tend to fall into these
-broad categories:
+Software bugs that result in privacy leaks tend to fall into three
+categories:
 
 \begin{itemize}
 \item Failure to destroy privacy-sensitive data when they are no longer needed.
@@ -148,7 +148,7 @@ microphone. It's very easy for a programmer to overlook some small
 piece of storage that may hold some very sensitive piece of
 information. 
 
-\subsection{Usability Flaws}
+\subsection{Usability Flaws \DONE}
 
 Some privacy leaks happen because the user of a program doesn't
 realize what the program is doing. The program behaves properly,
@@ -209,7 +209,7 @@ of their users. They are frequently present because nobody looked
 deeply at the data and publicized their findings. 
 
 
-\section{Technical Privacy Auditing with Digital Forensics Tools}
+\section{Technical Privacy Auditing with Digital Forensics Tools \INDEV}
 
 \emph{Auditing} is the systematic examination by qualified personnel of processes and
 objects that is done for the purpose of determining conformance with a
@@ -228,9 +228,7 @@ document the impact that the data center is having on the environment
 as a result of its energy use, waste heat disposal, and any chemical
 releases. 
 
-\subsection{Privacy Auditing}
-
-\emph{prior work on privacy auditing}
+\subsection{Privacy Auditing \INDEV}
 
 Most privacy auditing involves the systematic examination of policies,
 procedures, and specifications. An accounting firm might review the
@@ -241,17 +239,18 @@ say that the website does not track the geographical location of
 users, but the website's developers might have used a platform that
 does record this information. 
 
+\hl{Anything else?}
 
 \subsection{Technical Privacy Auditing}
 
-Technical Privacy Auditing (TPA) is a new approach of looking for private
-information through technical means.  In TPA we are typically looking
+Technical Privacy Auditing (TPA) looks for private
+information using technical means.  In TPA we are typically looking
 for information whose presence is unknown or undocumented. Such
 privacy leaks cannot be readily found by examining policies or
 documentation. Instead it is necessary to search for them.
 
-We have created the TPA Methodology to help users find leaks. The TPA
-Methodology consists of several steps:
+The TPA Methodology is a sequence of steps that you can use to find
+such leaks. The TPA Methodology consists of several steps:
 
 \begin{enumerate}
 \item \textbf{TARGET} Determine the systems or data objects to examine.
@@ -264,8 +263,9 @@ Methodology consists of several steps:
 \item \textbf{REPORT} Share results in a concise \& understandable form
 \end{enumerate}
 
+\hl{Anything else?}
 
-\subsection{Digital Forensics}
+\subsection{Digital Forensics \DONE}
 
 \emph{Digital Forensics} (DF) is a branch of forensic sciences that
 involves the investigation digital devices and the data that they
@@ -345,7 +345,7 @@ can reveal an individual's state-of-mind or intent \emph{at the time
 The next section describes how digital forensic tools can be used to
 accomplish these goals.
 
-\subsection{DF Tools: Microscopes for finding Personally Identifiable Information (PII) }
+\subsection{DF Tools: Microscopes for Finding Private Information \DONE}
 
 Our goal is to use
 the model for privacy auditing. We want to detect the presence of
@@ -373,15 +373,7 @@ apply the same tools to documents, media and network streams acquired
 in the ``wild''---in the digital environment---and see if those wild
 samples contain PII. If they do, we have documented a privacy failing.
 
-Others have used DF tools for this purpose. For example, in 2009 the
-Inspector General of the United States Department of Defense issued a
-report in which forensic software was used to test hard drives leaving
-the government service. The IG found that ``DOD Components did not
-properly sanitize, document, or fully account for excess unclassified
-IT equipment before it was released to other Federal, DOD, or
-non-Federal organizations.''\cite{D-2009-104}
-
-Both of the privacy leaking examples at the beginning of this chapter
+The examples at the beginning of this chapter
 could have been readily prevented by applying the digital forensics
 model:
 
@@ -404,7 +396,7 @@ model:
   re-applied, the tools could then verify that the redaction had been
   completed as expected.
 
-\item \textbf{The Apple Geolocation Database.} Likewise, Warden and Allan didn't
+\item \textbf{The Apple Geolocation Database.} Warden and Allan didn't
   require special forensic tools to find the covert geolocation
   database that was present in iOS~4. The database was a standard SQLite3
   file, and the file was stored as part of the iPhone ``backup''
@@ -422,11 +414,32 @@ model:
   released to the general public. An important part of the Analysis
   step is to look for and try to explain outliers: the database
   was such an outlier that should have attracted attention. 
+
+\item \textbf{The Snapchat Photos.} Unlike the previous two cases, the
+  ``deleted'' Snapchat photos discovered by Decipher Forensics could
+  only be recovered by using digital forensics tools. Nevertheless,
+  Snapchat's developers or product
+  testers could have followed a similar procedure while Snapchat was
+  under development to see if photos were actually being deleted or
+  if they were just being hidden from the users' view. Once this
+  problem was detected, it would have
+  been relatively easy to modify the program so that snapped photos
+  would be overwritten before they were deleted so that the data could
+  not be recovered.
 \end{enumerate}
+
+Others have used DF tools for this purpose. For example, in 2009 the
+Inspector General of the United States Department of Defense issued a
+report in which forensic software was used to test hard drives leaving
+the government service. The IG found that ``DOD Components did not
+properly sanitize, document, or fully account for excess unclassified
+IT equipment before it was released to other Federal, DOD, or
+non-Federal organizations.''\cite{D-2009-104}
+
 
 
 \section{Conventions used in this book}
-In general this book follows \emph{Wikipedia Manual of
+This book follows the \emph{Wikipedia Manual of
   Style}\footnote{\url{http://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style}}
 and specifically the Computer
 Science\footnote{\url{http://en.wikipedia.org/wiki/Wikipedia:WikiProject_Computer_science/Manual_of_style}}
@@ -440,16 +453,16 @@ Science\footnote{\url{http://en.wikipedia.org/wiki/Wikipedia:WikiProject_Compute
 Text in this book is generally typeset in the serif font that you are
 now reading. The fixed-width courier font is used for programs,
 computer input and output, as well as for numbers that might
-reasonably be expected to be constants in a computer program. Thus,
+be constants in a digital forensics computer program. Thus,
 the Earth is 150 million kilometers (150 Gm) from the sun, but a
 traditional disk sector has |512| bytes (|512|~B).
 
 \subsection{Radix}
 Numbers are generally assumed to be in base 10 unless otherwise
 specified. Binary digits are suffixed with a |b|; octal
-is indicated with a leading |0| as in most programming
-languages; hexadecimal numbers may be prefixed with |0x| or |\x| or
-have a |h| suffix. Unfortunately there are
+is indicated with a leading |0| (as in most programming
+languages); hexadecimal numbers may be prefixed with |0x| or |\x| or
+have |h| as a suffix. Unfortunately there are
 exceptions that must be inferred from context. For example, hex dumps
 and cryptographic hashes are always presented courier as unadorned hexadecimal
 digits. Examples are shown in \tabref{nomenclature}.
@@ -470,22 +483,23 @@ Base & Nomenclature & Example & Equivalent      & Usage \\
 16 & Hexadecimal &  |DEADBEEFh|& 3,735,928,559  & text \\
    &             &  |0xFF|     & 255            & Output \\
    &             &  |\xFF|     & 255            & Python code\\
+   &             &  |da39a3ee5e6b4b0d3255bfef95601890afd80709| & n/a & hash value\\
 \hline
 \hline
 \end{tabular}
 \caption{Examples of numbers in various bases used in this book.}\label{nomenclature}
 \end{table}
 
-\subsection{Units}
+\subsection{Units \DONE}
 
-Measurements for Natural phenomena discussed in this book are provided
+Measurements for natural phenomena discussed in this book are provided
 in SI Units (the ``Metric System.'')
 Manufactured objects are described in either SI units or
 United States customary units (followed by SI approximations), depending on the system of measurements
 that was used to design and produce the object. Thus, this book
 discusses 5.25-inch (133mm) floppy disks.
 
-\subsection{SI and IEC Multipliers}\label{sec:si-and-iec}
+\subsection{SI and IEC Multipliers \DONE}\label{sec:si-and-iec}
 % \note{1MB = 1,000,000 bytes}
 % \note{1MiB = 1,048,576 bytes}
 
@@ -512,29 +526,28 @@ this is rarely the case due to manufacturing concerns.
 For much of computing history the correct sense of Ks and Ms could be
 inferred from context and, in any event, the difference between 1000
 and 1024 wasn't all that significant. Those in the industry knew that
-a megabyte of RAM was really $1024\times1024=1048576$ bytes.
+a megabyte of RAM was really $\texttt{1024}\times\texttt{1024}=\texttt{1048576}$ bytes.
 
 The difference in interpretation became an issue in the 1990s as the
 number of people using computers mushroomed fierce pressure to cut
 costs hit the storage industry. A storage vendor could truthfully
 advertise and sell a ``600 MB''
 hard drive that stored 600,000,000 bytes in
-precisely 1,171,875 512-byte sectors. There was simply no incentive
+precisely 1,171,875 |512|-byte sectors. There was simply no incentive
 for storage vendors to sell such a hard drive that stored
 $600\times1024\times1024=629,145,600$ bytes and required 1,228,800
 sectors to do so.
 
 A second reason for the standardization effort was the increasing
-ridiculousness stemming from computer scientists using
-a non-standard system of measurement. Really, why should the K prefix
-mean 1024 when describing bytes but 1000 when describing grams?
+confusion stemming from computer scientists using the K prefix
+mean |1024| (e.g. bytes) in some contexts but 1000 in others (e.g. grams). 
 
 A third reason for the standardization was the industry's move to
 increasingly larger storage systems, resulting in successively larger
 divergence between the power-of-two measurement and the corresponding
 power-of-ten measurement. This third reason is almost certainly the
 reason that binary-based prefixes were proposed in the 1990s---that's
-when the need for the prefixes started to become noticable.
+when the need to distinguish between powers of two and powers of 10 become noticeable.
 
 The IEC binary prefixes were proposed in 1996\cite{iec:1996}, and
 adopted as an international standard in 1999.  In 2006 additional
@@ -544,8 +557,7 @@ yobi (Yi=$2^{80}$)\cite{iec:80000-13:2008}.
 Despite this standardization effort, today we live in a somewhat
 confusing world in which so-called ``4GB'' DRAM modules 
 store precisely 4,294,967,296 bytes
-but ``4GB'' microSD cards sold for cell
-phones store 4,000,000,000 bytes. Even more confusing, the DRAM
+but ``4GB'' microSD cards store 4,000,000,000 bytes. Even more confusing, the DRAM
 module may have four ($2^{2}$) chips, each storing 1073741824
 ($2^{30}$) bytes each, while the microSD card may two million flash
 pages, each with 4096 bytes of usable storage, but present that
@@ -602,13 +614,13 @@ yotta & Y & $10^{24} = 1000^8$ & yobi & Yi & $2^{80} = 1024^8 $& 21\% & Mangled 
   linguistic roots.}\label{si-iec-differences}
 \end{table}
 
-\section{Other Resources}
-\subsection{Books}
-\subsection{Articles}
+\section{Other Resources \INDEV}
+\subsection{Books \INDEV}
+\subsection{Articles \INDEV}
 
-\section{Exercises}
-* Open the JPEG and determine the address of where the photographer
-was standing. Show your work.
+% \section{Exercises}
+% * Open the JPEG and determine the address of where the photographer
+% was standing. Show your work.
 
 
 

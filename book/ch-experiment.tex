@@ -118,7 +118,7 @@ during normal browsing---we need to test our acquisition and analysis
 steps to make sure that they work as expected. We can perform such a test with this sequence of steps:
 
 \newcounter{protocol}\setcounter{protocol}{0}
-\newcommand{\protocol}[#1]{\noindent\textit{Protocol \#\arabic{protocol}: #1\refstepcounter{protocol}}}
+\newcommand{\protocol}[1]{\noindent\textit{Protocol \#\arabic{protocol}: #1\refstepcounter{protocol}}}
 
 \protocol{Normal Behavior, first try}
 \begin{enumerate}
@@ -175,7 +175,7 @@ random data. Overwriting cannot be used for media that are damaged or not writea
 The media type and size may also influence whether overwriting is a suitable sanitization 
 method. [SP 800-36]. 
 
-Studies have shown that most of today’s media can be effectively cleared by one overwrite.''\cite{nist-800-88}.
+Studies have shown that most of today’s media can be effectively cleared by one overwrite.''\cite{nist-800-88}}.
 the system before we begin the
 experiment. This adds two more steps to our procedure:
 
@@ -209,7 +209,7 @@ token. There are many such examples---here we will
 use exp201990176, although you should use your own. Having chosen and
 tested the sequence, you can be pretty sure that the sequence does not
 appear in a subdomain (e.g. \texttt{page201990176.nps.edu}) or a domain
-  within a common top-level domain (e.g. \textt{exp201990176.org}).
+  within a common top-level domain (e.g. \texttt{exp201990176.org}).
 
 In a typical experiment there is frequently the need for multiple
 tokens. For example, we may wish to have one for a domain
@@ -283,6 +283,7 @@ show them to someone else for review.
 With that in mind, here is a more specific experimental protocol:
 
 \protocol{Final Protocol}
+\begin{enumerate}
 \item Create the Collateral website
 \begin{enumerate}
 \item This protocol uses the tag key 201990176 and the domain
@@ -298,7 +299,7 @@ With that in mind, here is a more specific experimental protocol:
 \item Determine the device associated with the internal hard drive
   (it's probably \verb+/dev/sda+)
 \item Clear the internal hard drive with the \texttt{dd} command:\\
-      \verb+# dd if=/dev/zero of=/dev/sda bs=65536
+      \verb+# dd if=/dev/zero of=/dev/sda bs=65536+
 \item Close the Terminal
 \item Partition and install Ubuntu Linux to the laptop's internal
   drive using the Ubuntu installer.
@@ -319,6 +320,7 @@ With that in mind, here is a more specific experimental protocol:
      \verb|$ tar cfvz /tmp/data1.tar.gz $HOME|
 \item Copy \verb+/tmp/data0.tar.gz+ and \verb+/tmp/data1.tar.gz+ to
   another computer for analysis.
+\end{enumerate}
 \end{enumerate}
 
 \begin{table}
