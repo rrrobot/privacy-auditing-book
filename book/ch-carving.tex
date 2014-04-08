@@ -1,26 +1,133 @@
 \chapter{Carving: Finding Hidden Files in Bulk Data}
 
-\emph{File carving}, sometimes called \emph{data carving} or simply \emph{carving}, is a digital forensics technique used to recover files, file fragments, or other kinds of objects from an input, based on their structure or content, rather than metadata.  The input is most commonly one or more disk images, but can also include other data streams, such as physical memory images or network packet captures. In addition to recovering objects, carving can also be used to simply learn the locations of potentially recoverable objects without incurring the overhead of recovery.  File carving is a powerful tool for recovering data when filesystem metadata (e.g., directory structures) is corrupt or destroyed, which occurs when old files have been deleted or the data source is corrupted, e.g., if data is being recovered from a damaged hard drive.  When file carving is applied to traditional non-volatile storage media, such as hard drives, solid state drives, or removable media such as USB thumbdrives, the objects to be recovered are usually documents (e.g., Microsoft Word or PDF files), images (e.g., JPEG or PNG-format graphics files), video files (e.g., AVI or MPEG format movies), or other common file types.  For physical memory carving, recovered objects are generally operating systems kernel or application data structures, which reveal the current or historical state of a computer system.  
+\color{red} 
+Overall comments:
+
+1 - This is great start. Remember that it's coming after the chapter
+that describes disks and file systems (\chapref{ch-drives}) and the
+chapter on finding hidden information in file systems
+(\chapref{ch-fshidden}). In \chapref{ch-drives} we show people how to
+work with disk images; in \chapref{ch-fshidden} we show how to use
+SleuthKit to recover deleted files. I want \chapref{ch-fshidden} to
+end with the idea that there are all these data that can't be
+recovered because we don't have file system metadata. This chapter
+will introduce traditional header/footer carving, carving with
+validation, fragment recovery carving, and hash-based carving.
+
+2 - students like short paragraphs
+
+3 - Other comments in text
+
+also, about formatting:
+
+1 - your source file has one line per paragraph. That increases the
+chances of conflicts if we both edit at the same time. The paragraphs
+I've edited I'll turn into filled paragraphs with emacs. 
+
+2 - I found some \verb+^M\+'s in your text; did you do any editing on windows?
+
+\color{black}
+
+
+\hl{I recast this paragraph to discuss why it is important to our
+  readers:}
+
+\emph{File carving} (also called \emph{data carving} or simply
+\emph{carving}), is a digital forensics technique used to recover
+files, file fragments, or other kinds of objects based on their
+structure or content, rather than using metadata. Carving is a
+critical technique in privacy auditing because it can find data that
+are present and usable, but are invisible because pointers to the
+data have been erased.
+
+Most carvers will operate on any block of data of any size. It's
+common to use carvers to search for data in disk images. But carvers
+can be used to search other kinds of data as well. For example, you
+can run a carver on a database file to see if information is present
+in the file that cannot be retrieved through the database API.
+(\citeN{1247492} demonstrated how MySQL left significant information
+in database table storage, the transaction log, indexes, and other
+system components.) Carvers can be applied to other data
+streams as well, including physical memory (or memory images), and
+even network packet captures. 
+
+\hl{This is an implementation detail that we can move later; it's
+  really whether we copy out the data now or later, right?} In addition to recovering objects, carving can also be used to 
+learn the locations of potentially recoverable objects without
+incurring the overhead of recovery. 
+
+File carving is a powerful tool for recovering data when filesystem
+metadata (e.g., directory structures) is corrupt or destroyed, which
+occurs when old files have been deleted or the data source is
+corrupted, e.g., if data is being recovered from a damaged hard drive.
+When file carving is applied to traditional non-volatile storage
+media, such as hard drives, solid state drives, or removable media
+such as USB thumbdrives, the objects to be recovered are usually
+documents (e.g., Microsoft Word or PDF files), images (e.g., JPEG or
+PNG-format graphics files), video files (e.g., AVI or MPEG format
+movies), or other common file types.  For physical memory carving,
+recovered objects are generally operating systems kernel or
+application data structures, which can reveal the current or historical
+state of a computer system.
 
 
 \begin{figure}[ht]
+\hl{Good caption. Long captions are good, as many students read the
+  captions without reading the text.}
 \begin{center}
 \includegraphics[width=140mm]{ch-carving/carvingoverview.pdf}
 \end{center}
-\caption{A high level overview of file carving.  A file carver searches for binary strings called headers that mark the beginnings of relevant file types.  Other data is then evaluated to determine where the file ends and potentially, for validation.  The figure illustrates an ideal situation$-$difficulties arise when unrelated data blocks intervene between the header and footer as a result of file fragmentation, or in more serious cases, when the fragmentation results in the header and fooger being in reverse order.  Files may also be partially corrupted, resulting in, e.g., a missing footer.}
+\caption{A high level overview of file carving.  A file carver
+  searches for binary strings called headers that mark the beginnings
+  of relevant file types.  Other data is then evaluated to determine
+  where the file ends and potentially, for validation.  The figure
+  illustrates an ideal situation$-$difficulties arise when unrelated
+  data blocks intervene between the header and footer as a result of
+  file fragmentation, or in more serious cases, when the fragmentation
+  results in the header and fooger being in reverse order.  Files may
+  also be partially corrupted, resulting in, e.g., a missing footer.} 
 \label{fig:carvingoverview}
 \end{figure}
 
+Historically, file carvers operated by looking for file headers and
+footers, which are unique strings of bytes that appear at predictable
+places near the beginning and end of files of a particular type
+\cite{Foremost, Scalpel}.  Such sequences are sometimes called
+\emph{magic numbers.} Carvers may also scan for \emph{milestones}, which
+are other strings of bytes that intervene between the beginning and
+end of the file, to attempt to eliminate false positives (\emph{do we
+  need to define terms like this here or has this occurred somewhere
+  else?} \hl{We generally define on the first use in a chapter, and
+  put it in ital. We also put it in the glossary.})\label{def:milestones}.  Carving programs often have an option to look for headers
+only at or near sector boundaries, because files are almost always
+created on a sector boundary.  However, searching the entire input
+without regard to sector boundaries can enable discovery of embedded
+files, such as JPEGs embedded in Microsoft Word or in archives
+(e.g. ZIP files).  Depending on the circumstances, this may be either an
+advantage or disadvantage.   
 
-Historically, file carvers operated by looking for file headers and footers, which are unique strings of bytes that appear at predictable places near the beginning and end of files of a particular type \cite{Foremost, Scalpel}.  They may also scan for "milestones", which are other strings of bytes that intervene between the beginning and end of the file, to attempt to eliminate false positives (\emph{do we need to define terms like this here or has this occurred somewhere else?}).  Carving programs often have an option to look for headers only at or near sector boundaries, because new files are always created on a sector boundary.  However, searching the entire input without regard to sector boundaries can enable discovery of embedded files, such as JPEGs embedded in Microsoft Word or other compound document types.  Depending on the circumstances, this may be either an advantage or disadvantage.  
+While header/footer--based file carving is still widely used to
+recover data from storage media, other carving strategies have been
+developed, to increase the accuracy of file carving tools by
+incorporating detailed knowledge of specific file types and validation
+mechanisms, and to expand the scope of carving to other types of
+media.  Recent research has also concentrated on improving the
+performance of carving tools and whereas carving was once a fairly
+time--intensive process, data recovery using carving can now generally
+be performed at the rate that the target storage media can transfer
+data.  There has also been some limited success in developing tools
+that can handle fragmented objects, but these are generally limited to
+recovery of specific file types and the majority of carving tools
+cannot automatically reconstruct arbitrarily fragmented
+objects. \hl{mention fragment recovery carving and hash-based carving. We should probably have the
+  carving taxonomy in a box. Each of these approaches should be
+  described below?}
 
-While header/footer--based file carving is still widely used to recover data from storage media, other carving strategies have been developed, to increase the accuracy of file carving tools by incorporating detailed knowledge of specific file types and validation mechanisms, and to expand the scope of carving to other types of media.  Recent research has also concentrated on improving the performance of carving tools and whereas carving was once a fairly time--intensive process, data recovery using carving can now generally be performed at the rate that the target storage media can transfer data.  There has also been some limited success in developing tools that can handle fragmented objects, but these are generally limited to recovery of specific file types and the majority of carving tools cannot automatically reconstruct arbitrarily fragmented objects.   
-
-See Figure \ref{carvingoverview}.  Or else.
+See Figure \ref{carvingoverview}.  
 
 Applications of file carving and more details about the various file carving techniques currently in use are presented below.
 
-\section{Applications of Carving}
+\section{Using Carving to Find Hidden Data}
 
 Carving is typically used to recover objects or object fragments (most commonly, files or file fragments) that have been deleted.  Carving might be carried out to support a digital forensics investigation, in the context of criminal or civil litigation, during incident response, or to recover data that's been inadvertently lost, e.g., as a result of  corrupted media or user error.  For the purposes of privacy auditing, carving can be used in precisely the same manner it would be used in a digital forensics investigation of broad scope--namely, to determine what sensitive data can be recovered from target media.  For example, most modern operating systems delete files by simply modifying filesystem metadata to free resources such as inodes or MFT entries and the data blocks allocated to the files.  This makes the files ``disappear'' from a user's view, without actually scrubbing the data blocks previously allocated to the file.  These data blocks then reside in the unallocated regions of storage media, inaccessible to most users, until they are allocated to new files and overwritten.  There are numerous situations where this shallow file deletion process exposes sensitive user data to recovery.  For example, when users clear web browser caches, empty the recycle bin on Microsoft Windows systems, clear system logs, or delete files from the command line, typical users lose \emph{control} over potentially sensitive data, but the data is often easily recovered with carving techniques.  Furthermore, there are situations where operating systems allocate significant amounts of disk space on a semi-permanent basis without sanitization, resulting in data being trapped (and recoverably via file carving) for long periods of time.  Consider, for example, the HTML fragment and image file depicted in Figure \ref{fig:insideswapfile}, which were carved from a Windows XP swap file.  Because of the structure and organization of swap files, it would be very unusual for this data to be present as a result of swapping--in fact, in this case, the two deleted files were trapped when Windows extended the swap file, and were easily recovered using file carving.  Another common misconception is that format operations permanently destroy data.  In fact, with the exception of how SSDs are handled in recent versions of modern operating systems, most format operations destroy little data.  In figure \ref{fig:formatting}, the effects of formatting a 256MB thumb drive for three different filesystems is depicted.  Even after the third format operation, most data remains.  The thumb drive stored four photographic images in addition to a variety of other files.  All four photographic images stored on the thumb drive were still completely recoverable after the format operations, as illustrated in Figure \ref{fig:recovered}.  
 
@@ -36,6 +143,8 @@ Carving is typically used to recover objects or object fragments (most commonly,
 \end{figure}
 
 
+\hl{I really like Figure 13.3. Can we have the source code for the
+  program as well?}
 \begin{figure}[ht]
 \centering
 \includegraphics[width=150mm]{ch-carving/formatting.pdf}
@@ -55,9 +164,38 @@ Carving is typically used to recover objects or object fragments (most commonly,
 Given that carving can recover data that is otherwise completely inaccessible to non-technical users, it is imperative that privacy advocates understand the capabilities and limitations of this forensic technique.  
 
 
-\section{Header/Footer\-Based Carving}
+\section{How Carvers Work}
+In this section we will discuss the specifics of how carvers work. We
+will look at three carvers: scalpel, a traditional carver; PhotoRec, a
+modern carver with a pluggable architecture; and frag\_find, a
+hash-based carver.
 
-Header/footer based carving tools use a database of carving rules, with each rule defining how objects of a particular type should be identified in a data stream. This approach is similar to that used by the Unix {\tt file} command, which uses a database of rules to identify file types.  For carving, the rules help to identify the starting and ending locations of files a stream, and allow the carving tool to copy sequences of bytes between the header and footer into regular files for examination.  A rule typically defines a header and optionally, a footer, each of which is a binary string expected to be discovered near the beginning/end of objects of the corresponding type.  For example, for JPEG file types, the appropriate header is 0xFFD8FFE00010 and the footer is 0xFFD9.  The rule also commonly provides other guidance to the carving tool, including the minimum and maximum sizes of matching objects that should be carved, whether alphabetic components of the header and footer are case sensitive, and whether carving operations for an object should cease if the header of a matching object is encountered (this identifies objects stored "back to back" on the storage media).  Other guidance to the carving tool might include whether to choose the footer closest to a discovered header or farthest away from the header, and whether the footer should actually be included in the recovered object.  To illustrate some of these issues, consider the following carving rules from a configuration file for Scalpel \ref{Scalpel}, a popular header/footer--based file carver:
+\subsection{Header/Footer\-Based Carving with Scalpel}
+
+Header/footer based carving tools use a database of carving rules,
+with each rule defining how objects of a particular type should be
+identified in a data stream. This approach is similar to that used by
+the Unix {\tt file} command, which uses a database of rules to
+identify file types.  For carving, the rules help to identify the
+starting and ending locations of files a stream, and allow the carving
+tool to copy sequences of bytes between the header and footer into
+regular files for examination.  A rule typically defines a header and
+optionally, a footer, each of which is a binary string expected to be
+discovered near the beginning/end of objects of the corresponding
+type.  For example, for JPEG file types, the appropriate header is
+0xFFD8FFE00010 and the footer is 0xFFD9.  The rule also commonly
+provides other guidance to the carving tool, including the minimum and
+maximum sizes of matching objects that should be carved, whether
+alphabetic components of the header and footer are case sensitive, and
+whether carving operations for an object should cease if the header of
+a matching object is encountered (this identifies objects stored "back
+to back" on the storage media).  Other guidance to the carving tool
+might include whether to choose the footer closest to a discovered
+header or farthest away from the header, and whether the footer should
+actually be included in the recovered object.  To illustrate some of
+these issues, consider the following carving rules from a
+configuration file for Scalpel \ref{Scalpel}, a popular
+header/footer--based file carver:
 
 {
 % SLG commented out \medium, as it caused a problem
@@ -79,14 +217,21 @@ Comments in the example above begin with a hash mark ("\#") and are ignored by t
 
 One benefit of header/footer-based carvers is that they can retrieve files from a raw disk image in a filesystem--agnostic way, operating regardless of the type of filesystem on the disk image.  Perhaps more importantly, file carving is possible even if the filesystem metadata has been destroyed, such as during a filesystem format operation or as a result of file corruption due to media damage, a power outage, or similar event.    One limitation of header/footer--based carving tools is that an object's data must be contiguous to be carved properly.  With manual intervention or multiple carving steps which prune out previously recovered objects from the target media, some non-contiguous objects can be recovered, but in general fragmented objects are problematic.  Still, header/footer--based carvers that encounter fragmented objects can still partially recover the objects, and even object fragments may pose significant risks to privacy.  Finally, of the various types of file carvers, header/footer--based carvers are generally the most configurable, since only the binary strings that delimit the beginning and end of targeted file types must be described.  In contrast, deep carvers, which have extensive knowledge of the format of specific file types, generally require writing code to target additional file types.
 
-\section{Reducing False Positives: Semantic Carving}
+\subsection{Reducing False Positives with PhotoRec, a Semantic Carver}
+
+\hl{I recommend looking at the code inside PhotoRec that does JPEG
+  validation. it's very easy to follow and will fit in well with the
+  JPEG file format that is discussed in} \chapref{ch:container_files}
 
 Unlike header/footer-based carving, \emph{semantic} or \emph{deep carving} uses detailed knowledge of individual file types to detect, parse, and recover files from disk images or raw, physical disk devices.  Whereas header/footer-based carving uses only minimal structural information about particular file types, the goal of semantic carving is to leverage sufficient information about particular file types to allow more accurate detection and validation of files (thus reducing false positives).   Semantic file carvers also attempt to use file metadata to determine the precise lengths of files to be recovered, reducing "over-carving", which results frequently when header/footer-based carvers cannot accurately determine where a file ends.  Semantic carving is much more resilient in carving compound files, e.g., files that contain other files (examples include archives such as ZIP, but also image files with embedded thumbnails, to support rapid previewing).  Since the semantic file carver understands the structure of the container file, embedded files such as thumbnails can simply be included without further processing by the carver, preserving the integrity of the compound file.   Header/footer based carving tools like Scalpel include experimental features that try to correlate nested headers and footers (e.g., in the case of an image file with embedded thumbnails), but in practice these cases are better handled with deeper knowledge of the structure of files of particular types.
 
 Early attempts to reduce false positives in file carving introduced validators, which performed consistency checks to determine the validity of recovered files (e.g., decompressing a recovered JPEG file to determine if it decompresses properly, or analyzing the format of a ZIP file to see if the archive is intact).  Files that fail validation can either be discarded or marked as corrupted, but preserved for deeper examination by an investigator.  Photorec \ref{photorec} is currently the state-of-the-art semantic carver, supporting more than 400 file types.  Attempts to recover individual file types in Photorec are triggered by discovery of a matching header in a disk image.  Execution of file type-specific C functions (written by the author of the tool or by investigators wishing to extend the list of types supported by Photorec) follow the discovery of the header, and these functions validate the data as well as parse relevant file metadata to discover the length of the file and other information.  This detailed knowledge of file structures greatly increases accuracy when carving pristine files, but it can be time-consuming to accommodate new file
 types due to limited documentation of their formats and generally requires programming skill.
 
-\section{Carving Fragmented Files}
+\subsection{The challenge of fragmented files}
+
+
+
 
 Dealing with fragmented objects is the most difficult problem in carving.  In legacy filesystems such as FAT, which does not incorporate strategies to reduce file fragmentation, many small files are likely to be stored contiguously, because files are created on cluster boundaries and cluster sizes under FAT tend to be rather large.  Larger files on FAT filesystems, however, are commonly fragmented\cite{dfrws2007:SimsonLGarfinkel}.  While modern filesystems such as NTFS, ext2/3/4 and HFS+ do take steps to ensure that fragmentation of files is reduced, fragmentation does still occur.  Furthermore, performance for SSDs does not benefit from legacy anti--fragmentation mechanisms, and some of these mechanisms may actually reduce SSD lifespan.  As a result, some anti--fragmentation strategies are suppressed when SSDs are in use.  
 
@@ -100,7 +245,22 @@ Digital Assembly: Download new trial and check it out.  Wasn't so impressive las
 time I looked at it.
 \end{Verbatim}
 
+\subsection{hash-based carving with frag\_find}
+
+\hl{discuss that if you know what you are looking for, you can find it
+  more easily. frag\_find does this by using sector hashes to search
+  for a target. In this way it can find fragmented files.}
+
+
 \section{Memory Carving}
+
+\hl{In this section, perhaps a simple example of memory carving to
+  show how relatively short structured information can be readily
+  recovered. My suggestion is to discuss the carving of some Windows
+  data structure that is easy to validate and contains significant
+  private information, such as a process list or a network packet
+  (IPv4 header checksums do great validation here). We can use either
+  Volatility or bulk\_extractor's code for discussion. Or both. }
 
 \begin{Verbatim}
 Physical memory acquisition, Volatility, maybe specialized, standalone stuff, but

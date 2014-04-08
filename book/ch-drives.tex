@@ -1,4 +1,4 @@
-\chapter{Understanding Disks, Files and File Systems}
+\chapter{Understanding Disks, Files and File Systems}\label{ch-drives}
 As a computer user you are familiar with files. This chapter looks in
 detail at how files are stored on \emph{mass storage devices} such as
 hard drives and camera cards (``drives.''). It shows how two popular file systems
@@ -55,11 +55,11 @@ A 1~TB drive therefore has approximately 250 million 4~KiB
 blocks. (For an explanation as to why blocks are sized in powers of
 two but hard drive storage is not, see \secvref{sec:si-and-iec}.)
 
-\twofigures{.55\textwidth}{ch-fs/1024px-Seagate_ST33232A_hard_disk_inner_view.jpg}{Inner
+\twofigures{.55\textwidth}{ch-drives/1024px-Seagate_ST33232A_hard_disk_inner_view.jpg}{Inner
   view of a Seagate 3.5 inches hard disk drive 
   manufactured in 1998. This drive has 3 platters, 6
   physical read/write heads, and a total storage of 3,227~MB. (photo: Eric
-  Gaba, Wikimedia Commons)}{.4\textwidth}{ch-fs/sdcard}{Two SanDisk SD
+  Gaba, Wikimedia Commons)}{.4\textwidth}{ch-drives/sdcard}{Two SanDisk SD
   Cards manufactured in 2003. Each card has 1,000~MB of solid state
   storage. (photo: Simson L.\ Garfinkel)}
 
@@ -127,13 +127,13 @@ hard drive might have two spinning platters and store a 2~TB, but the
 underlying principal remains the same. 
 
 
-\sgraphic{ch-fs/BRL61-IBM_305_RAMAC}{An IBM 305 RAMAC computer system at U.S. Army Red River
+\sgraphic{ch-drives/BRL61-IBM_305_RAMAC}{An IBM 305 RAMAC computer system at U.S. Army Red River
   Arsenal, with two IBM 350 disk drives in the foreground. Each IBM
   350 consisted of fifty 24-inch diameter disks, creating 100 recording
   surfaces, each with 100 tracks, each track holding 100 5-bit
   characters, for a total storage of 5~Mb.\cite{ibm-350}\label{ibm-305}} 
 
- \twofigures{.45\textwidth}{ch-fs/Cylinder_Head_Sector}{The structure
+ \twofigures{.45\textwidth}{ch-drives/Cylinder_Head_Sector}{The structure
    of a traditional hard drive consists of multiple platters, 
    each with two read/write heads. The surface of each
    platter is divided into concentric tracks, with each track divided
@@ -144,7 +144,7 @@ underlying principal remains the same.
  the outer tracks than the inner tracks so that data is recorded at a
  constant areal density. These drives refer to each
  sector by a Logical Block Address (LBA), rather than by
- CHS.}{.45\textwidth}{ch-fs/cd}{The data on an optical disc is arranged
+ CHS.}{.45\textwidth}{ch-drives/cd}{The data on an optical disc is arranged
    as a series of blocks in a single spiral, with information recorded
    at a constant linear density. Blocks are referred to by their
    Logical Block Address. CD-ROM (Compact Disc Read Only Memory) media
@@ -242,7 +242,7 @@ PowerShot SX 260 HS camera.
 \caption{A conceptual view of a FAT16 file system. Each box
   represents one or more disk sectors.\label{fig:fat16}}
 \begin{center}
-\input{ch-fs/fat16.tex}
+\input{ch-drives/fat16.tex}
 \end{center}
 \end{figure}
 
@@ -539,7 +539,7 @@ This |dd| command is conceptually similar to the program in Listing\ref{clear.py
 You can do this
 easily with the program in \figref{overwrite}.
 
-\lstinputlisting[caption=\textbf{clear.py}: A simple program to clear a disk.]{ch-fs/clear.py}\label{clear.py}
+\lstinputlisting[caption=\textbf{clear.py}: A simple program to clear a disk.]{ch-drives/clear.py}\label{clear.py}
 
 After the card was cleared, we put it into the PowerShot, initialized
 the card, took two photos, deleted the first with the camera, and then
@@ -607,7 +607,7 @@ fields.
 
 \begin{figure}
 \lstinputlisting[caption=The start of a python program to display the
-  Master Boot Record.]{ch-fs/mbrdecode.py}\label{mbrdecode}
+  Master Boot Record.]{ch-drives/mbrdecode.py}\label{mbrdecode}
 \end{figure}
 
 Finally, you can view the contents of the MBR using the SleuthKit's |mmls| command:
