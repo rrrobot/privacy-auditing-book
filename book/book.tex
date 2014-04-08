@@ -1,5 +1,7 @@
 \documentclass[11pt,fleqn,twoside]{book} % Default font size and left-justified equations
 
+\newcommand{\citeN}[1]{\cite{#1}}
+
 \usepackage[top=1in,bottom=1in,left=1.25in,right=1.25in,
   marginparwidth=1in,
   marginparsep=12pt,
@@ -25,6 +27,12 @@
 \usepackage{calc}    % For simpler calculation - used for spacing the index letter headings correctly
 \usepackage{makeidx} % Required to make an index
 \makeindex           % Tells LaTeX to create the files required for indexing
+
+% Status of each section
+\newcommand{\NOSTART}{\xspace\textit{{\small NOT STARTED}}}
+\newcommand{\DONE}{\xspace\textit{{\small DONE}}}
+\newcommand{\INDEV}{\xspace\textit{{\small IN DEVELOPMENT}}}
+\newcommand{\TODO}{\NOSTART}
 
 %----------------------------------------------------------------------------------------
 

@@ -4,3 +4,7 @@ digitnotar theft was discovered because Google Chrome and pinned google.com
 
 cindy murphy has a 2-hour YouTube video
 
+
+Detecting Information Leakage in Text
+* Text Classification for Data Loss Prevention, Michael Hart (Symantec Research Labs), Pratyusa Manadhata (HP Labs), and Rob Johnson (Stony Brook University), PET 2011, http://freehaven.net/anonbib/papers/pets2011/p2-hart.pdf
+* Sanitization's Slippery Slope: The Design and Study of a Text Revision Assistant. Richard Chow, Ian Oberst and Jessica Staddon. SOUPS 2009.
