@@ -51,7 +51,8 @@ Consider these three cases:
   somehow doesn't. That's what the Utah-based company Decipher
   Forensics discovered in May 2013 when it analyzed cell phones that
   had been used with the popular \emph{Snapchat} application, which
-  lets users send photos with an expiration date. What the Decipher Forensics discovered was that even
+  lets users send photos with an expiration date. What the Decipher
+  Forensics discovered was that even 
   though Snapchat was promising users that it deleted the photos, in
   fact they were only hidden and could still be recovered with
   digital forensic tools\cite{ksl-snap-chat}.
@@ -236,10 +237,14 @@ privacy policy associated with a website, then examine the website's
 specifications to see if the site's designers were told to create a
 website that matched the policy. For example, the privacy policy might
 say that the website does not track the geographical location of
-users, but the website's developers might have used a platform that
-does record this information. 
+users, but the website's developers might have used an advertising
+service that in fact records this information. Auditors can learn this
+by examining all of the policy documents for each of the embedded
+services and verifying that they are all in compliance with the
+website's policy.
 
-\hl{Anything else?}
+
+%\hl{Anything else?}
 
 \subsection{Technical Privacy Auditing}
 
@@ -263,7 +268,7 @@ such leaks. The TPA Methodology consists of several steps:
 \item \textbf{REPORT} Share results in a concise \& understandable form
 \end{enumerate}
 
-\hl{Anything else?}
+% \hl{Anything else?}
 
 \subsection{Digital Forensics \DONE}
 
@@ -483,7 +488,8 @@ Base & Nomenclature & Example & Equivalent      & Usage \\
 16 & Hexadecimal &  |DEADBEEFh|& 3,735,928,559  & text \\
    &             &  |0xFF|     & 255            & Output \\
    &             &  |\xFF|     & 255            & Python code\\
-   &             &  |da39a3ee5e6b4b0d3255bfef95601890afd80709| & n/a & hash value\\
+   &             &  |da39a3ee5e6b4b0d3255| & n/a & hash value\\
+   &             &  |bfef95601890afd80709| \\
 \hline
 \hline
 \end{tabular}
@@ -530,24 +536,16 @@ a megabyte of RAM was really $\texttt{1024}\times\texttt{1024}=\texttt{1048576}$
 
 The difference in interpretation became an issue in the 1990s as the
 number of people using computers mushroomed fierce pressure to cut
-costs hit the storage industry. A storage vendor could truthfully
-advertise and sell a ``600 MB''
-hard drive that stored 600,000,000 bytes in
-precisely 1,171,875 |512|-byte sectors. There was simply no incentive
-for storage vendors to sell such a hard drive that stored
-$600\times1024\times1024=629,145,600$ bytes and required 1,228,800
-sectors to do so.
-
-A second reason for the standardization effort was the increasing
-confusion stemming from computer scientists using the K prefix
-mean |1024| (e.g. bytes) in some contexts but 1000 in others (e.g. grams). 
-
-A third reason for the standardization was the industry's move to
-increasingly larger storage systems, resulting in successively larger
+costs hit the storage industry. Hard drive vendors 
+advertised ``600 MB''
+drives that stored 600,000,000 bytes in
+precisely 1,171,875 |512|-byte sectors. This was confusing for people
+who expected that a drive would store
+$600\times1024^2=629,145,600$ bytes using 1,228,800
+sectors. As the years progressed and the industry moved to
+increasingly larger storage systems, there was a successively larger
 divergence between the power-of-two measurement and the corresponding
-power-of-ten measurement. This third reason is almost certainly the
-reason that binary-based prefixes were proposed in the 1990s---that's
-when the need to distinguish between powers of two and powers of 10 become noticeable.
+power-of-ten measurement. Not surprisingly it was in the 1990s that binary-based prefixes were proposed---when the need to distinguish between powers of two and powers of 10 become noticeable.
 
 The IEC binary prefixes were proposed in 1996\cite{iec:1996}, and
 adopted as an international standard in 1999.  In 2006 additional
@@ -614,9 +612,9 @@ yotta & Y & $10^{24} = 1000^8$ & yobi & Yi & $2^{80} = 1024^8 $& 21\% & Mangled 
   linguistic roots.}\label{si-iec-differences}
 \end{table}
 
-\section{Other Resources \INDEV}
-\subsection{Books \INDEV}
-\subsection{Articles \INDEV}
+%\section{Other Resources \INDEV}
+%\subsection{Books \INDEV}
+%\subsection{Articles \INDEV}
 
 % \section{Exercises}
 % * Open the JPEG and determine the address of where the photographer
