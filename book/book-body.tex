@@ -31,10 +31,10 @@
 \ifpartone
   \bookpart{Task and Tools}
   \input{ch-1}
-  \input{ch-2}
-  \input{ch-what}  % What data looks like
+%  \input{ch-2}  % investigation models
   % \input{ch-storage} % How data are stored
-  \input{ch-experiment}         % Designing a DF experiment
+  \input{ch-drives}
+  \input{ch-what}  % What text looks like
   % \input{ch-legal}
 \fi
 \ifparttwo
@@ -46,7 +46,6 @@
 \fi
 \ifpartthree
   \bookpart{Working with Storage}
-  \input{ch-drives}
   \input{ch-fshidden}
   \input{ch-carving}
 \fi
@@ -64,6 +63,7 @@
 \ifpartsix{
   \appendix
   \bookpart{Appendices}
+  \input{ch-experiment}         % Designing a DF experiment
   \input{ch-glossary}
   \input{ch-tools}
   \input{ch-python}
