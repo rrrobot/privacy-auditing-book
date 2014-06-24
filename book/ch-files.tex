@@ -1,0 +1,410 @@
+\chapter{Files, File Type, and File Type Identification}
+
+In computer system engineering the term \emph{file} usually means a
+sequence of zero or more bytes that can be saved in some kind of storage
+device so that it can be repeatedly accessed. These bytes are known as the \emph{file contents}. 
+Because at any given instance there is a specific number of bytes, every file inherently has a
+\emph{file length}. 
+
+There are other characteristics that we
+commonly observe in files, such as file names, time stamps, owners,
+\etc. Together these are sometimes called \emph{file
+  properties} or \emph{file metadata}. \tabref{file-properties}
+presents a list of file
+properties seen on some operating systems. This list is not
+exhaustive, and it is easy to find counter examples of files that lack any
+(or all) of these properties. As a result, all that we
+can say about files definitively is that they have zero or more bytes,
+and that these bytes can be \emph{read} or \emph{written} (that is, they can be
+copied from the file into the computer's memory, and new bytes can be
+copied to the file). 
+
+
+\begin{table}
+\begin{tabularx}{\textwidth}{lX}
+Property & Description \\
+\hline
+\\
+\multicolumn{2}{l}{\textit{\small mandatory file properties:}}\\
+File Contents & A sequence of bytes that makes up the file.\\
+File Length   & The number of bytes in the \emph{file contents}.\\
+\\
+\multicolumn{2}{l}{\textit{\small optional file properties:}}\\
+File Name & A sequence of 1 or more characters that can be used to reference the file. Files can have
+zero, one, or multiple names.\\
+Creation time (crtime) & The date and time when the file was created.\\
+Modification time (mtime) & The date and time that the file's contents were last modified.\\
+Access time (atime) & The date and time when a  byte of the file was last read.\\
+Change time (ctime) & The date and time that the file's metadata was last modified. On Unix-based file systems
+   the change time is frequently treated as if it were a creation time.\\
+Inode number & Many file systems use a single integer to describe the location of a metadata block that provides a pointer to the file's contents. The block is called an \emph{inode} (index node).\\
+Link Count (nlink) & On file systems that support \emph{hard links} (multiple names pointing at the same inode), the link count tracks the number of links.\\
+Owner (uid) & The owner of a file is typically the operating system user that has the ability to change the file's properties. It is typically the creator of the file, although the owner can be changed.\\
+Group (gid) & In addition to owners, most file systems allow a file to be put in one or more groups. Group membership can then be used to allow or prevent access to the file.\\
+mode & Unix-based systems encode a ``mode'' in file system entries that are used to denote special files, such as those representing physical devices, FIFOs, sockets, and symbolic links.\\
+Access Control Lists (ACLs) & An extended list of users and groups that are allowed (or disallowed) access to the file.
+\end{tabularx}
+\caption{Mandatory and optional file properties}\label{file-properties}
+\end{table}
+
+Files have been one of the primary abstractions provided by operating
+systems for manipulating data for more than fifty years. Files are
+the primary way that most computer information is stored, including:
+
+\begin{itemize}
+\item Text (typically as a sequence of bytes)
+\item Digital photographs (\eg JPEG files)
+\item Documents (\eg Microsoft Word Files, Adobe Acrobat files)
+\item Programs (\eg source code and executables)
+\item Databases (\eg Oracle database files, SQLite files)
+\item Disk images (a byte-for-byte copy of a disk can be put into a file).
+\end{itemize}
+
+Because of their pervasive use, the identification, recovery and
+manipulation of files is one of the primary tasks of computer
+forensics. 
+
+It's important to remember that files are just
+\emph{abstractions}---there is nothing inherent in the design of
+memory or storage systems that dictates the use of files. Indeed,
+there are many examples on modern computer systems of information that
+is typically \emph{not} stored in files on a running computer system, including::
+
+\begin{itemize}
+\item The contents of RAM, including system memory and video memory.
+\item CPU registers, the page translation table, and the translation
+  lookaside buffer (TLB).
+\item BIOS ROM or Flash RAM used for booting the computer.
+\item Boot blocks on the mass storage device.
+\item Partitions used for virtual memory. (Operating systems such
+  as Unix traditionally swapped to an unformatted portion of the disk
+  called the \emph{swap partition}; it is only recently
+  have operating systems started swapping to files.)
+\item Partitions managed directly by a database. (Some databases
+  directly access the raw storage to avoid the overhead of going
+  through the file system.)
+\end{itemize}
+
+Of course, any of these pieces of information, like any other digital
+data, can be extracted and stored in a file.
+
+With the move to cloud-based services such as Facebook and Google
+Docs, files are sure to become less important in computer forensics
+and privacy auditing over the next decade. It is likely that storage
+on clients such as mobile phones and laptops will increasingly be used
+to cache information stored on a remote server, and the information
+those servers will be stored in databases, rather than in files.
+
+\section{File Type}
+
+Before you can work with a file, it is necessary to know how the
+information inside that file is organized. This organization is called
+the file's \emph{type}. Privacy sensitive information can be missed if
+a file's type is not properly identified, since many file types
+require the use of special algorithms to interpret the data that they
+contain. 
+
+File types exist in an overlapping hierarchy, with many files having
+dozens of types of varying levels of specificity. This complicates the
+task of file type identification. For example, a program that is
+compiled by a Java program may be thought of as a Java source file, a
+source code file, or merely a text file: all are accurate descriptions
+of the file's type.
+
+Many file types are named after the specific version of a program. For
+example, there is a Microsoft Word 2007 document file, which 
+describes a particular format used by Microsoft Word to store
+documents. Such names can be misleading, because popular file formats will
+be adopted by many programs.
+
+Desktop operating systems use a file's type to identify the program
+that is run to ``open'' the file, as well as the icon that should be
+used when the file is displayed in a windows.
+
+\subsection{Identifying a File's Type}
+
+Identifying file type is complicated not only because there are
+hundreds of thousands of types, but because the standard for
+identification is ultimately whether or not the file can be read and
+its information extracted. 
+
+When a file type is named after a program (as above), the name is
+usually historical reference, since after a file type is released it
+is common for developers to add support for this file type to other
+programs. For example, Word 2007 files can be read by many different
+programs. Adding to the confusion, different programs may display
+different information given the same Word file.)
+
+In general there are two ways to identify a file's type:
+
+\begin{itemize}
+\item Identification by filename extension or other Metadata.
+\item Using content within the file.
+\end{itemize}
+
+\subsubsection{File Extension or other Metadata}
+
+A file's \emph{extension} is the sequence of letters following the
+last period (``.'') in the file's name. For example, the file
+\emph{WINWORD.EXE} has ``EXE'' as an extension, while the file
+\emph{WINWORD.TXT} has ``TXT'' as an extension.
+
+Extensions were originally limited to three uppercase characters by
+early computer systems. Modern systems allow extensions to be any mix
+of letters, numbers and symbols that are valid for a file name. Some
+systems treat extensions as case-sensitive, while others do not. That
+is, on Windows the extensions ``.EXE'' and ``.exe'' are equivalent,
+but on Unix the extensions ``.conf'' and ``.CONF'' are not.
+
+Beyond the file's extension, operating systems can explicitly record
+the file's type elsewhere in the file system.
+
+Extensions and other metadata are not an accurate way to identify file type because
+the extension is easily changed, either by accident or on
+purpose. For example, changing the extension of a ``.java'' file to
+``.txt'' on most desktop computers will change the way that the file's
+icon is displayed as well as changing the program that runs when the
+file is double-clicked, even though changing the name does not change
+the file's contents.
+
+\subsubsection{File Content}
+
+The only reliable way to identify a file's type is by using the file's
+content. These approaches are commonly used.
+
+\begin{itemize}
+\item \textbf{File Headers and Magic Numbers.} Many file types begin
+  with a specific header, also called a ``magic number.'' For example,
+  Windows executables begin with the sequence ``MZ'' (the initials of
+  programmer Mark Zbikowski), ZIP files begin with the sequence ``PK''
+  (the initials of programmer Phil Katz), and PDF files begin with the
+  sequence ``\%!''.  Header recognition is a fast way to identify a
+  file because it typically requires no more looking up a value in a
+  table, but it can produce incorrect results because magic numbers are easily
+  changed. 
+\item \textbf{Internal Structure.} A second approach to identify a
+  file's contents is by parsing the file's internal data structures
+  and testing to see if they are internally consistent. This can be a
+  computationally expensive approach, as each file type must be
+  checked sequentially, but it is quite accurate.
+
+\item \textbf{Statistical Modeling.} A third approach to file type
+ identification is to compare the statistics of the file being
+ identified to a corpus of files of known type. Although this is the
+ least reliable approach for identifying files, it has the advantage
+ that it can identify file fragments with much higher reliability than
+ the other two approaches.
+\end{itemize}
+
+Ultimately, the gold standard of file type identification is to open a
+file in an application program and see if the file's content can be
+read. Unfortunately, this can be dangerous if there is a potential
+that the files contain malware.
+
+\subsection{Kinds of File Types}
+
+
+
+Finally, some file
+types are complex data structures that are stored by a specific
+program and generally can't 
+
+However
+because of an accident of history, we also think of a file's type as
+being the file's \emph{extension}---that is, the three or four
+characters that come after the final period in the file's name.
+
+For example, digital cameras will create files with names like
+\emph{DSC0001.JPG} that contain digital images. Most people think of
+these files as ``JPEGs'' because the names end with the letters ``.jpg'' or
+``.jpeg''.  But what really makes a file a JPEG is
+its conformance to a format dictated by the Joint Photographic Experts
+Group (JPEG)'s 1992 standard, known formally as ISO/IEC IS 10918-1 and
+as ITU-T Recommendation T.81. That format defines a ``chunk-based''
+container file format that begins with the byte sequence |FF D8| and
+ends with the byte sequence |FF D9|.
+
+Likewise, files created by Microsoft's popular Word file have the
+extension ``.doc'' or ``.docx''. Some people call these files ``DOC''
+or ``DOCX'' files. In fact, files created by Word with the ``.doc''
+extension are typically byte streams formatting according to Microsoft's Object Linking and
+Embedding (MSOLE) format; look inside these files and you will see data
+structures reminiscent of the FAT32 file system. Files with the ``.docx'' extension are
+typically ZIP compression archives that contain structured XML that is
+interpreted by Word to display an editable word processing
+document. (However, encrypted ``.docx'' files follow a different
+standard altogether.)
+Microsoft Excel uses the same MSOLE and ZIP formats when saving files
+with the ``.xls'' and ``.xlsx'' extensions, respectively.
+
+In practice, the phrase \emph{file type} can mean one of several things:
+
+\begin{itemize}
+\item \textbf{The file's \emph{extension}.} Early computer systems
+  required that file names be in the format of eight characters, a
+  period, and three characters. The three characters after the period
+  are called the extension and were used on some computers to denote
+  the program that was used to write and read the file. Microsoft
+  Windows allowed extensions to be any length and directly associated
+  application programs with extensions through the Windows Registry;
+  double-clicking on a file's icon caused the application program
+  registered for that file extension to run and open the file.
+\item \textbf{The file's Internet media type (also known its MIME
+  type).} The internet media type is a sequence of letters that are
+  transmitted with every byte stream is that is downloaded over the
+  Internet using the HTTP protocol. JPEG files are downloaded with the
+  Internet media type ``image/jpeg''. \wikipedia{http://en.wikipedia.org/wiki/Internet_media_type}. 
+\item \textbf{The file's \emph{magic numbers} or \emph{file
+    header}}. Both terms are used to describe a sequence of bytes at the
+  beginning of the file that hold information about the file and may
+  be used to identify it in some way.
+\end{itemize}
+
+Closely related to file type are:
+\begin{itemize}
+\item The file's \emph{header}.
+\item The file's \emph{footer}.
+\end{itemize}
+
+Let us explore each of these in turn and see how they influence
+file type and interpretation when performing computer forensics.
+
+\subsection{File Extensions}
+
+\emph{to be written.}
+
+\subsection{Internet Media Types}
+
+\emph{to be written}
+
+\subsection{Magic Numbers}
+
+The term \emph{magic number} is used to denote a constant byte or set
+of bytes that typically appears at the beginning of a file. A common
+magic number is the letters ``MZ'' denoting the start of a DOS or
+Windows executable or Dynamic-Link Library (DLL). The SQLite database
+uses the 15 letters ``SQLite format 3'' as its magic number. Magic numbers are
+thus not really numbers, but actually sequences of characters. ``MZ'' has
+the numeric value 23117 or 19802 depending on whether one is using
+little-endian or big-endian math (\figref{calc-mz}). (Even though the
+string ``SQLite format 3'' has a numeric value, it would never be used
+in practice.)
+
+\begin{figure}
+\begin{Verbatim}
+>>> ord('M') | ord('Z')<<8
+23117
+>>> hex(23117)
+'0x5a4d'
+>>> 
+>>> ord('M')<<8 | ord('Z')
+19802
+>>> hex(19802)
+'0x4d5a'
+\end{Verbatim}
+\caption{Computing the decimal and hex values of the character
+  sequence ``MZ'' in little-endian and big-endian format with
+  Python.}\label{calc-mz}
+\end{figure}
+
+While some file formats require magic numbers, others do not. Files in
+the Hyper Text Markup Language originally were supposed to begin with
+the string ``|<html|'' and nowadays should begin with the string
+``|<!DOCTYPE|'', but most web browsers will do their best to display
+any text as HTML if they detect HTML tags.
+
+\subsection{File Headers}
+
+\emph{To be written. Note that the file header may contain fields
+  which contain metadata.}
+
+\subsection{File Footers}
+
+\section{Container Files}
+
+\subsection{Chunk-based Container Files}
+
+
+\subsubsection{GIF}
+\emph{how GIF came about}
+
+\subsubsection{TIFF}
+\emph{What can be stored in a TIFF}
+
+\subsubsection{JPEG}\label{jpeg-format}
+\subsubsection{PNG}
+
+\subsection{Directory-based Container Files}
+
+\subsubsection{ZIP}
+
+\subsubsection{PDF}
+
+\subsection{Opportunities for Stegnagraphy}
+The structure of these files means that there are many opportunities
+to hide data in a container file that will be ignored by legitimate
+software and processed by covert-communications programs.
+
+\subsubsection{Stegnagraphy with Chunk-Based Files}
+Create new chunk types that will be ignored.
+
+Hide information at the end of each chunk.
+
+Danger is that some programs may look for such data (or even error),
+so it's important to test. It may be desirable to encrypt the data and
+include cover data that gives the impression that the text is
+legitimately placed there by a program that the analyst simply doesn't
+have access to. For example, a new chunk type containing a string such
+as ``gamma correction'' or ``color calibration.''
+
+\subsubsection{Stegnagraphy with Directory-Based Files}
+
+ZIP and PDF.
+
+Store information in regions not associated with files.
+
+Embed new file types that are ignored.
+
+\subsubsection{Traditional Stegnography}
+Finally, multi-media files can be used for traditional
+stegnaraphy. For example, the bottom bits of a picture can be used to
+encode another image....
+
+
+
+\section{File Type Identification}
+
+Because we do not have a really firm definition for ``file type,''
+it's not clear what's meant by file type identification. Do we mean
+finding an application that can ``open'' a file? Do we mean being able
+to extract the content from a file so that it can be viewed/indexed/processed?
+
+\subsection{Front-Reading vs. Rear-Reading}
+
+\emph{JPEG files read from the front; ZIP files read from the back;
+  this is a problem}
+
+
+\subsection{The \emph{file} command and libmagic}
+
+\emph{to be written}
+
+\subsection{File Corruption}
+
+\section{Content Extraction}
+
+An alternative to file type identification is content extraction.
+
+\subsection{Text extraction with the \emph{strings} command}
+
+
+
+\section{Exercises}
+
+What is the numeric value of ``SQLite format 3'' in base 10? Provide
+both big-endian and little-endian values, as well as the  program you
+used to calculate the value. 
+
+%\input{file_type_identification}  4               % October 20
+
+% LocalWords:  executables
