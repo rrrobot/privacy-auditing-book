@@ -47,14 +47,9 @@ can run a carver on a database file to see if information is present
 in the file that cannot be retrieved through the database API.
 (\citeN{1247492} demonstrated how MySQL left significant information
 in database table storage, the transaction log, indexes, and other
-system components.) Carvers can be applied to other data
-streams as well, including physical memory (or memory images), and
-even network packet captures. 
-
-\hl{This is an implementation detail that we can move later; it's
-  really whether we copy out the data now or later, right?} In addition to recovering objects, carving can also be used to 
-learn the locations of potentially recoverable objects without
-incurring the overhead of recovery. 
+system components.) Carvers can be applied to other data streams as
+well, including physical memory (or memory images), and even network
+packet captures.
 
 File carving is a powerful tool for recovering data when filesystem
 metadata (e.g., directory structures) is corrupt or destroyed, which
@@ -67,13 +62,11 @@ documents (e.g., Microsoft Word or PDF files), images (e.g., JPEG or
 PNG-format graphics files), video files (e.g., AVI or MPEG format
 movies), or other common file types.  For physical memory carving,
 recovered objects are generally operating systems kernel or
-application data structures, which can reveal the current or historical
-state of a computer system.
+application data structures, which can reveal the current or
+historical state of a computer system.
 
 
 \begin{figure}[ht]
-\hl{Good caption. Long captions are good, as many students read the
-  captions without reading the text.}
 \begin{center}
 \includegraphics[width=140mm]{ch-carving/carvingoverview.pdf}
 \end{center}
@@ -95,16 +88,14 @@ places near the beginning and end of files of a particular type
 \cite{Foremost, Scalpel}.  Such sequences are sometimes called
 \emph{magic numbers.} Carvers may also scan for \emph{milestones}, which
 are other strings of bytes that intervene between the beginning and
-end of the file, to attempt to eliminate false positives (\emph{do we
-  need to define terms like this here or has this occurred somewhere
-  else?} \hl{We generally define on the first use in a chapter, and
-  put it in ital. We also put it in the glossary.})\label{def:milestones}.  Carving programs often have an option to look for headers
+end of the file, to attempt to eliminate false positives 
+\label{def:milestones}.  Carving programs often have an option to look for headers
 only at or near sector boundaries, because files are almost always
 created on a sector boundary.  However, searching the entire input
 without regard to sector boundaries can enable discovery of embedded
 files, such as JPEGs embedded in Microsoft Word or in archives
-(e.g. ZIP files).  Depending on the circumstances, this may be either an
-advantage or disadvantage.   
+(e.g. ZIP files).  Depending on the circumstances, this may be either
+an advantage or disadvantage.
 
 While header/footer--based file carving is still widely used to
 recover data from storage media, other carving strategies have been
@@ -119,9 +110,13 @@ data.  There has also been some limited success in developing tools
 that can handle fragmented objects, but these are generally limited to
 recovery of specific file types and the majority of carving tools
 cannot automatically reconstruct arbitrarily fragmented
-objects. \hl{mention fragment recovery carving and hash-based carving. We should probably have the
+objects. 
+
+
+\hl{mention fragment recovery carving and hash-based carving. We should probably have the
   carving taxonomy in a box. Each of these approaches should be
   described below?}
+
 
 See Figure \ref{carvingoverview}.  
 
@@ -129,7 +124,50 @@ Applications of file carving and more details about the various file carving tec
 
 \section{Using Carving to Find Hidden Data}
 
-Carving is typically used to recover objects or object fragments (most commonly, files or file fragments) that have been deleted.  Carving might be carried out to support a digital forensics investigation, in the context of criminal or civil litigation, during incident response, or to recover data that's been inadvertently lost, e.g., as a result of  corrupted media or user error.  For the purposes of privacy auditing, carving can be used in precisely the same manner it would be used in a digital forensics investigation of broad scope--namely, to determine what sensitive data can be recovered from target media.  For example, most modern operating systems delete files by simply modifying filesystem metadata to free resources such as inodes or MFT entries and the data blocks allocated to the files.  This makes the files ``disappear'' from a user's view, without actually scrubbing the data blocks previously allocated to the file.  These data blocks then reside in the unallocated regions of storage media, inaccessible to most users, until they are allocated to new files and overwritten.  There are numerous situations where this shallow file deletion process exposes sensitive user data to recovery.  For example, when users clear web browser caches, empty the recycle bin on Microsoft Windows systems, clear system logs, or delete files from the command line, typical users lose \emph{control} over potentially sensitive data, but the data is often easily recovered with carving techniques.  Furthermore, there are situations where operating systems allocate significant amounts of disk space on a semi-permanent basis without sanitization, resulting in data being trapped (and recoverably via file carving) for long periods of time.  Consider, for example, the HTML fragment and image file depicted in Figure \ref{fig:insideswapfile}, which were carved from a Windows XP swap file.  Because of the structure and organization of swap files, it would be very unusual for this data to be present as a result of swapping--in fact, in this case, the two deleted files were trapped when Windows extended the swap file, and were easily recovered using file carving.  Another common misconception is that format operations permanently destroy data.  In fact, with the exception of how SSDs are handled in recent versions of modern operating systems, most format operations destroy little data.  In figure \ref{fig:formatting}, the effects of formatting a 256MB thumb drive for three different filesystems is depicted.  Even after the third format operation, most data remains.  The thumb drive stored four photographic images in addition to a variety of other files.  All four photographic images stored on the thumb drive were still completely recoverable after the format operations, as illustrated in Figure \ref{fig:recovered}.  
+Carving is typically used to recover objects or object fragments (most
+commonly, files or file fragments) that have been deleted.  Carving
+might be carried out to support a digital forensics investigation, in
+the context of criminal or civil litigation, during incident response,
+or to recover data that's been inadvertently lost, e.g., as a result
+of corrupted media or user error.  For the purposes of privacy
+auditing, carving can be used in precisely the same manner it would be
+used in a digital forensics investigation of broad scope--namely, to
+determine what sensitive data can be recovered from target media.  For
+example, most modern operating systems delete files by simply
+modifying filesystem metadata to free resources such as inodes or MFT
+entries and the data blocks allocated to the files.  This makes the
+files ``disappear'' from a user's view, without actually scrubbing the
+data blocks previously allocated to the file.  These data blocks then
+reside in the unallocated regions of storage media, inaccessible to
+most users, until they are allocated to new files and overwritten.
+
+There are numerous situations where this shallow file deletion process
+exposes sensitive user data to recovery.  For example, when users
+clear web browser caches, empty the recycle bin on Microsoft Windows
+systems, clear system logs, or delete files from the command line,
+typical users lose \emph{control} over potentially sensitive data, but
+the data is often easily recovered with carving techniques.
+Furthermore, there are situations where operating systems allocate
+significant amounts of disk space on a semi-permanent basis without
+sanitization, resulting in data being trapped (and recoverably via
+file carving) for long periods of time.
+
+Consider, for example, the HTML fragment and image file depicted in
+Figure \ref{fig:insideswapfile}, which were carved from a Windows XP
+swap file.  Because of the structure and organization of swap files,
+it would be very unusual for this data to be present as a result of
+swapping--in fact, in this case, the two deleted files were trapped
+when Windows extended the swap file, and were easily recovered using
+file carving.  Another common misconception is that format operations
+permanently destroy data.  In fact, with the exception of how SSDs are
+handled in recent versions of modern operating systems, most format
+operations destroy little data.  In figure \ref{fig:formatting}, the
+effects of formatting a 256MB thumb drive for three different
+filesystems is depicted.  Even after the third format operation, most
+data remains.  The thumb drive stored four photographic images in
+addition to a variety of other files.  All four photographic images
+stored on the thumb drive were still completely recoverable after the
+format operations, as illustrated in Figure \ref{fig:recovered}.
 
 \begin{figure}[ht]
 \center
@@ -145,6 +183,8 @@ Carving is typically used to recover objects or object fragments (most commonly,
 
 \hl{I really like Figure 13.3. Can we have the source code for the
   program as well?}
+
+
 \begin{figure}[ht]
 \centering
 \includegraphics[width=150mm]{ch-carving/formatting.pdf}
@@ -265,6 +305,21 @@ time I looked at it.
 \begin{Verbatim}
 Physical memory acquisition, Volatility, maybe specialized, standalone stuff, but
 most of that functionality is making its way into Volatility anyway, better in general to carve against virtual address spaces so things are contiguous, et al
+
+
+
+
+
+
+
+PUT THIS SOMEWHERE--ALSO INCLUDE A SECTION ON IN PLACE CARVING? 
+
+\hl{This is an implementation detail that we can move later; it's
+  really whether we copy out the data now or later, right?} In addition to recovering objects, carving can also be used to 
+learn the locations of potentially recoverable objects without
+incurring the overhead of recovery. 
+
+
 
 
 
