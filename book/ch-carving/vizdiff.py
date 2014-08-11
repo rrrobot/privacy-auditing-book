@@ -14,10 +14,16 @@
 #
 # v1.0: first release, 8/2014.
 ##########################################################################
-
+from __future__ import print_function
 import os,sys,math
-from Tkinter import *
 from stat import *
+try:
+    # for Python2.x
+    from Tkinter import *
+except ImportError:
+    # for Python3.x
+    from tkinter import *
+
 class VizDiff:
 
     DEBUG=1
@@ -57,7 +63,7 @@ class VizDiff:
             if data != self.zero[0:len(data)]:
                 self.baseline[idx] = 'G'
                 if (self.DEBUG):
-                    print "\"" + filename + "\": non-zero cluster", idx
+                    print("\"" + filename + "\": non-zero cluster", idx)
 
             drawing.create_rectangle(
                int(idx % self.dim) * (self.width / self.dim), # x1
@@ -102,8 +108,8 @@ class VizDiff:
             if data1 != data2:
                 self.diffs[idx] = 'R'
                 if (self.DEBUG):
-                    print "\"" + filename1 + "\" --> \"" + filename2 + 
-                        "\": difference in non-zero cluster", idx
+                    print ("\"" + filename1 + "\" --> \"" + filename2 + 
+                        "\": difference in non-zero cluster", idx)
             idx = idx + 1
 
         for idx in range(0, int(math.ceil(float(self.filesize) /
@@ -169,17 +175,17 @@ def main():
                     sys.exit("Input must be regular files and file sizes " +
                              "must all be equal.\n")
                 else:
-                    print "Computing differences between\"" + imagefilename1 + 
-                        "\" and \"" + imagefilename2 + "\"..."
+                    print("Computing differences between\"" + imagefilename1 + 
+                        "\" and \"" + imagefilename2 + "\"...")
                     v.display_difference(imagefilename1, imagefilename2)
-                    print "Done."
+                    print("Done.")
                     fileidx = fileidx + 1
                     if fileidx >= numargs:
                         break
                     imagefilename1=imagefilename2
                     imagefilename2=sys.argv[fileidx]
 
-        print "To exit, simply close the baseline window.";
+        print("To exit, simply close the baseline window.")
         root.mainloop()
 
 if __name__ == "__main__":
