@@ -78,7 +78,7 @@ historical state of a computer system.
   data blocks intervene between the header and footer as a result of
   file fragmentation, or in more serious cases, when the fragmentation
   results in the header and fooger being in reverse order.  Files may
-  also be partially corrupted, resulting in, e.g., a missing footer.} 
+  also be partially corrupted, resulting in, e.g., a missing footer.}
 \label{fig:carvingoverview}
 \end{figure}
 
@@ -164,7 +164,13 @@ handled in recent versions of modern operating systems, most format
 operations destroy little data.  In figure \ref{fig:formatting}, the
 effects of formatting a 256MB thumb drive for three different
 filesystems is depicted.  Even after the third format operation, most
-data remains.  The thumb drive stored four photographic images in
+data remains.  These visualizations were generated using the Python program
+shown in Listing~\ref{vizdiff}. 
+
+\lstinputlisting[caption=A simple Python program for visualizing the differences
+between a series of identically sized disk images,label=vizdiff]{ch-carving/vizdiff.py}
+
+The thumb drive stored four photographic images in
 addition to a variety of other files.  All four photographic images
 stored on the thumb drive were still completely recoverable after the
 format operations, as illustrated in Figure \ref{fig:recovered}.
@@ -177,13 +183,8 @@ format operations, as illustrated in Figure \ref{fig:recovered}.
 \vspace{3mm}
 \includegraphics[width=100mm]{ch-carving/cacheinswap.png}
 \caption{Image file and HTML fragment carved from a Windows swap file.  These are deleted documents ``trapped'' in the un-sanitized space allocated by Windows to the swap file.}
-\label{fig:insideswapfileå}
+\label{fig:insideswapfile}
 \end{figure}
-
-
-\hl{I really like Figure 13.3. Can we have the source code for the
-  program as well?}
-
 
 \begin{figure}[ht]
 \centering
@@ -253,9 +254,53 @@ header/footer--based file carver:
 \end{Verbatim}
 }
 
-Comments in the example above begin with a hash mark ("\#") and are ignored by the carving tool.  The first rule carves GIF format images files, and used "gif" as the extension for recovered files.  The "y" indicates that the header and footer and are case-sensitive.  "100:500000" indicates that only files between 100 and 500,000 bytes (inclusive) should be recovered.  The final two elements of the rule are the header and footer, represented by hexadecimal strings.  The JPEG and PNG rules are similar.  The Microsoft Office rule is different, in that no footer is specified.  In this case, files that match the header are carved to the maximum size specified (in this case, 1,000,000 bytes).  Rules like this are wasteful of space, but if file types don't have strings that can be reliably predicted to be near the end of file, then for header/footer--based carving, there's essentially no choice.  The final rule illustrates header/footer--based carving being used to carve objects with headers and footers specified by regular expressions.  In this rule, files of a maximum of 100,000 bytes are carved if they begin with a string of three "G" characters, followed by a character other than a "G".   The file is terminated by a digit (0--9) followed by five "H" characters.  Using regular expressions for headers and footers potentially decreases performance of the carving tool, but provides a much more powerful means to describe the objects to be recovered.  Creating a new rule can be time--consuming, because some knowledge about the common structure of files of the new type is required, but this knowledge need not be nearly as deep as for \emph{semantic carving}, covered later in the chapter.
+Comments in the example above begin with a hash mark ("\#") and are
+ignored by the carving tool.  The first rule carves GIF format images
+files, and used "gif" as the extension for recovered files.  The "y"
+indicates that the header and footer and are case-sensitive.
+"100:500000" indicates that only files between 100 and 500,000 bytes
+(inclusive) should be recovered.  The final two elements of the rule
+are the header and footer, represented by hexadecimal strings.  The
+JPEG and PNG rules are similar.  The Microsoft Office rule is
+different, in that no footer is specified.  In this case, files that
+match the header are carved to the maximum size specified (in this
+case, 1,000,000 bytes).  Rules like this are wasteful of space, but if
+file types don't have strings that can be reliably predicted to be
+near the end of file, then for header/footer--based carving, there's
+essentially no choice.  The final rule illustrates
+header/footer--based carving being used to carve objects with headers
+and footers specified by regular expressions.  In this rule, files of
+a maximum of 100,000 bytes are carved if they begin with a string of
+three "G" characters, followed by a character other than a "G".  The
+file is terminated by a digit (0--9) followed by five "H" characters.
+Using regular expressions for headers and footers potentially
+decreases performance of the carving tool, but provides a much more
+powerful means to describe the objects to be recovered.  Creating a
+new rule can be time--consuming, because some knowledge about the
+common structure of files of the new type is required, but this
+knowledge need not be nearly as deep as for \emph{semantic carving},
+covered later in the chapter.
 
-One benefit of header/footer-based carvers is that they can retrieve files from a raw disk image in a filesystem--agnostic way, operating regardless of the type of filesystem on the disk image.  Perhaps more importantly, file carving is possible even if the filesystem metadata has been destroyed, such as during a filesystem format operation or as a result of file corruption due to media damage, a power outage, or similar event.    One limitation of header/footer--based carving tools is that an object's data must be contiguous to be carved properly.  With manual intervention or multiple carving steps which prune out previously recovered objects from the target media, some non-contiguous objects can be recovered, but in general fragmented objects are problematic.  Still, header/footer--based carvers that encounter fragmented objects can still partially recover the objects, and even object fragments may pose significant risks to privacy.  Finally, of the various types of file carvers, header/footer--based carvers are generally the most configurable, since only the binary strings that delimit the beginning and end of targeted file types must be described.  In contrast, deep carvers, which have extensive knowledge of the format of specific file types, generally require writing code to target additional file types.
+One benefit of header/footer-based carvers is that they can retrieve
+files from a raw disk image in a filesystem--agnostic way, operating
+regardless of the type of filesystem on the disk image.  Perhaps more
+importantly, file carving is possible even if the filesystem metadata
+has been destroyed, such as during a filesystem format operation or as
+a result of file corruption due to media damage, a power outage, or
+similar event.  One limitation of header/footer--based carving tools
+is that an object's data must be contiguous to be carved properly.
+With manual intervention or multiple carving steps which prune out
+previously recovered objects from the target media, some
+non-contiguous objects can be recovered, but in general fragmented
+objects are problematic.  Still, header/footer--based carvers that
+encounter fragmented objects can still partially recover the objects,
+and even object fragments may pose significant risks to privacy.
+Finally, of the various types of file carvers, header/footer--based
+carvers are generally the most configurable, since only the binary
+strings that delimit the beginning and end of targeted file types must
+be described.  In contrast, deep carvers, which have extensive
+knowledge of the format of specific file types, generally require
+writing code to target additional file types.
 
 \subsection{Reducing False Positives with PhotoRec, a Semantic Carver}
 
@@ -263,17 +308,68 @@ One benefit of header/footer-based carvers is that they can retrieve files from 
   validation. it's very easy to follow and will fit in well with the
   JPEG file format that is discussed in} \chapref{ch:container_files}
 
-Unlike header/footer-based carving, \emph{semantic} or \emph{deep carving} uses detailed knowledge of individual file types to detect, parse, and recover files from disk images or raw, physical disk devices.  Whereas header/footer-based carving uses only minimal structural information about particular file types, the goal of semantic carving is to leverage sufficient information about particular file types to allow more accurate detection and validation of files (thus reducing false positives).   Semantic file carvers also attempt to use file metadata to determine the precise lengths of files to be recovered, reducing "over-carving", which results frequently when header/footer-based carvers cannot accurately determine where a file ends.  Semantic carving is much more resilient in carving compound files, e.g., files that contain other files (examples include archives such as ZIP, but also image files with embedded thumbnails, to support rapid previewing).  Since the semantic file carver understands the structure of the container file, embedded files such as thumbnails can simply be included without further processing by the carver, preserving the integrity of the compound file.   Header/footer based carving tools like Scalpel include experimental features that try to correlate nested headers and footers (e.g., in the case of an image file with embedded thumbnails), but in practice these cases are better handled with deeper knowledge of the structure of files of particular types.
+Unlike header/footer-based carving, \emph{semantic} or \emph{deep
+  carving} uses detailed knowledge of individual file types to detect,
+parse, and recover files from disk images or raw, physical disk
+devices.  Whereas header/footer-based carving uses only minimal
+structural information about particular file types, the goal of
+semantic carving is to leverage sufficient information about
+particular file types to allow more accurate detection and validation
+of files (thus reducing false positives).  Semantic file carvers also
+attempt to use file metadata to determine the precise lengths of files
+to be recovered, reducing "over-carving", which results frequently
+when header/footer-based carvers cannot accurately determine where a
+file ends.  Semantic carving is much more resilient in carving
+compound files, e.g., files that contain other files (examples include
+archives such as ZIP, but also image files with embedded thumbnails,
+to support rapid previewing).  Since the semantic file carver
+understands the structure of the container file, embedded files such
+as thumbnails can simply be included without further processing by the
+carver, preserving the integrity of the compound file.  Header/footer
+based carving tools like Scalpel include experimental features that
+try to correlate nested headers and footers (e.g., in the case of an
+image file with embedded thumbnails), but in practice these cases are
+better handled with deeper knowledge of the structure of files of
+particular types.
 
-Early attempts to reduce false positives in file carving introduced validators, which performed consistency checks to determine the validity of recovered files (e.g., decompressing a recovered JPEG file to determine if it decompresses properly, or analyzing the format of a ZIP file to see if the archive is intact).  Files that fail validation can either be discarded or marked as corrupted, but preserved for deeper examination by an investigator.  Photorec \ref{photorec} is currently the state-of-the-art semantic carver, supporting more than 400 file types.  Attempts to recover individual file types in Photorec are triggered by discovery of a matching header in a disk image.  Execution of file type-specific C functions (written by the author of the tool or by investigators wishing to extend the list of types supported by Photorec) follow the discovery of the header, and these functions validate the data as well as parse relevant file metadata to discover the length of the file and other information.  This detailed knowledge of file structures greatly increases accuracy when carving pristine files, but it can be time-consuming to accommodate new file
-types due to limited documentation of their formats and generally requires programming skill.
+Early attempts to reduce false positives in file carving introduced
+validators, which performed consistency checks to determine the
+validity of recovered files (e.g., decompressing a recovered JPEG file
+to determine if it decompresses properly, or analyzing the format of a
+ZIP file to see if the archive is intact).  Files that fail validation
+can either be discarded or marked as corrupted, but preserved for
+deeper examination by an investigator.  Photorec \ref{photorec} is
+currently the state-of-the-art semantic carver, supporting more than
+400 file types.  Attempts to recover individual file types in Photorec
+are triggered by discovery of a matching header in a disk image.
+Execution of file type-specific C functions (written by the author of
+the tool or by investigators wishing to extend the list of types
+supported by Photorec) follow the discovery of the header, and these
+functions validate the data as well as parse relevant file metadata to
+discover the length of the file and other information.  This detailed
+knowledge of file structures greatly increases accuracy when carving
+pristine files, but it can be time-consuming to accommodate new file
+types due to limited documentation of their formats and generally
+requires programming skill.
 
 \subsection{The challenge of fragmented files}
 
 
 
 
-Dealing with fragmented objects is the most difficult problem in carving.  In legacy filesystems such as FAT, which does not incorporate strategies to reduce file fragmentation, many small files are likely to be stored contiguously, because files are created on cluster boundaries and cluster sizes under FAT tend to be rather large.  Larger files on FAT filesystems, however, are commonly fragmented\cite{dfrws2007:SimsonLGarfinkel}.  While modern filesystems such as NTFS, ext2/3/4 and HFS+ do take steps to ensure that fragmentation of files is reduced, fragmentation does still occur.  Furthermore, performance for SSDs does not benefit from legacy anti--fragmentation mechanisms, and some of these mechanisms may actually reduce SSD lifespan.  As a result, some anti--fragmentation strategies are suppressed when SSDs are in use.  
+Dealing with fragmented objects is the most difficult problem in
+carving.  In legacy filesystems such as FAT, which does not
+incorporate strategies to reduce file fragmentation, many small files
+are likely to be stored contiguously, because files are created on
+cluster boundaries and cluster sizes under FAT tend to be rather
+large.  Larger files on FAT filesystems, however, are commonly
+fragmented\cite{dfrws2007:SimsonLGarfinkel}.  While modern filesystems
+such as NTFS, ext2/3/4 and HFS+ do take steps to ensure that
+fragmentation of files is reduced, fragmentation does still occur.
+Furthermore, performance for SSDs does not benefit from legacy
+anti--fragmentation mechanisms, and some of these mechanisms may
+actually reduce SSD lifespan.  As a result, some anti--fragmentation
+strategies are suppressed when SSDs are in use.
 
 \begin{Verbatim}
 Do we want to get into the anti-fragmentation stuff in e.g., ext2/3/4 and 
@@ -303,8 +399,10 @@ time I looked at it.
   Volatility or bulk\_extractor's code for discussion. Or both. }
 
 \begin{Verbatim}
-Physical memory acquisition, Volatility, maybe specialized, standalone stuff, but
-most of that functionality is making its way into Volatility anyway, better in general to carve against virtual address spaces so things are contiguous, et al
+Physical memory acquisition, Volatility, maybe specialized, standalone
+stuff, but most of that functionality is making its way into
+Volatility anyway, better in general to carve against virtual address
+spaces so things are contiguous, et al
 
 
 
