@@ -1,5 +1,5 @@
-#!/usr/bin/python -
-############################################################################
+#!/usr/bin/python
+##########################################################################
 # vizdiff.py,  (c) Copyright 2014 by Golden G. Richard III.
 #
 # Port of vizdiff.pl to Python.
@@ -13,7 +13,7 @@
 # Red areas: non-matching clusters
 #
 # v1.0: first release, 8/2014.
-############################################################################
+##########################################################################
 
 import os,sys,math
 from Tkinter import *
@@ -28,10 +28,12 @@ class VizDiff:
         self.clustersize = clustersize
         self.width = width
         self.filesize = filesize
-        self.diffs_size = int(math.ceil(float(self.filesize) / float(self.clustersize)))
+        self.diffs_size = int(math.ceil(float(self.filesize) / 
+                                        float(self.clustersize)))
         self.baseline = ['B'] * self.diffs_size
         self.diffs = ['G'] * self.diffs_size
-        self.dim = math.ceil(math.sqrt(float(self.filesize) / float(self.clustersize)))
+        self.dim = math.ceil(math.sqrt(float(self.filesize) / 
+                                       float(self.clustersize)))
         self.zero = ['\0'] * self.clustersize
     
 
@@ -42,7 +44,9 @@ class VizDiff:
         window = self.root            # Toplevel()                  
         window.title("Baseline: " + filename)
         drawing = Canvas(window)
-        drawing.config(width=self.width, height=self.width, background="white")
+        drawing.config(width=self.width, 
+                       height=self.width, 
+                       background="white")
         drawing.pack(fill=BOTH)
 
         f = open(filename, "rb")
@@ -55,12 +59,15 @@ class VizDiff:
                 if (self.DEBUG):
                     print "\"" + filename + "\": non-zero cluster", idx
 
-            drawing.create_rectangle(int(idx % self.dim) * (self.width / self.dim), # x1
-                                     int(idx / self.dim) * (self.width / self.dim), # y1
-                                     int(idx % self.dim) * (self.width / self.dim) + (self.width / self.dim), # x2
-                                     int(idx / self.dim) * (self.width / self.dim) + (self.width / self.dim), # y2
-                                     outline = ('blue' if self.baseline[idx] == 'B' else 'green'),
-                                     fill = ('blue' if self.baseline[idx] == 'B' else 'green'))
+            drawing.create_rectangle(
+               int(idx % self.dim) * (self.width / self.dim), # x1
+               int(idx / self.dim) * (self.width / self.dim), # y1
+               int(idx % self.dim) * (self.width / self.dim) + 
+                   (self.width / self.dim), # x2
+               int(idx / self.dim) * (self.width / self.dim) + 
+                   (self.width / self.dim), # y2
+               outline = ('blue' if self.baseline[idx] == 'B' else 'green'),
+               fill = ('blue' if self.baseline[idx] == 'B' else 'green'))
             idx = idx + 1
         
         f.close()
@@ -75,7 +82,9 @@ class VizDiff:
         window = Toplevel(self.root)                  
         window.title(filename1 + "-->" + filename2)
         drawing = Canvas(window)
-        drawing.config(width=self.width, height=self.width, background="white")
+        drawing.config(width=self.width, 
+                       height=self.width, 
+                       background="white")
         drawing.pack(fill=BOTH)
 
         # mark differences between clusters in the two disk images
@@ -87,29 +96,40 @@ class VizDiff:
             if not data1:
                 break
 
-            if data1 != self.zero[0:len(data1)] or data2 != self.zero[0:len(data2)]:
+            if (data1 != self.zero[0:len(data1)] or 
+                data2 != self.zero[0:len(data2)]):
                 self.baseline[idx] = 'G'
             if data1 != data2:
                 self.diffs[idx] = 'R'
                 if (self.DEBUG):
-                    print "\"" + filename1 + "\" --> \"" + filename2 + "\": difference in non-zero cluster", idx
+                    print "\"" + filename1 + "\" --> \"" + filename2 + 
+                        "\": difference in non-zero cluster", idx
             idx = idx + 1
 
-        for idx in range(0, int(math.ceil(float(self.filesize) / float(self.clustersize)))):
+        for idx in range(0, int(math.ceil(float(self.filesize) /
+                                          float(self.clustersize)))):
             if self.diffs[idx] == 'R':
-                drawing.create_rectangle(int(idx % self.dim) * (self.width / self.dim), # x1
-                                         int(idx / self.dim) * (self.width / self.dim), # y1
-                                         int(idx % self.dim) * (self.width / self.dim) + (self.width / self.dim), # x2
-                                         int(idx / self.dim) * (self.width / self.dim) + (self.width / self.dim), # y2
-                                         outline = 'red', 
-                                         fill = 'red')
+                drawing.create_rectangle(
+                    int(idx % self.dim) * (self.width / self.dim), # x1
+                    int(idx / self.dim) * (self.width / self.dim), # y1
+                    int(idx % self.dim) * (self.width / self.dim) + 
+                        (self.width / self.dim), # x2
+                    int(idx / self.dim) * (self.width / self.dim) + 
+                        (self.width / self.dim), # y2
+                    outline = 'red', 
+                    fill = 'red')
             else:
-                drawing.create_rectangle(int(idx % self.dim) * (self.width / self.dim)+1, # x1
-                                         int(idx / self.dim) * (self.width / self.dim)+1, # y1
-                                         int(idx % self.dim) * (self.width / self.dim) + (self.width / self.dim), # x2
-                                         int(idx / self.dim) * (self.width / self.dim) + (self.width / self.dim), # y2
-                                         outline = ('blue' if self.baseline[idx] == 'B' else 'green'),
-                                         fill = ('blue' if self.baseline[idx] == 'B' else 'green'))
+                drawing.create_rectangle(
+                    int(idx % self.dim) * (self.width / self.dim)+1, # x1
+                    int(idx / self.dim) * (self.width / self.dim)+1, # y1
+                    int(idx % self.dim) * (self.width / self.dim) + 
+                        (self.width / self.dim), # x2
+                    int(idx / self.dim) * (self.width / self.dim) + 
+                        (self.width / self.dim), # y2
+                    outline = ('blue' if self.baseline[idx] == 'B' 
+                               else 'green'),
+                    fill = ('blue' if self.baseline[idx] == 'B' 
+                              else 'green'))
 
         drawing.pack()
         window.update()
@@ -121,7 +141,8 @@ def main():
     numargs=len(sys.argv)
     fileidx=4
     if numargs < 4:
-        sys.exit("Usage: vizdiff.py <clustersize> <width> <imgfile1> <imgfile2> [...<imgfileN>]\n")
+        sys.exit("Usage: vizdiff.py <clustersize> <width> " +
+                 "<imgfile1> <imgfile2> [...<imgfileN>]\n")
     else:
         clustersize = int(sys.argv[1])
         width = int(sys.argv[2])
@@ -131,20 +152,25 @@ def main():
         if not os.path.isfile(imagefilename2):
             sys.exit("File \""+ imagefilename2 + "\" does not exist.\n")
 
-        (mode1, ino1, dev1, nlink1, uid1, gid1, size1, atime1, mtime1, ctime1) = os.stat(imagefilename1)
+        (mode1, ino1, dev1, nlink1, uid1, gid1, size1, 
+            atime1, mtime1, ctime1) = os.stat(imagefilename1)
         if not S_ISREG(mode1):
-            sys.exit("Input must be regular files and file sizes must all be equal.\n")
+            sys.exit("Input must be regular files and file sizes " +
+                     "must all be equal.\n")
         else:
             v = VizDiff(root, size1, clustersize, width)
             v.display_baseline(imagefilename1)
             while True:
                 if not os.path.isfile(imagefilename2):
                     sys.exit("File \"" + imagefilename2 + "\" does not exist.")
-                (mode2, ino2, dev2, nlink2, uid2, gid2, size2, atime2, mtime2, ctime2) = os.stat(imagefilename2)
+                (mode2, ino2, dev2, nlink2, uid2, gid2, size2, 
+                    atime2, mtime2, ctime2) = os.stat(imagefilename2)
                 if not S_ISREG(mode2) or size1 != size2:
-                    sys.exit("Input must be regular files and file sizes must all be equal.\n")
+                    sys.exit("Input must be regular files and file sizes " +
+                             "must all be equal.\n")
                 else:
-                    print "Computing differences between\"" + imagefilename1 + "\" and \"" + imagefilename2 + "\"..."
+                    print "Computing differences between\"" + imagefilename1 + 
+                        "\" and \"" + imagefilename2 + "\"..."
                     v.display_difference(imagefilename1, imagefilename2)
                     print "Done."
                     fileidx = fileidx + 1
