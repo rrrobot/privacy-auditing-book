@@ -371,15 +371,35 @@ fragmentation of files is reduced, fragmentation does still occur.
 Furthermore, performance for SSDs does not benefit from legacy
 anti--fragmentation mechanisms, and some of these mechanisms may
 actually reduce SSD lifespan.  As a result, some anti--fragmentation
-strategies are suppressed when SSDs are in use.  While some tools
+strategies are suppressed when SSDs are in use.  
+
+While some tools
 exist for recovering fragmented files of certain types \cite{adroit},
 a general approach for fragmented file recovery is considered intractable.
+For a special case, however, when a copy (or partial copy) of a file to be
+recovered is available, \emph{hash--based carving} can be used to discover
+even highly fragmented files.  This is useful in establishing the existence
+of known files on a disk image, in contrast to the discovery of unknown
+files.  Hash-based carving is covered in the next section.
 
 \subsection{Hash-based carving with frag\_find}
 
-\hl{discuss that if you know what you are looking for, you can find it
-  more easily. frag\_find does this by using sector hashes to search
-  for a target. In this way it can find fragmented files.}
+The frag\_find carver uses sector hashes to search for parts of a target file, called the \emph{master file}, in a disk image. Hash-based file carvers are particularly useful for establishing that copies of the master file exist (or existed) on the disk image.  Since files in commonly used filesystems are always fragmented on boundaries that are a multiple of the hard drive's sector size, sectors belonging to even highly fragmented copies of the master file on the disk image are easily discovered.  frag\_find works as follows:
+
+\begin{itemize}
+
+\item First, for each master file, a data structure is created that can map each master file sector to a set of sectors in the image file. This data structure is called a \emph{filemap} and one is created for each master 
+file.
+
+\item Every sector of each master file is scanned. For each sector in the file, both the MD5 and SHA-1 hashes are computed. Each MD5 hash is used to set a corresponding bit in a Bloom filter. TheSHA-1 hashes are stored in a data structure called the \emph{shamap} that maps SHA-1 hashes to one or more sectors in the master file.  
+
+\item Each sector of the disk image is scanned. For each sector, the MD5 hash is computed and the corresponding bit checked in the Bloom filter.  If the sector’s MD5 is found in the Bloom filter, then the sector’s SHA-1 hash is calculated and the \emph{shamap} structure is examined--for each matching sector found in the \emph{shamap}, the sector number of the matching sector in the disk image is added to the corresponding sector in each \emph{filemap}.  This allows frag\_find to track the locations in the disk image that match fragments of each master file. 
+
+\item Each \emph{filemap} is then scanned for the longest runs of consecutive sectors in the disk image.    This run is noted and then removed from the \emph{filemap}. The process is repeated until the \emph{filemap} is empty.  The goal of this step is to identify the largest contiguous chunks of a master file that appear in the disk image, since the presence of large chunks of the file is highly indicative of the file previously existing in the disk image.
+
+\end{itemize}
+
+The likelihood that matching sectors discovered by frag\_find are correlated with master files being  previously stored in the disk image depends on several factors.  First, \emph{distinct sectors}, that is sectors that are manufactured by some random process, like the sectors comprising the compressed image data in a JPEG of a desert flower, are very likely to be unique to a particular file. Confidence that sectors are distinct can be strengthened by searching for them in a large disk corpus and verifying that they are found only in the master file and nowhere else.  Thus, for distinct sectors, matching even a single sector between a master file and disk image is a strong indicator that the file previously existed on the disk.  Second, the presence of large contiguous runs of sectors, particularly distinct sectors, is even stronger evidence that a master file previously existed on the disk.
 
 
 \section{Memory Carving}
@@ -392,27 +412,20 @@ a general approach for fragmented file recovery is considered intractable.
   (IPv4 header checksums do great validation here). We can use either
   Volatility or bulk\_extractor's code for discussion. Or both. }
 
+USE VOLATILITY EXAMPLE HERE, e.g., command console stuff?
+
+
 \begin{Verbatim}
 Physical memory acquisition, Volatility, maybe specialized, standalone
 stuff, but most of that functionality is making its way into
 Volatility anyway, better in general to carve against virtual address
 spaces so things are contiguous, et al
-
-
-
-
-
-
-
-PUT THIS SOMEWHERE--ALSO INCLUDE A SECTION ON IN PLACE CARVING? 
-
-\hl{This is an implementation detail that we can move later; it's
-  really whether we copy out the data now or later, right?} In addition to recovering objects, carving can also be used to 
-learn the locations of potentially recoverable objects without
-incurring the overhead of recovery. 
-
-
-
-
-
 \end{Verbatim}
+
+
+\color{red}
+Decide where (if at all) to talk about in-place carving, which can also be used to determine the locations (or simple existence) of recoverable objects, w/o the overhead of recovery
+\color{black}
+
+
+
