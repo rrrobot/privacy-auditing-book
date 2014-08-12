@@ -1,5 +1,16 @@
 \chapter{Carving: Finding Hidden Files in Bulk Data}
 
+
+
+
+
+
+
+
+
+
+
+
 \color{red} 
 Overall comments:
 
@@ -14,23 +25,16 @@ recovered because we don't have file system metadata. This chapter
 will introduce traditional header/footer carving, carving with
 validation, fragment recovery carving, and hash-based carving.
 
-2 - students like short paragraphs
-
-3 - Other comments in text
-
-also, about formatting:
-
-1 - your source file has one line per paragraph. That increases the
-chances of conflicts if we both edit at the same time. The paragraphs
-I've edited I'll turn into filled paragraphs with emacs. 
-
-2 - I found some \verb+^M\+'s in your text; did you do any editing on windows?
-
 \color{black}
 
 
-\hl{I recast this paragraph to discuss why it is important to our
-  readers:}
+
+
+
+
+
+
+
 
 \emph{File carving} (also called \emph{data carving} or simply
 \emph{carving}), is a digital forensics technique used to recover
@@ -85,7 +89,8 @@ historical state of a computer system.
 Historically, file carvers operated by looking for file headers and
 footers, which are unique strings of bytes that appear at predictable
 places near the beginning and end of files of a particular type
-\cite{Foremost, Scalpel}.  Such sequences are sometimes called
+\cite{Foremost, Scalpel}, as depicted in Figure \ref{fig:carvingoverview}.
+Such sequences are sometimes called
 \emph{magic numbers.} Carvers may also scan for \emph{milestones}, which
 are other strings of bytes that intervene between the beginning and
 end of the file, to attempt to eliminate false positives 
@@ -95,7 +100,7 @@ created on a sector boundary.  However, searching the entire input
 without regard to sector boundaries can enable discovery of embedded
 files, such as JPEGs embedded in Microsoft Word or in archives
 (e.g. ZIP files).  Depending on the circumstances, this may be either
-an advantage or disadvantage.
+an advantage or disadvantage. 
 
 While header/footer--based file carving is still widely used to
 recover data from storage media, other carving strategies have been
@@ -112,13 +117,13 @@ recovery of specific file types and the majority of carving tools
 cannot automatically reconstruct arbitrarily fragmented
 objects. 
 
+\color{red}
 
+RE below, any idea on how to structure the presentation in a figure / box?
 \hl{mention fragment recovery carving and hash-based carving. We should probably have the
   carving taxonomy in a box. Each of these approaches should be
   described below?}
-
-
-See Figure \ref{carvingoverview}.  
+\color{black}
 
 Applications of file carving and more details about the various file carving techniques currently in use are presented below.
 
@@ -149,7 +154,7 @@ typical users lose \emph{control} over potentially sensitive data, but
 the data is often easily recovered with carving techniques.
 Furthermore, there are situations where operating systems allocate
 significant amounts of disk space on a semi-permanent basis without
-sanitization, resulting in data being trapped (and recoverably via
+sanitization, resulting in data being trapped (and recoverable via
 file carving) for long periods of time.
 
 Consider, for example, the HTML fragment and image file depicted in
@@ -165,7 +170,8 @@ operations destroy little data.  In figure \ref{fig:formatting}, the
 effects of formatting a 256MB thumb drive for three different
 filesystems is depicted.  Even after the third format operation, most
 data remains.  These visualizations were generated using the Python program
-shown in Listing~\ref{vizdiff}. 
+shown in Listing~\ref{vizdiff}, based on an old Perl script written years again, and works
+under both Python 2.7 and 3.3+. 
 
 \lstinputlisting[caption=A simple Python program for visualizing the differences
 between a series of identically sized disk images,label=vizdiff]{ch-carving/vizdiff.py}
@@ -220,7 +226,7 @@ the Unix {\tt file} command, which uses a database of rules to
 identify file types.  For carving, the rules help to identify the
 starting and ending locations of files a stream, and allow the carving
 tool to copy sequences of bytes between the header and footer into
-regular files for examination.  A rule typically defines a header and
+regular files for examination. A rule typically defines a header and
 optionally, a footer, each of which is a binary string expected to be
 discovered near the beginning/end of objects of the corresponding
 type.  For example, for JPEG file types, the appropriate header is
@@ -304,10 +310,6 @@ writing code to target additional file types.
 
 \subsection{Reducing False Positives with PhotoRec, a Semantic Carver}
 
-\hl{I recommend looking at the code inside PhotoRec that does JPEG
-  validation. it's very easy to follow and will fit in well with the
-  JPEG file format that is discussed in} \chapref{ch:container_files}
-
 Unlike header/footer-based carving, \emph{semantic} or \emph{deep
   carving} uses detailed knowledge of individual file types to detect,
 parse, and recover files from disk images or raw, physical disk
@@ -338,7 +340,7 @@ validity of recovered files (e.g., decompressing a recovered JPEG file
 to determine if it decompresses properly, or analyzing the format of a
 ZIP file to see if the archive is intact).  Files that fail validation
 can either be discarded or marked as corrupted, but preserved for
-deeper examination by an investigator.  Photorec \ref{photorec} is
+deeper examination by an investigator.  Photorec \cite{photorec} is
 currently the state-of-the-art semantic carver, supporting more than
 400 file types.  Attempts to recover individual file types in Photorec
 are triggered by discovery of a matching header in a disk image.
@@ -346,16 +348,16 @@ Execution of file type-specific C functions (written by the author of
 the tool or by investigators wishing to extend the list of types
 supported by Photorec) follow the discovery of the header, and these
 functions validate the data as well as parse relevant file metadata to
-discover the length of the file and other information.  This detailed
+discover the length of the file and other information.  For example, the file
+|file_jpg.c|, part of the source code for Photorec, deals with validation of 
+JPEG images and incorporates a number of checks to ensure that JPEG
+files are properly carved.  This detailed
 knowledge of file structures greatly increases accuracy when carving
 pristine files, but it can be time-consuming to accommodate new file
 types due to limited documentation of their formats and generally
 requires programming skill.
 
 \subsection{The challenge of fragmented files}
-
-
-
 
 Dealing with fragmented objects is the most difficult problem in
 carving.  In legacy filesystems such as FAT, which does not
@@ -369,19 +371,11 @@ fragmentation of files is reduced, fragmentation does still occur.
 Furthermore, performance for SSDs does not benefit from legacy
 anti--fragmentation mechanisms, and some of these mechanisms may
 actually reduce SSD lifespan.  As a result, some anti--fragmentation
-strategies are suppressed when SSDs are in use.
+strategies are suppressed when SSDs are in use.  While some tools
+exist for recovering fragmented files of certain types \cite{adroit},
+a general approach for fragmented file recovery is considered intractable.
 
-\begin{Verbatim}
-Do we want to get into the anti-fragmentation stuff in e.g., ext2/3/4 and 
-HFS+?
-\end{Verbatim}
-
-\begin{Verbatim}
-Digital Assembly: Download new trial and check it out.  Wasn't so impressive last
-time I looked at it.
-\end{Verbatim}
-
-\subsection{hash-based carving with frag\_find}
+\subsection{Hash-based carving with frag\_find}
 
 \hl{discuss that if you know what you are looking for, you can find it
   more easily. frag\_find does this by using sector hashes to search
