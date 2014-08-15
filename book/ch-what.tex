@@ -1,4 +1,4 @@
-\chapter{What Text Looks Like \INDEV}
+\chapter{Text\INDEV}
 
 Sometimes you can spot data leakage by simply opening a file with an
 ordinary utility, as we did in the last chapter when we used Apple's
@@ -199,7 +199,6 @@ non-ASCII characters will render the string invisible to the
 
 \section{Unicode}
 
-
 Unicode is the international standard used by all modern computer
 systems to define a mapping between information stored inside a
 computer and the letters, digits and symbols that are displayed on
@@ -246,7 +245,10 @@ possible to freely use Arabic words like
 
 \subsection{Code Points and Characters}
 
-Like ASCII and ISO8859-1, at its most fundamental level the Unicode standard defines a mapping between code points and print characters. The big difference is quantity: Unicode's most recent version, Unicode 6.0, defines more than 109,000 printable objects. 
+Like ASCII and ISO8859-1, at its most fundamental level the Unicode
+standard defines a mapping between code points and print
+characters. The big difference is quantity: Unicode's most recent
+version, Unicode 6.0, defines more than 109,000 printable objects.
 
 Most of the code points map to characters, which the standard  calls
 ``graphemes.'' A grapheme is a unit of written language such as the
@@ -338,7 +340,15 @@ expanded beyond the 17 code planes (\tabref{code-planes}).
 \caption{Unicode code planes}\label{code-planes}
 \end{table}
 
-The assignment of code planes is arbitrary, of course, but there is some sensibility in the allocation. Plane 0 was first. The extension mechanism that the standards body adopted allows an additional 4 bits to be optionally specified; Plane 1 has all of those additional bits set to 0, Plane 16 has them all set to '1', and Plane 0 is marked by the absence of those optional bits. Planes 1 and 2 are really the only additional planes that were mapped out by the Committee; the top two Planes were reserved for private use. Because Planes 3-13 are unassigned, they can be trapped as errors. 
+The assignment of code planes is arbitrary, but there is some
+sensibility in the allocation. Plane 0 was first. The extension
+mechanism that the standards body adopted allows an additional 4 bits
+to be optionally specified; Plane 1 has all of those additional bits
+set to 0, Plane 16 has them all set to '1', and Plane 0 is marked by
+the absence of those optional bits. Planes 1 and 2 are really the only
+additional planes that were mapped out by the Committee; the top two
+Planes were reserved for private use. Because Planes 3-13 are
+unassigned, they can be trapped as errors.
 
 Many systems (like Java) were designed to be Unicode-aware when
 Unicode only had 16-bit characters.  Unicode 2.0's creators thought
@@ -348,7 +358,15 @@ always be 0. Instead, a coding scheme was developed that allowed pairs
 of 16-bit code points the BMP to represent characters with code points
 greater than 65,535. These pairs are called ``surrogates.''
 
-Consider the SQUARED FREE (U+1F193). This code point can be represented with 4-bytes using a sequence of four hex characters, 00 01 F1 93. But the code point can also be represented with a pair of Unicode characters called "surrogates." The 18 bits of code points outside the BMP to be divided into two halves, with 9 bits encoded by a first surrogate in the range D800-DBFF and 9 bits encoded using a second surrogate in the range DC00-DFFF. In the case of U+1F193, the two surrogates are U+D83C and U+DD93. Java always uses surrogates to represent characters outside the BMP.
+Consider the SQUARED FREE (U+1F193). This code point can be
+represented with 4-bytes using a sequence of four hex characters, 00
+01 F1 93. But the code point can also be represented with a pair of
+Unicode characters called "surrogates." The 18 bits of code points
+outside the BMP to be divided into two halves, with 9 bits encoded by
+a first surrogate in the range D800-DBFF and 9 bits encoded using a
+second surrogate in the range DC00-DFFF. In the case of U+1F193, the
+two surrogates are U+D83C and U+DD93. Java always uses surrogates to
+represent characters outside the BMP.
 
 Python can be compiled to use either 16-bit or 32-bit Unicode code
 points for its internal representation. If sys.maxunicode is 65535,
@@ -401,8 +419,6 @@ Unicode provides a special code called the Byte Order Mark (BOM, U+FEFF) that ca
 \caption{Unicode Byte Order Mark Signatures}\label{unicode-bom}
 \end{table}
 
-C programmers have the biggest problem with UTF-16 and UTF-32 encodings, for the simple reason that the C standard library uses the NULL character (00) to denote the end of a string. The obvious way to avoid this is by using the wide-character version of the string library---for example, use wcslen() instead of strlen().  Personally I recommend abandoning C-style strings and using the C++ STL std::wstring type instead.
-
 From the above examples it may seem that a program can trivially convert between Unicode to ASCII by simply removing or inserting alternating NULL characters. You should never do this!!!  This simplistic approach will fail if the Unicode string contains anything other than code points in the range U+0001 through U+00FF. Instead, programs should explicitly encode Unicode strings from an abstract internal representation when strings are transformed for operating system APIs, sent over a network connection or persisted into a file. Likewise, when data is read from an external source it should be decoded from the wire format into the program's internal representation.
 
 
@@ -424,10 +440,10 @@ As the table makes clear, UTF-8 is great for Americans, since documents coded in
 \begin{table}
 \begin{tabular}{llllll}
     Bits &Code Point Range  &  Byte 1 &    Byte 2&    Bytes 3&    Byte 4\\
-    7    &U+0000  - U+007F  & 0xxxxxxx&\\
-    11   &U+0080  - U+07FF  & 110xxxxx&   10xxxxxx&\\
-    16   &U+0800  - U+FFFF  & 1110xxxx&   10xxxxxx&  10xxxxxx&\\
-    21   &U+10000 - U+1FFFFF& 11110xxx&   10xxxxxx&  10xxxxxx&  10xxxxxx\\
+    7    &U+0000  -- U+007F  & 0xxxxxxx&\\
+    11   &U+0080  -- U+07FF  & 110xxxxx&   10xxxxxx&\\
+    16   &U+0800  -- U+FFFF  & 1110xxxx&   10xxxxxx&  10xxxxxx&\\
+    21   &U+10000 -- U+1FFFFF& 11110xxx&   10xxxxxx&  10xxxxxx&  10xxxxxx\\
 \end{tabular}
 \caption{UTF-8 Encoding}
 \end{table}
@@ -435,6 +451,7 @@ As the table makes clear, UTF-8 is great for Americans, since documents coded in
 One of the primary advantages of UTF-8 is that the NULL character is never used. This means that the POSIX APIs can be used more-or-less transparently with UTF-8 encoded Unicode. The confusion here, however, is that UTF-8 is not Unicode---it is a Unicode encoding. Keeping your program's internal data encoded in UTF-8 is fine as long as the strings are viewed atomically and no string operations such as comparison, search, case change, or splitting even needs to be performed by the program. All of these operations require decoding the UTF-8 sequences into Unicode characters and then re-encoding the Unicode characters back to UTF-8.
 
 
+\section{Searching for private information}
 
 
 \section{Creating a File with ``Hidden'' text}\label{sec:make-pdf}
@@ -500,107 +517,6 @@ uuencode
 
 binhex
 
-
-\section{Hashing}
-
-In computer science a \emph{hash function} is any function that maps a
-sequence of zero or more characters (called a \emph{string}) to an
-binary number of a specific fixed size---that is, a fixed number of
-bits. A 16-bit hash function can produce $2^{16}=65,536$ different hash values, while a
-32-bit hash function can produce $2^{32}=4,294,967,296$ possible hash
-values. Hash functions are designed so that changing a single
-character in the input results in a completely different number. While
-the pigeonhole principle guarantees that many different strings will
-have the same hash value---something that's called a \emph{hash
-  collision}---the more bits in the hash has, the smaller the chance
-of a collision.
-
-Hashing was invented by H.\ P.\ Luhn in a 1953 IBM technical memo;
-it's been widely used for computerized text processing since the
-1960s. For example, because every sentence in a document can be
-treated as a string, hashing makes it possible to rapidly see if the
-same paragraph ever repeats in a long document: just computer the hash
-value for each paragraph, put all of the hashes into a list, sort the
-list, and see if any number repeats twice. If there is no repeat, then
-no paragraph is repeated. Of course, if a number \emph{does} repeat,
-then it's necessary to look at the paragraphs that correspond to those
-two numbers to determine if the same paragraph really is repeated
-twice or the duplicate is the result of a hash collision. Using hashes
-in this manner is much faster than working directly with the
-paragraphs because it is much faster for computers to compare numbers
-than sequences of words---even when you take into account the time to
-perform the hashing.
-
-(Interesting fact: The name \emph{hash} comes from the way hash functions are typically
-implemented as a two-step process that first chops and then mixes the
-data, much in the way that one might make hash in the kitchen!)
-
-In 1979 Stanford University PhD student Ralph Merkle invented a way to use
-hashing for computer security\citep{merkle:79}. Merkle's idea was to
-use a hash
-function that produced more than 100 bits of output and that
-additionally had the property of being \emph{one-way}. That is, it was
-a function for which it was relatively easy to compute the hash of a
-string, but it was nearly impossible, given a hash, to find a
-corresponding string. The essence of Merkle's idea was to use a
-document's 100-bit one-way hash as a stand-in for the document itself
-for certain mathematical purposes. For example, instead of digitally
-certifying a 50-page document, the document could be reduced to a
-100-bit hash and the hash could then be certified. Because there are so many different possible hash values
-($2^{100}\approx10^{30}$), Merkle reasoned that it would not be
-possible for an attacker to take the digital signature from one document and use it
-to certify a second document---because to do so would require that
-both documents had the same hash value.
-
-Today digital signatures applied to hashes are
-the basis of many cyber security system. Digital signatures protect
-credit card numbers sent over the Internet, certify the authenticity
-and integrity of code run on iPhones, and validate keys used play
-digital music. The idea of hashing has been applied to other areas as
-well---in particular, forensics.
-
-One of the first and continuing uses of hashing in DF was to establish
-\emph{chain-of-custody} for forensic data. Instead of hashing a
-document or a file, the hash function is applied to the entire disk
-image---that is, \emph{all} of the bytes extracted from a hard
-drive. Many law enforcement organizations will create two
-disk images of a drive and then computer the hash of each image.  If the values match, then the
-copies are assumed to each be a true copy of the data that were on the
-drive. The hash value is then included in the official report. With
-the hash recorded, the image file can be copied to a server at the
-police department, to an investigator's workstation, or even given to
-a forensic expert working for the other side. Any investigator with the
-data can calculate the hash and see if it matches the original
-reported value. If the hashes match, the investigator can be sure that
-not a single bit in the disk image has been changed since the original
-image was recorded. Hashing is so important that many DF tools can
-automatically validate an evidence file by recomputing the hash and
-comparing it with a stored value.
-
-A second use for hashing is to identify specific
-files. This approach takes advantage of the property that it is
-extraordinarily unlikely for two files to have the same
-hash value. File hashes can thus be used to identify files in much the
-same way that a person can be identified by their fingerprints. 
-
-Today forensic practitioners distribute databases containing the file
-hashes as a standard part of forensic processing. The best known of these data
-sets is the National Software Reference Library Reference Data Set,
-distributed by the National Institute of Standards and
-Technology\cite{nist-nsrl-rds-march2012}. These data sets can be used
-to identify \emph{known goods}, such as programs distributed as part
-of operating systems, or \emph{known bads} such as computer viruses,
-stolen documents and child of pornography. Recent work is now
-applying cryptographic hashing to blocks of data smaller than
-files\cite{garfinkel:sector-id}, taking advantage of the fact that
-even relatively short 512-byte and 4096-byte segments taken from
-files can be highly identifying. 
-
-File and sector identification with hashing means that a hard drive
-containing millions of files can be automatically searched against a
-database containing the hashes of hundreds of millions of file hashes
-in a relatively short amount of time---perhaps just a few hours. Importantly, the search can be done without any human
-intervention.
 
 \section{Exercises}
 * Convert numbers to different bases
