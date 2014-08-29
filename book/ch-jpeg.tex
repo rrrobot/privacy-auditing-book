@@ -66,7 +66,7 @@ content of JPEGs themselves can leak information.
 \section{The JPEG file format}
 
 The most common digital image compression format in use today is the
-JPEG File Interchange Format (JFIF) and the Exchangable image file
+JPEG File Interchange Format (JFIF) and the Exchangeable image file
 format (Exif). The name ``JPEG'' stands for the Joint Photographic Experts
 Group, an international committee that was formed in 1986 to develop digital
 photography standards.  The JFIF standard was released in 1992 and was
@@ -192,16 +192,16 @@ the JPEG file format. Many such programs exist, but few of them allow
 the degree of control that we require here. Therefore we will present
 a short program that understands a small amount of the format and use
 it to find the examples of the first two above. The Exif format is
-rather compliated, however, so we'll use a specialized open source
+rather complicated, however, so we'll use a specialized open source
 tool for that one.
 
 \lstinputlisting[caption=A simple Python program for decoding the JPEG file structure,label=jpeg_scan]{ch-jpeg/jpeg_scan.py}
 
 Listing~\ref{jpeg_scan} is a simple python program that understands
 the basic structure of the JFIF and Exif file format. The main
-function is |validate_jepg(fn)|, which opens the named file, reads it
+function is |validate_jpeg(fn)|, which opens the named file, reads it
 into a buffer called |data|, and then loops through the JFIF
-segments. The body of this function is thie |while| loop, which checks
+segments. The body of this function is the |while| loop, which checks
 to make sure that it has a marker (beginning with a |FF|). It
 dispenses with the fixed size segments, provides special handling for
 the SOS segment (which extends to the end of the file), and then has
@@ -209,7 +209,7 @@ handling for the variable-length segments (the program assumes that
 any unknown marker is going variable-length). As an example of
 handling variable-sized programs the program prints comments.
 
-Following the fuction is the part of the program that parses
+Following the function is the part of the program that parses
 arguments. If one or more files are provided, they are processed. If a directory name is provided, the program iterates
 through all subdirectories, looking for a files with extensions ending
 in \emph{.jpg} or \emph{.jpeg}. The debug option causes
@@ -222,7 +222,7 @@ output
 \end{Verbatim}
 
 We ran this program on several hundred thousand files to look for
-JPEGs with anamolous contents. The following sections describe some of
+JPEGs with anomalous contents. The following sections describe some of
 what we found.
 
 \subsection{Files that are not JPEGs}
@@ -270,7 +270,7 @@ length. We analyzed comments on discovered:
 \begin{itemize}
 \item Many JPEGs had comments indicating the programs that had created
   them. 
-\item Apple's iPhoto applicaiton sets the Comment to be the same as
+\item Apple's iPhoto application sets the Comment to be the same as
   the caption when a slideshow is created.
 \end{itemize}
 
@@ -282,7 +282,7 @@ are exposed.
 
 Comments that reveal the program used to create the image make it
 possible to link together multiple images that came from the same
-person (although the linkage is unrelable and easily forged). Because
+person (although the linkage is unreliable and easily forged). Because
 comments may not be removed if an image is edited, they may cause
 information to be leaked from one use of a photo to another. 
 
