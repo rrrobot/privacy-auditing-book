@@ -20,73 +20,73 @@ to implement it. Today there are numerous programs that can create,
 display and even edit PDF files, and the format has been adopted as an
 international standard (ISO 32000-1:2008)\cite{ISO32000-1:2008}.
 
-\subsection{Before PDF: PostScript}
-
-Before PDF, electronic documents were typically distributed either as text
-files, such as the Internet RFCs, or as PostScript
-files. \emph{PostScript} is a programming language that Adobe Systems
-created in the 1980s. The key idea 
-of PostScript was that the language was interpreted by the printer, rather than 
-the computer. This allowed relatively small amounts of data to be sent to
-the printer, which would then render the page at the highest resolution
-the device supported. But it also meant that the computer would be
-freed from having to have drives for every different kind of printer
-that might ever be on the market.
-
-Listing~\ref{hello.ps} below shows a simple PostScript program that draws a
-black box and the words ``Hello World!''  The output of the program
-(shrunk significantly) is shown at quarter size appears in
-\figref{hello-ps-figure}. 
-
-\lstinputlisting[caption=A simple PostScript program,label=hello-ps-listing]{ch-pdf/hello-ps.ps}
-
-Even without reading a PostScript manual you
-can draw some conclusions about the programming language simply by 
-inspecting the listing and the resulting output:
-
-\begin{itemize}
-\item PostScript files begin with the magic number \verb|%!|.
-\item Strings are enclosed in parentheses. 
-\item Font names are preceded with slashes. (In fact, any literal name
-  can be put on the stack by preceding it with a slash.)
-\item Line drawing is performed with human-readable commands like
-  ``moveto'' and ``drawto''. 
-\item Arguments for commands come before the commands themselves,
-  implying that PostScript is a stack-oriented language.
-\item Because sometimes there are line breaks between commands and
-  other times there are not, you can reasonably infer that whitespace
-  is ignored in this file format.
-\end{itemize}
-
-You can confirm these conclusions and learn more about PostScript by
-reviewing any one of the numerous online PostScript
-tutorial.\footnote{A particularly good online guide is \emph{A First
-    Guide to PostScript} by PJ
-  Weingartner. \url{http://www.tailrecursive.org/postscript/index.html}}
-You can also use a text editor (\S\ref{sec:text-editors}) to enter
-these characters into a file called \emph{hello.ps} and try opening
-the file with a PostScript viewer (\S\ref{sec:postscript-viewer}).
-
-PostScript's initial use was inside the Apple LaserWriter, the first
-mass-market laser printer. There were inkjet printers, plotters, and
-large-scale laser printers before the LaserWriter, but each had their
-own language. With PostScript, application programs didn't have to
-separately understand how to generate print codes for each
-device. Instead, an application program could simply generate
-PostScript and know that the resulting page would be correctly
-printed. PostScript's most powerful features turned out to be the
-ability to distribute high-quality line art as encapsulated PostScript
-files that could embedded in other documents, scaled, transformed, and
-then printed---all with little work on the part of the application
-program. This, combined with the language's support for high quality
-typography, made PostScript one of the key enabling technologies of
-the 1980's boom in desktop publishing.
-
-\begin{figure}
-\includegraphics[scale=.25]{ch-pdf/hello-ps.pdf}
-\caption{The output of Listing~\ref{hello-ps-listing}, shrunk to 25\% of
-  the original size.}\label{hello-ps-figure}
-\end{figure}
+% \subsection{Before PDF: PostScript}
+% 
+% Before PDF, electronic documents were typically distributed either as text
+% files, such as the Internet RFCs, or as PostScript
+% files. \emph{PostScript} is a programming language that Adobe Systems
+% created in the 1980s. The key idea 
+% of PostScript was that the language was interpreted by the printer, rather than 
+% the computer. This allowed relatively small amounts of data to be sent to
+% the printer, which would then render the page at the highest resolution
+% the device supported. But it also meant that the computer would be
+% freed from having to have drives for every different kind of printer
+% that might ever be on the market.
+% 
+% Listing~\ref{hello.ps} below shows a simple PostScript program that draws a
+% black box and the words ``Hello World!''  The output of the program
+% (shrunk significantly) is shown at quarter size appears in
+% \figref{hello-ps-figure}. 
+% 
+% \lstinputlisting[caption=A simple PostScript program,label=hello-ps-listing]{ch-pdf/hello-ps.ps}
+% 
+% Even without reading a PostScript manual you
+% can draw some conclusions about the programming language simply by 
+% inspecting the listing and the resulting output:
+% 
+% \begin{itemize}
+% \item PostScript files begin with the magic number \verb|%!|.
+% \item Strings are enclosed in parentheses. 
+% \item Font names are preceded with slashes. (In fact, any literal name
+%   can be put on the stack by preceding it with a slash.)
+% \item Line drawing is performed with human-readable commands like
+%   ``moveto'' and ``drawto''. 
+% \item Arguments for commands come before the commands themselves,
+%   implying that PostScript is a stack-oriented language.
+% \item Because sometimes there are line breaks between commands and
+%   other times there are not, you can reasonably infer that whitespace
+%   is ignored in this file format.
+% \end{itemize}
+% 
+% You can confirm these conclusions and learn more about PostScript by
+% reviewing any one of the numerous online PostScript
+% tutorial.\footnote{A particularly good online guide is \emph{A First
+%     Guide to PostScript} by PJ
+%   Weingartner. \url{http://www.tailrecursive.org/postscript/index.html}}
+% You can also use a text editor (\S\ref{sec:text-editors}) to enter
+% these characters into a file called \emph{hello.ps} and try opening
+% the file with a PostScript viewer (\S\ref{sec:postscript-viewer}).
+% 
+% PostScript's initial use was inside the Apple LaserWriter, the first
+% mass-market laser printer. There were inkjet printers, plotters, and
+% large-scale laser printers before the LaserWriter, but each had their
+% own language. With PostScript, application programs didn't have to
+% separately understand how to generate print codes for each
+% device. Instead, an application program could simply generate
+% PostScript and know that the resulting page would be correctly
+% printed. PostScript's most powerful features turned out to be the
+% ability to distribute high-quality line art as encapsulated PostScript
+% files that could embedded in other documents, scaled, transformed, and
+% then printed---all with little work on the part of the application
+% program. This, combined with the language's support for high quality
+% typography, made PostScript one of the key enabling technologies of
+% the 1980's boom in desktop publishing.
+% 
+% \begin{figure}
+% \includegraphics[scale=.25]{ch-pdf/hello-ps.pdf}
+% \caption{The output of Listing~\ref{hello-ps-listing}, shrunk to 25\% of
+%   the original size.}\label{hello-ps-figure}
+% \end{figure}
 
 \subsection{The PDF Specification}
 
