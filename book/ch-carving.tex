@@ -1,41 +1,5 @@
 \chapter{Carving: Finding Hidden Files in Bulk Data}
 
-
-
-
-
-
-
-
-
-
-
-
-\color{red} 
-Overall comments:
-
-1 - This is great start. Remember that it's coming after the chapter
-that describes disks and file systems (\chapref{ch-drives}) and the
-chapter on finding hidden information in file systems
-(\chapref{ch-fshidden}). In \chapref{ch-drives} we show people how to
-work with disk images; in \chapref{ch-fshidden} we show how to use
-SleuthKit to recover deleted files. I want \chapref{ch-fshidden} to
-end with the idea that there are all these data that can't be
-recovered because we don't have file system metadata. This chapter
-will introduce traditional header/footer carving, carving with
-validation, fragment recovery carving, and hash-based carving.
-
-\color{black}
-
-
-
-
-
-
-
-
-
-
 \emph{File carving} (also called \emph{data carving} or simply
 \emph{carving}), is a digital forensics technique used to recover
 files, file fragments, or other kinds of objects based on their
@@ -399,7 +363,7 @@ file.
 
 \end{itemize}
 
-The likelihood that matching sectors discovered by frag\_find are correlated with master files being  previously stored in the disk image depends on several factors.  First, \emph{distinct sectors}, that is sectors that are manufactured by some random process, like the sectors comprising the compressed image data in a JPEG of a desert flower, are very likely to be unique to a particular file. Confidence that sectors are distinct can be strengthened by searching for them in a large disk corpus and verifying that they are found only in the master file and nowhere else.  Thus, for distinct sectors, matching even a single sector between a master file and disk image is a strong indicator that the file previously existed on the disk.  Second, the presence of large contiguous runs of sectors, particularly distinct sectors, is even stronger evidence that a master file previously existed on the disk.
+The likelihood that matching sectors discovered by frag\_find are correlated with master files being  previously stored on a disk depends on several factors.  First, \emph{distinct sectors}, that is sectors that are manufactured by some random process, like the sectors comprising the compressed image data in a JPEG of a desert flower, are very likely to be unique to a particular file. Confidence that sectors are distinct can be strengthened by searching for them in a large disk corpus and verifying that they are found only in the master file and nowhere else.  Thus, for distinct sectors, matching even a single sector between a master file and disk image is a strong indicator that the file previously existed on the disk.  Second, the presence of large contiguous runs of sectors, particularly distinct sectors, is even stronger evidence that a master file previously existed on the disk.
 
 
 \section{Memory Carving}
